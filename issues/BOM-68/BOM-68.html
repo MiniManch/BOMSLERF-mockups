@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BOM-68 — Character Desaturates in Grass</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500&display=swap">
+<style>
+.bsl-bar{position:sticky;top:0;z-index:9999;display:flex;gap:14px;align-items:baseline;
+  flex-wrap:wrap;padding:10px 18px;background:#0b0814;border-bottom:1px solid rgba(201,168,76,.3);
+  font:13px/1.5 'Inter',system-ui,sans-serif;color:#9aa2b4}
+.bsl-bar b{font:600 14px 'Cinzel',serif;color:#c9a84c;letter-spacing:.02em}
+.bsl-bar a{color:#f0d080;text-decoration:none;border-bottom:1px solid rgba(240,208,128,.35)}
+.bsl-bar a:hover{color:#fff}
+.bsl-bar .sp{flex:1}
+.bsl-bar .src{font-size:11px;color:#6b7283}
+
+:root {
+  --gold: #c9a84c;
+  --gold-dim: #8a6f30;
+  --gold-faint: rgba(201,168,76,0.15);
+  --crimson: #8b1a1a;
+  --crimson-bright: #c0392b;
+  --deep: #05030e;
+  --card: rgba(10,7,20,0.93);
+  --panel: rgba(14,10,26,0.88);
+  --border: rgba(201,168,76,0.18);
+  --border-s: rgba(201,168,76,0.45);
+  --text: #e4d9c0;
+  --dim: #8a7f6a;
+  --muted: #4a4438;
+  --error: #d94040;
+  --error-bg: rgba(160,30,30,0.18);
+  --success: #3db86a;
+  --success-bg: rgba(30,100,50,0.2);
+  --blue: #2a6db5;
+}
+.gf {
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  aspect-ratio: 16/9;
+  background: #080514;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.gf-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 65% 30%, rgba(139,26,26,0.4) 0%, transparent 55%),
+    radial-gradient(ellipse at 15% 85%, rgba(25,12,55,0.7) 0%, transparent 45%),
+    radial-gradient(ellipse at 85% 85%, rgba(20,8,40,0.5) 0%, transparent 40%),
+    linear-gradient(180deg, #0d0a1a 0%, #100816 60%, #080514 100%);
+}
+.gf-castle {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 52%;
+  background: #080514;
+  clip-path: polygon(
+    0% 100%, 0% 55%,
+    2% 55%, 2% 42%, 4% 42%, 4% 55%,
+    7% 55%, 7% 38%, 9% 38%, 9% 55%,
+    12% 55%, 12% 42%, 14% 42%, 14% 55%,
+    18% 55%, 18% 62%,
+    24% 62%, 24% 28%, 26% 28%, 26% 15%, 28% 15%, 28% 28%, 30% 28%, 30% 62%,
+    36% 62%, 36% 55%,
+    39% 55%, 39% 42%, 41% 42%, 41% 55%,
+    44% 55%, 44% 48%,
+    49% 48%, 49% 5%, 50% 0%, 51% 5%, 51% 48%,
+    56% 48%, 56% 55%,
+    59% 55%, 59% 42%, 61% 42%, 61% 55%,
+    64% 55%, 64% 62%,
+    70% 62%, 70% 28%, 72% 28%, 72% 15%, 74% 15%, 74% 28%, 76% 28%, 76% 62%,
+    82% 62%, 82% 55%,
+    85% 55%, 85% 38%, 88% 38%, 88% 55%,
+    91% 55%, 91% 42%, 93% 42%, 93% 55%,
+    96% 55%, 96% 42%, 98% 42%, 98% 55%,
+    100% 55%, 100% 100%
+  );
+}
+.gf-sky { position:absolute;inset:0;background:radial-gradient(ellipse at 50% -10%,rgba(180,40,20,0.5) 0%,transparent 65%);}
+.gf-fog { position:absolute;bottom:48%;left:0;right:0;height:12%;background:linear-gradient(180deg,transparent,rgba(30,15,50,0.4),transparent);}
+.gf-vignette { position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,transparent 40%,rgba(5,3,14,0.6) 100%);}
+.gf-inner { position:relative;z-index:2;width:100%;height:100%;display:flex;align-items:center;justify-content:center; }
+.hud { width:100%;height:100%;position:relative;z-index:2; }
+.hud-top { position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:flex-start;padding:8px 10px; }
+.hud-bot { position:absolute;bottom:0;left:0;right:0;display:flex;justify-content:space-between;align-items:flex-end;padding:8px 10px; }
+.hud-timer { background:rgba(8,5,16,0.85);border:0.5px solid rgba(201,168,76,0.35);border-radius:6px;padding:5px 14px;text-align:center; }
+.hud-timer-val { font-family:'Cinzel',serif;font-size:16px;color:var(--gold); }
+.hud-timer-val.urgent { color:var(--error); }
+.hud-timer-lab { font-size:8px;color:var(--muted); }
+.hud-flags { display:flex;gap:6px; }
+.hud-flag { background:rgba(8,5,16,0.8);border:0.5px solid var(--border);border-radius:5px;padding:3px 9px;font-size:10px; }
+.hud-flag.safe { border-color:rgba(61,184,106,0.4);color:#4ade80; }
+.hud-flag.taken { border-color:rgba(200,60,60,0.4);color:#fca5a5; }
+.hud-kf { background:rgba(8,5,16,0.75);border:0.5px solid var(--border);border-radius:4px;padding:3px 8px;font-size:9px;color:var(--dim); }
+.hud-hp-area { display:flex;flex-direction:column;gap:6px; }
+.hud-hp-row { display:flex;align-items:center;gap:6px; }
+.hud-avatar { width:22px;height:22px;background:#1e2d45;border:0.5px solid #2563eb;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0; }
+.hud-hpbar { width:72px;height:5px;background:rgba(255,255,255,0.08);border-radius:3px;overflow:hidden; }
+.hud-hpfill { height:100%;border-radius:3px; }
+.hud-hpval { font-size:8px;color:var(--muted); }
+.hud-joy { width:44px;height:44px;background:rgba(0,0,0,0.45);border:0.5px solid rgba(255,255,255,0.12);border-radius:50%;display:flex;align-items:center;justify-content:center; }
+.hud-joy-inner { width:16px;height:16px;border-radius:50%;border:1.5px solid rgba(255,255,255,0.25); }
+.hud-abilities { display:flex;gap:6px;align-items:flex-end; }
+.hud-ult { width:34px;height:34px;background:#120c1a;border:1.5px solid #7c3aed;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-direction:column; }
+.hud-skill { width:38px;height:38px;background:#0f1a1f;border:1.5px solid #0ea5e9;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-direction:column; }
+.hud-atk { width:48px;height:48px;background:#1a0f0f;border:2px solid #dc2626;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-direction:column; }
+.hud-btn-ico { font-size:16px; }
+.hud-btn-cd { font-size:7px;margin-top:1px; }
+.hud-cd-overlay { position:absolute;inset:0;background:rgba(0,0,0,0.6);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--dim); }
+.hud-passive { width:22px;height:22px;background:#0f1a10;border:1px solid rgba(61,184,106,0.4);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:10px;margin-bottom:4px; }
+.hud-abil-wrap { display:flex;flex-direction:column;align-items:flex-end;gap:3px; }
+.eg-table { width:100%;background:rgba(8,5,16,0.88);border:0.5px solid var(--border);border-radius:6px;overflow:hidden; }
+.eg-table table { width:100%;border-collapse:collapse;font-size:10px; }
+.eg-table th { padding:4px 7px;color:var(--muted);border-bottom:0.5px solid var(--border);text-align:left;font-weight:400; }
+.eg-table td { padding:4px 7px;border-bottom:0.5px solid rgba(201,168,76,0.05); }
+.eg-table tr:last-child td { border-bottom:none; }
+.eg-table tr.me td { background:rgba(30,45,80,0.4); }
+.eg-table td.win-mark { color:#4ade80; }
+.eg-table td.loss-mark { color:#f87171; }
+.eg-table td.coin { color:var(--gold); }
+.spec-block {
+  margin-top:28px;
+  background:rgba(10,7,20,0.7);
+  border:0.5px solid var(--border);
+  border-radius:8px;
+  overflow:hidden;
+}
+.spec-block-title {
+  padding:10px 16px;
+  font-size:11px;
+  font-weight:500;
+  color:var(--gold-dim);
+  background:rgba(201,168,76,0.06);
+  border-bottom:0.5px solid var(--border);
+  font-family:'Cinzel',serif;
+  letter-spacing:.04em;
+}
+.spec-row { display:flex;justify-content:space-between;align-items:flex-start;padding:7px 16px;border-bottom:0.5px solid rgba(201,168,76,0.05);gap:16px; }
+.spec-row:last-child { border-bottom:none; }
+.spec-field { font-size:11px;color:var(--dim);width:130px;flex-shrink:0; }
+.spec-val { font-size:11px;color:var(--text);flex:1;text-align:right; }
+.spec-err { font-size:10px;color:var(--error);text-align:right; }
+.screens {
+  display: grid;
+  gap: 24px;
+}
+.screens.cols-2 { grid-template-columns: 1fr 1fr; }
+.screens.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+.screens.cols-1 { grid-template-columns: 1fr; max-width: 680px; }
+.screen-wrap { display: flex; flex-direction: column; gap: 10px; }
+.screen-label {
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  padding-left: 2px;
+}
+.screen-label.active { color: var(--gold-dim); }
+.screen-label.error { color: #a04040; }
+.screen-label.success { color: #3a8050; }
+.section-header {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+.section-title {
+  font-family: 'Cinzel', serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--gold);
+}
+.section-sub {
+  font-size: 13px;
+  color: var(--dim);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--deep);color:var(--text);font-family:'Inter',sans-serif;
+     font-size:14px;line-height:1.5;padding:26px 22px 44px}
+h2.mt{font-family:'Cinzel',serif;font-size:19px;font-weight:600;color:var(--gold);margin:0 0 5px}
+p.ms{color:var(--dim);font-size:13px;margin:0 0 26px;max-width:74ch}
+.grp{margin:0 0 30px}
+.grp-h{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-dim);
+       margin:0 0 11px;padding-bottom:6px;border-bottom:0.5px solid var(--border)}
+.cols{display:grid;gap:18px}
+.c2{grid-template-columns:1fr 1fr}
+.c3{grid-template-columns:1fr 1fr 1fr}
+@media(max-width:780px){.c2,.c3{grid-template-columns:1fr}}
+.cap{font-size:10px;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin:0 0 7px}
+.cap.ok{color:#3a8050}.cap.bad{color:#a04040}.cap.on{color:var(--gold-dim)}
+.why{background:rgba(201,168,76,0.05);border-left:2px solid var(--gold-dim);padding:10px 14px;
+     font-size:12px;color:var(--dim);margin:14px 0 0;border-radius:0 4px 4px 0}
+.why b{color:var(--gold-dim);font-weight:500}
+.warn{background:rgba(160,30,30,0.14);border-left:2px solid var(--error);padding:10px 14px;
+      font-size:12px;color:#d9b0b0;margin:14px 0 0;border-radius:0 4px 4px 0}
+.warn b{color:var(--error);font-weight:500}
+.open{background:rgba(201,168,76,0.09);border:0.5px dashed var(--border-s);padding:11px 14px;
+      font-size:12px;color:var(--text);margin:16px 0 0;border-radius:5px}
+.open b{color:var(--gold);font-weight:500}
+table.t{width:100%;border-collapse:collapse;font-size:11.5px;margin-top:4px;
+        background:rgba(8,5,16,0.7);border:0.5px solid var(--border);border-radius:6px;overflow:hidden}
+table.t th{text-align:left;font-weight:400;color:var(--muted);padding:6px 10px;
+           border-bottom:0.5px solid var(--border);font-size:10px;letter-spacing:.05em;text-transform:uppercase}
+table.t td{padding:6px 10px;border-bottom:0.5px solid rgba(201,168,76,0.05);vertical-align:top}
+table.t tr:last-child td{border-bottom:none}
+table.t td.n{font-family:ui-monospace,Menlo,monospace;color:var(--gold);white-space:nowrap}
+table.t td b{color:var(--text);font-weight:500}
+.sw{display:inline-block;width:11px;height:11px;border-radius:2px;vertical-align:-1px;
+    margin-right:6px;border:0.5px solid rgba(255,255,255,0.18)}
+.chip{display:inline-block;font-size:9px;padding:2px 7px;border-radius:3px;letter-spacing:.05em;
+      border:0.5px solid var(--border);color:var(--dim);background:rgba(8,5,16,0.6)}
+.chip.b{border-color:rgba(42,109,181,0.5);color:#93c5fd}
+.chip.r{border-color:rgba(192,57,43,0.5);color:#fca5a5}
+.chip.g{border-color:rgba(201,168,76,0.5);color:var(--gold)}
+.ctr{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+     flex-direction:column;z-index:3}
+.lab{position:absolute;bottom:6px;right:8px;z-index:6;font-size:7.5px;letter-spacing:.09em;
+     text-transform:uppercase;color:var(--muted);background:rgba(5,3,14,0.82);
+     padding:2px 6px;border-radius:3px;max-width:62%;text-align:right;line-height:1.3}
+.fig{width:16px;height:26px;border-radius:3px 3px 1px 1px;position:absolute;z-index:3}
+.fig::after{content:'';position:absolute;top:-7px;left:50%;transform:translateX(-50%);
+            width:9px;height:9px;border-radius:50%;background:inherit;opacity:.9}
+.nm{position:absolute;z-index:4;font-size:7.5px;color:var(--text);background:rgba(5,3,14,0.8);
+    padding:1px 4px;border-radius:2px;white-space:nowrap;transform:translateX(-50%)}
+.grass{position:absolute;border-radius:40% 45% 42% 48%;background:rgba(30,70,30,0.55);
+       border:0.5px solid rgba(60,120,60,0.45);z-index:2}
+</style>
+</head>
+<body>
+<div class="bsl-bar"><b>BOM-68</b><span>Character Desaturates in Grass</span><span class="sp"></span><a href="https://stiv90000.atlassian.net/browse/BOM-68">Jira</a> · GDD <a href="https://github.com/Bomslerf/BomSlerf-GDD/blob/main/docs/04_Vision_FOV.md">§3 grass</a> <span class="src">from drawn 2026-11-07</span></div>
+
+<h2 class="mt">Character Desaturates in Grass</h2>
+<p class="ms">The visual half of the grass system. A character standing in grass should read as
+<i>concealed but present</i> to anyone who can legitimately see them — it is the cue that tells the
+player their hiding is working.</p>
+
+<div class="grp"><div class="grp-h">The three states</div>
+<div class="cols c3">
+<div class="screen-wrap"><div class="cap ">outside — full colour</div><div class="gf " style="background:#0a1208"><div class="gf-bg" style="background:radial-gradient(ellipse at 30% 30%,rgba(20,50,20,0.45),transparent 60%),radial-gradient(ellipse at 80% 80%,rgba(80,10,10,0.35),transparent 50%),linear-gradient(180deg,#0a1208,#080a06)"></div><div class="lab">outside the grass · full colour</div><div class="gf-vignette"></div><div class="grass" style="left:52%;top:26%;width:34%;height:52%"></div><div class="fig" style="left:26%;top:44%;background:#c0392b"></div><div class="nm" style="left:28%;top:72%">Vargoth</div></div></div>
+<div class="screen-wrap"><div class="cap on">inside — desaturated</div><div class="gf " style="background:#0a1208"><div class="gf-bg" style="background:radial-gradient(ellipse at 30% 30%,rgba(20,50,20,0.45),transparent 60%),radial-gradient(ellipse at 80% 80%,rgba(80,10,10,0.35),transparent 50%),linear-gradient(180deg,#0a1208,#080a06)"></div><div class="lab">inside the grass · desaturated</div><div class="gf-vignette"></div><div class="grass" style="left:52%;top:26%;width:34%;height:52%"></div><div class="fig" style="left:62%;top:44%;background:#6b4a48;opacity:.62"></div><div class="nm" style="left:64%;top:72%;opacity:.5">Vargoth</div></div></div>
+<div class="screen-wrap"><div class="cap bad">attacking — revealed</div><div class="gf " style="background:#0a1208"><div class="gf-bg" style="background:radial-gradient(ellipse at 30% 30%,rgba(20,50,20,0.45),transparent 60%),radial-gradient(ellipse at 80% 80%,rgba(80,10,10,0.35),transparent 50%),linear-gradient(180deg,#0a1208,#080a06)"></div><div class="lab">attacking from grass · fully revealed</div><div class="gf-vignette"></div><div class="grass" style="left:52%;top:26%;width:34%;height:52%"></div><div class="fig" style="left:62%;top:44%;background:#c0392b"></div><div class="nm" style="left:64%;top:72%">Vargoth</div><div style="position:absolute;left:62%;top:40%;width:34px;height:34px;border:1px solid rgba(255,220,120,0.5);border-radius:50%;z-index:2"></div></div></div>
+</div>
+<div class="why"><b>Desaturate, do not fade to transparent.</b> Transparency reads as a rendering
+bug and makes the character hard to click. Dropping saturation and a little contrast keeps the
+silhouette solid while saying "hidden".</div>
+</div>
+
+<div class="grp"><div class="grp-h">Build spec</div>
+<table class="t"><thead><tr><th>Item</th><th>Rule</th></tr></thead><tbody><tr><td>Applies to</td><td>the character model <b>and</b> their nameplate</td></tr><tr><td>Saturation</td><td>drop to roughly 35% — tune in playtest, value in BOM-87</td></tr><tr><td>Opacity</td><td>stays near full. This is a colour change, not a fade.</td></tr><tr><td>Transition</td><td>short crossfade on entering and leaving, not a hard snap</td></tr><tr><td>Attacking</td><td><b>full colour immediately</b> — attacking breaks concealment per the FOV rules</td></tr><tr><td>Your own character</td><td>desaturates too, so you can tell you are concealed</td></tr><tr><td>Flag carrier</td><td><span class="chip g">see below</span></td></tr></tbody></table>
+<div class="warn"><b>Conflict with BOM-128.</b> The flag carrier is supposed to be
+<i>permanently and obviously visible</i>. Grass desaturation directly fights that. The carrier should
+almost certainly be exempt — but that is a product call, not a developer's.</div>
+<div class="open"><b>Depends on BOM-70 and BOM-71.</b> This ticket is only the <i>look</i>. Who can
+see whom, and for how long after leaving, is decided there — and those two have no spec yet either.
+All three want deciding in one sitting.</div>
+</div>
+
+</body>
+</html>

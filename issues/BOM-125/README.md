@@ -1,0 +1,22 @@
+# BOM-125 — Mother Greta — ability VFX
+
+![BOM-125 mockup](BOM-125.png)
+
+## Links
+
+- **Jira:** [BOM-125](https://stiv90000.atlassian.net/browse/BOM-125)
+- **Spec:** not mapped yet
+- **Interactive:** [`BOM-125.html`](https://github.com/MiniManch/BOMSLERF-mockups/blob/main/issues/BOM-125/BOM-125.html) — open it raw to interact
+- **Image for pasting:** `https://raw.githubusercontent.com/MiniManch/BOMSLERF-mockups/main/issues/BOM-125/BOM-125.png`
+
+## Where this came from
+
+Extracted from the original mockup sheets.
+
+Source sections:
+  - `sprint4_blocks_bc.html → c4`
+
+---
+
+*Part of [BOMSLERF-mockups](https://github.com/MiniManch/BOMSLERF-mockups). The rules are owned by [BomSlerf-GDD](https://github.com/Bomslerf/BomSlerf-GDD) — where
+this mockup and the GDD disagree, **the GDD wins** and the mockup gets redrawn.*

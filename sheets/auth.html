@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BomSlerf — Auth Flow Mockup</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #c9a84c;
+    --gold-dim: #7a6230;
+    --red: #8b1a1a;
+    --red-bright: #c0392b;
+    --surface: rgba(8,6,14,0.88);
+    --card: rgba(12,9,20,0.92);
+    --border: rgba(201,168,76,0.2);
+    --border-strong: rgba(201,168,76,0.5);
+    --text: #e8dfc8;
+    --dim: #9a8f7a;
+    --muted: #5a5248;
+    --error: #e05555;
+    --error-bg: rgba(180,40,40,0.15);
+    --success: #4ade80;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background:#0a0810;
+    color:var(--text);
+    font-family:'Inter', sans-serif;
+    min-height:100vh;
+  }
+
+  .doc-header {
+    background:rgba(0,0,0,0.6);
+    border-bottom:1px solid var(--border);
+    padding:20px 48px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  }
+  .doc-title { font-family:'Cinzel',serif; font-size:16px; color:var(--gold); }
+  .doc-sub { font-size:12px; color:var(--muted); }
+  .doc-note { font-size:12px; color:var(--dim); background:rgba(201,168,76,0.06); border:0.5px solid var(--border); border-radius:4px; padding:6px 12px; }
+
+  .screens-grid {
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:0;
+    padding:0;
+  }
+
+  .screen-col {
+    border-right:1px solid rgba(201,168,76,0.1);
+    padding:32px 32px 40px;
+  }
+  .screen-col:last-child { border-right:none; }
+
+  .screen-label {
+    font-size:10px;
+    letter-spacing:.12em;
+    color:var(--muted);
+    text-transform:uppercase;
+    margin-bottom:20px;
+    font-family:'Cinzel',serif;
+  }
+
+  /* THE GAME SCREEN */
+  .game-screen {
+    position:relative;
+    border-radius:10px;
+    overflow:hidden;
+    border:1px solid var(--border);
+    aspect-ratio:16/9;
+    background:#0d0a18;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  .bg-art {
+    position:absolute;
+    inset:0;
+    background:
+      radial-gradient(ellipse at 70% 40%, rgba(139,26,26,0.35) 0%, transparent 60%),
+      radial-gradient(ellipse at 20% 80%, rgba(30,15,60,0.6) 0%, transparent 50%),
+      linear-gradient(180deg, #0d0a18 0%, #1a0d0d 50%, #0a0810 100%);
+  }
+
+  .castle-art {
+    position:absolute;
+    inset:0;
+    background:
+      linear-gradient(180deg, transparent 0%, rgba(8,5,16,0.5) 70%, rgba(8,5,16,0.9) 100%);
+  }
+
+  /* Silhouette castle using CSS */
+  .castle-silhouette {
+    position:absolute;
+    bottom:0;
+    left:0;
+    right:0;
+    height:55%;
+    background:
+      /* battlements top */
+      repeating-linear-gradient(
+        90deg,
+        transparent 0px, transparent 8px,
+        #0c0818 8px, #0c0818 16px
+      ),
+      linear-gradient(180deg, #0c0818 0%, #0a0614 100%);
+    clip-path: polygon(
+      0% 100%, 0% 45%,
+      3% 45%, 3% 35%, 5% 35%, 5% 45%,
+      8% 45%, 8% 30%, 10% 30%, 10% 45%,
+      13% 45%, 13% 35%, 15% 35%, 15% 45%,
+      20% 45%, 20% 55%,
+      25% 55%, 25% 20%, 27% 20%, 27% 10%, 29% 10%, 29% 20%, 31% 20%, 31% 55%,
+      36% 55%, 36% 45%,
+      40% 45%, 40% 35%, 42% 35%, 42% 45%,
+      45% 45%, 45% 40%,
+      50% 40%, 50% 0%, 51% 0%, 51% 40%,
+      55% 40%, 55% 45%,
+      58% 45%, 58% 35%, 60% 35%, 60% 45%,
+      63% 45%, 63% 55%,
+      69% 55%, 69% 20%, 71% 20%, 71% 10%, 73% 10%, 73% 20%, 75% 20%, 75% 55%,
+      80% 55%, 80% 45%,
+      83% 45%, 83% 35%, 85% 35%, 85% 45%,
+      87% 45%, 87% 30%, 89% 30%, 89% 45%,
+      92% 45%, 92% 35%, 94% 35%, 94% 45%,
+      97% 45%, 97% 45%,
+      100% 45%, 100% 100%
+    );
+  }
+
+  .fire-glow {
+    position:absolute;
+    bottom:20%;
+    left:50%;
+    transform:translateX(-50%);
+    width:3px;
+    height:30%;
+    background:linear-gradient(0deg, #8b1a1a, #ff6b00 40%, transparent);
+    filter:blur(2px);
+    opacity:0.7;
+  }
+
+  .sky-glow {
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+    height:50%;
+    background:radial-gradient(ellipse at 50% -20%, rgba(139,26,26,0.4) 0%, transparent 70%);
+  }
+
+  .screen-form {
+    position:relative;
+    z-index:2;
+    background:var(--card);
+    border:1px solid var(--border-strong);
+    border-radius:8px;
+    padding:24px 28px;
+    width:62%;
+    backdrop-filter:blur(12px);
+  }
+
+  .form-logo {
+    text-align:center;
+    margin-bottom:18px;
+  }
+  .form-logo-title {
+    font-family:'Cinzel',serif;
+    font-size:20px;
+    font-weight:700;
+    color:var(--gold);
+    letter-spacing:.08em;
+  }
+  .form-logo-sub {
+    font-size:10px;
+    color:var(--muted);
+    letter-spacing:.12em;
+    margin-top:3px;
+  }
+
+  .form-divider {
+    width:100%;
+    height:1px;
+    background:linear-gradient(90deg, transparent, var(--border-strong), transparent);
+    margin:14px 0;
+  }
+
+  .form-title {
+    font-size:13px;
+    font-weight:500;
+    color:var(--text);
+    margin-bottom:14px;
+    text-align:center;
+  }
+
+  .field {
+    margin-bottom:10px;
+  }
+  .field-label {
+    font-size:10px;
+    color:var(--dim);
+    margin-bottom:4px;
+    display:block;
+    letter-spacing:.04em;
+  }
+  .field-input {
+    width:100%;
+    background:rgba(255,255,255,0.04);
+    border:1px solid rgba(201,168,76,0.25);
+    border-radius:4px;
+    padding:7px 10px;
+    font-size:12px;
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+  }
+  .field-input.error-state {
+    border-color:var(--error);
+    background:var(--error-bg);
+  }
+  .field-input.success-state {
+    border-color:rgba(74,222,128,0.4);
+  }
+  .field-input.focused {
+    border-color:var(--gold-dim);
+    background:rgba(201,168,76,0.05);
+  }
+  .field-hint {
+    font-size:10px;
+    color:var(--muted);
+    margin-top:3px;
+  }
+  .field-error {
+    font-size:10px;
+    color:var(--error);
+    margin-top:3px;
+    display:flex;
+    align-items:center;
+    gap:4px;
+  }
+  .field-error::before { content:'⚠'; font-size:9px; }
+
+  .btn-primary {
+    width:100%;
+    background:linear-gradient(180deg, #9a1f1f, #6b1313);
+    border:1px solid rgba(201,168,76,0.3);
+    border-radius:4px;
+    padding:9px;
+    font-size:12px;
+    font-weight:500;
+    color:var(--gold);
+    font-family:'Cinzel',serif;
+    letter-spacing:.08em;
+    cursor:pointer;
+    margin-top:14px;
+    text-align:center;
+  }
+  .btn-secondary {
+    width:100%;
+    background:transparent;
+    border:1px solid rgba(201,168,76,0.2);
+    border-radius:4px;
+    padding:7px;
+    font-size:11px;
+    color:var(--dim);
+    cursor:pointer;
+    margin-top:6px;
+    text-align:center;
+  }
+
+  .switch-link {
+    text-align:center;
+    font-size:10px;
+    color:var(--muted);
+    margin-top:10px;
+  }
+  .switch-link span {
+    color:var(--gold-dim);
+    text-decoration:underline;
+    cursor:pointer;
+  }
+
+  .error-toast {
+    background:rgba(180,40,40,0.9);
+    border:1px solid rgba(200,60,60,0.5);
+    border-radius:5px;
+    padding:8px 12px;
+    font-size:11px;
+    color:#fca5a5;
+    margin-bottom:10px;
+    display:flex;
+    align-items:flex-start;
+    gap:7px;
+  }
+  .error-toast-icon { font-size:13px; flex-shrink:0; margin-top:1px; }
+
+  .success-banner {
+    background:rgba(20,80,40,0.9);
+    border:1px solid rgba(74,222,128,0.3);
+    border-radius:5px;
+    padding:8px 12px;
+    font-size:11px;
+    color:#4ade80;
+    margin-bottom:10px;
+    text-align:center;
+  }
+
+  /* VALIDATION RULES LIST */
+  .rules-list {
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+    margin-top:4px;
+  }
+  .rule {
+    font-size:10px;
+    display:flex;
+    align-items:center;
+    gap:5px;
+  }
+  .rule.pass { color:var(--success); }
+  .rule.fail { color:var(--muted); }
+  .rule.error { color:var(--error); }
+  .rule-dot { width:5px; height:5px; border-radius:50%; flex-shrink:0; }
+  .rule.pass .rule-dot { background:var(--success); }
+  .rule.fail .rule-dot { background:var(--muted); }
+  .rule.error .rule-dot { background:var(--error); }
+
+  .inline-grid {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+  }
+
+  /* VALIDATION SPEC TABLE */
+  .spec-section {
+    padding:32px 48px;
+    border-top:1px solid rgba(201,168,76,0.1);
+  }
+  .spec-title {
+    font-family:'Cinzel',serif;
+    font-size:14px;
+    color:var(--gold);
+    margin-bottom:20px;
+  }
+  .spec-grid {
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:16px;
+  }
+  .spec-card {
+    background:rgba(12,9,20,0.8);
+    border:0.5px solid var(--border);
+    border-radius:6px;
+    padding:16px;
+  }
+  .spec-card-title {
+    font-size:12px;
+    font-weight:500;
+    color:var(--gold-dim);
+    margin-bottom:10px;
+    font-family:'Cinzel',serif;
+    letter-spacing:.04em;
+  }
+  .spec-row {
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    padding:5px 0;
+    border-bottom:0.5px solid rgba(201,168,76,0.07);
+    gap:12px;
+  }
+  .spec-row:last-child { border-bottom:none; }
+  .spec-field { font-size:11px; color:var(--dim); flex-shrink:0; width:110px; }
+  .spec-rule { font-size:11px; color:var(--text); text-align:right; flex:1; }
+  .spec-err { font-size:10px; color:var(--error); margin-top:2px; }
+
+  .password-strength {
+    margin-top:5px;
+    display:flex;
+    gap:3px;
+  }
+  .strength-bar {
+    height:3px;
+    flex:1;
+    border-radius:2px;
+    background:rgba(255,255,255,0.08);
+  }
+  .strength-bar.weak { background:#e05555; }
+  .strength-bar.ok { background:#f97316; }
+  .strength-bar.strong { background:#4ade80; }
+
+  .eye-toggle {
+    position:relative;
+  }
+  .eye-icon {
+    position:absolute;
+    right:8px;
+    top:50%;
+    transform:translateY(-50%);
+    font-size:12px;
+    color:var(--muted);
+    cursor:pointer;
+  }
+
+  .footnote {
+    font-size:11px;
+    color:var(--muted);
+    padding:16px 48px 32px;
+    border-top:1px solid rgba(201,168,76,0.08);
+    line-height:1.7;
+  }
+  .footnote strong { color:var(--dim); }
+</style>
+</head>
+<body>
+
+<div class="doc-header">
+  <div>
+    <div class="doc-title">BomSlerf — Authentication Flow</div>
+    <div class="doc-sub">Mockup v1 · For Steve design direction + Amir implementation</div>
+  </div>
+  <div class="doc-note">Template only — Steve to provide final bg art & color direction</div>
+</div>
+
+<div class="screens-grid">
+
+  <!-- SCREEN 1: LOGIN (CLEAN) -->
+  <div class="screen-col">
+    <div class="screen-label">Login — default state</div>
+    <div class="game-screen">
+      <div class="bg-art"></div>
+      <div class="sky-glow"></div>
+      <div class="castle-silhouette"></div>
+      <div class="fire-glow"></div>
+      <div class="screen-form">
+        <div class="form-logo">
+          <div class="form-logo-title">BOMSLERF</div>
+          <div class="form-logo-sub">enter the realm</div>
+        </div>
+        <div class="form-divider"></div>
+        <div class="form-title">Sign in to your account</div>
+        <div class="field">
+          <label class="field-label">username</label>
+          <div class="field-input" style="color:var(--muted);font-style:italic">your warrior name</div>
+        </div>
+        <div class="field">
+          <label class="field-label">password</label>
+          <div class="eye-toggle">
+            <div class="field-input" style="color:var(--muted);font-style:italic">••••••••</div>
+            <div class="eye-icon">👁</div>
+          </div>
+        </div>
+        <div class="btn-primary">ENTER</div>
+        <div class="switch-link">no account? <span>join now</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 2: LOGIN ERRORS -->
+  <div class="screen-col">
+    <div class="screen-label">Login — error states</div>
+    <div class="game-screen">
+      <div class="bg-art"></div>
+      <div class="sky-glow"></div>
+      <div class="castle-silhouette"></div>
+      <div class="fire-glow"></div>
+      <div class="screen-form">
+        <div class="form-logo">
+          <div class="form-logo-title">BOMSLERF</div>
+          <div class="form-logo-sub">enter the realm</div>
+        </div>
+        <div class="form-divider"></div>
+        <div class="error-toast">
+          <div class="error-toast-icon">✕</div>
+          <div>Wrong username or password. Check your credentials and try again.</div>
+        </div>
+        <div class="field">
+          <label class="field-label">username</label>
+          <div class="field-input error-state">WarriorKing99</div>
+        </div>
+        <div class="field">
+          <label class="field-label">password</label>
+          <div class="eye-toggle">
+            <div class="field-input error-state">••••••••</div>
+            <div class="eye-icon">👁</div>
+          </div>
+        </div>
+        <div class="btn-primary" style="opacity:0.6;background:linear-gradient(180deg,#5a1a1a,#3a0a0a)">ENTER</div>
+        <div class="switch-link">no account? <span>join now</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 3: LOGIN LOADING -->
+  <div class="screen-col">
+    <div class="screen-label">Login — loading state</div>
+    <div class="game-screen">
+      <div class="bg-art"></div>
+      <div class="sky-glow"></div>
+      <div class="castle-silhouette"></div>
+      <div class="fire-glow"></div>
+      <div class="screen-form">
+        <div class="form-logo">
+          <div class="form-logo-title">BOMSLERF</div>
+          <div class="form-logo-sub">enter the realm</div>
+        </div>
+        <div class="form-divider"></div>
+        <div class="form-title">Sign in to your account</div>
+        <div class="field">
+          <label class="field-label">username</label>
+          <div class="field-input focused">WarriorKing99</div>
+        </div>
+        <div class="field">
+          <label class="field-label">password</label>
+          <div class="field-input focused">••••••••</div>
+        </div>
+        <div class="btn-primary" style="opacity:0.7;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:14px">
+          <div style="width:8px;height:8px;border-radius:50%;border:1.5px solid var(--gold);border-top-color:transparent;animation:none;opacity:0.7"></div>
+          ENTERING...
+        </div>
+        <div style="text-align:center;font-size:10px;color:var(--muted);margin-top:8px">summoning your warrior...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 4: SIGN UP (CLEAN) -->
+  <div class="screen-col" style="border-top:1px solid rgba(201,168,76,0.1)">
+    <div class="screen-label" style="margin-top:24px">Sign up — default state</div>
+    <div class="game-screen">
+      <div class="bg-art"></div>
+      <div class="sky-glow"></div>
+      <div class="castle-silhouette"></div>
+      <div class="fire-glow"></div>
+      <div class="screen-form" style="width:70%;padding:18px 22px">
+        <div class="form-logo">
+          <div class="form-logo-title">BOMSLERF</div>
+          <div class="form-logo-sub">forge your warrior</div>
+        </div>
+        <div class="form-divider"></div>
+        <div class="inline-grid">
+          <div class="field">
+            <label class="field-label">warrior name</label>
+            <div class="field-input" style="color:var(--muted);font-style:italic">nickname</div>
+            <div class="field-hint">3–12 chars, letters & numbers</div>
+          </div>
+          <div class="field">
+            <label class="field-label">date of birth</label>
+            <div class="field-input" style="color:var(--muted);font-style:italic">DD / MM / YYYY</div>
+            <div class="field-hint">must be 13 or older</div>
+          </div>
+        </div>
+        <div class="field">
+          <label class="field-label">email</label>
+          <div class="field-input" style="color:var(--muted);font-style:italic">your@email.com</div>
+        </div>
+        <div class="field">
+          <label class="field-label">password</label>
+          <div class="eye-toggle">
+            <div class="field-input" style="color:var(--muted);font-style:italic">create a password</div>
+            <div class="eye-icon">👁</div>
+          </div>
+          <div class="field-hint">8+ chars, 1 number or symbol</div>
+        </div>
+        <div class="field">
+          <label class="field-label">confirm password</label>
+          <div class="eye-toggle">
+            <div class="field-input" style="color:var(--muted);font-style:italic">repeat password</div>
+            <div class="eye-icon">👁</div>
+          </div>
+        </div>
+        <div class="btn-primary" style="margin-top:10px">FORGE MY WARRIOR</div>
+        <div class="switch-link">already a warrior? <span>sign in</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 5: SIGN UP VALIDATION -->
+  <div class="screen-col" style="border-top:1px solid rgba(201,168,76,0.1)">
+    <div class="screen-label" style="margin-top:24px">Sign up — validation states</div>
+    <div class="game-screen">
+      <div class="bg-art"></div>
+      <div class="sky-glow"></div>
+      <div class="castle-silhouette"></div>
+      <div class="fire-glow"></div>
+      <div class="screen-form" style="width:70%;padding:18px 22px">
+        <div class="form-logo">
+          <div class="form-logo-title">BOMSLERF</div>
+          <div class="form-logo-sub">forge your warrior</div>
+        </div>
+        <div class="form-divider"></div>
+        <div class="inline-grid">
+          <div class="field">
+            <label class="field-label">warrior name</label>
+            <div class="field-input error-state">War!</div>
+            <div class="field-error">3–12 chars, no special characters</div>
+          </div>
+          <div class="field">
+            <label class="field-label">date of birth</label>
+            <div class="field-input error-state">01 / 01 / 2015</div>
+            <div class="field-error">must be 13 or older to play</div>
+          </div>
+        </div>
+        <div class="field">
+          <label class="field-label">email</label>
+          <div class="field-input error-state">notanemail</div>
+          <div class="field-error">enter a valid email address</div>
+        </div>
+        <div class="field">
+          <label class="field-label">password</label>
+          <div class="eye-toggle">
+            <div class="field-input focused">MyPass</div>
+            <div class="eye-icon">👁</div>
+          </div>
+          <div class="password-strength">
+            <div class="strength-bar weak"></div>
+            <div class="strength-bar"></div>
+            <div class="strength-bar"></div>
+          </div>
+          <div class="rules-list">
+            <div class="rule pass"><div class="rule-dot"></div>at least 8 characters</div>
+            <div class="rule error"><div class="rule-dot"></div>needs a number or symbol</div>
+          </div>
+        </div>
+        <div class="field">
+          <label class="field-label">confirm password</label>
+          <div class="field-input error-state">MyPasss</div>
+          <div class="field-error">passwords don't match</div>
+        </div>
+        <div class="btn-primary" style="opacity:0.4;margin-top:10px;pointer-events:none">FORGE MY WARRIOR</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 6: SIGN UP SUCCESS -->
+  <div class="screen-col" style="border-top:1px solid rgba(201,168,76,0.1)">
+    <div class="screen-label" style="margin-top:24px">Sign up — all valid + success</div>
+    <div class="game-screen">
+      <div class="bg-art"></div>
+      <div class="sky-glow"></div>
+      <div class="castle-silhouette"></div>
+      <div class="fire-glow"></div>
+      <div class="screen-form" style="width:70%;padding:18px 22px">
+        <div class="form-logo">
+          <div class="form-logo-title">BOMSLERF</div>
+          <div class="form-logo-sub">forge your warrior</div>
+        </div>
+        <div class="form-divider"></div>
+        <div class="success-banner">⚔ Warrior forged — welcome to the realm, SirKnight88</div>
+        <div class="inline-grid">
+          <div class="field">
+            <label class="field-label">warrior name</label>
+            <div class="field-input success-state">SirKnight88</div>
+          </div>
+          <div class="field">
+            <label class="field-label">date of birth</label>
+            <div class="field-input success-state">15 / 06 / 1995</div>
+          </div>
+        </div>
+        <div class="field">
+          <label class="field-label">email</label>
+          <div class="field-input success-state">knight@gmail.com</div>
+        </div>
+        <div class="field">
+          <label class="field-label">password</label>
+          <div class="eye-toggle">
+            <div class="field-input success-state">••••••••••</div>
+            <div class="eye-icon">👁</div>
+          </div>
+          <div class="password-strength">
+            <div class="strength-bar strong"></div>
+            <div class="strength-bar strong"></div>
+            <div class="strength-bar strong"></div>
+          </div>
+          <div class="rules-list">
+            <div class="rule pass"><div class="rule-dot"></div>at least 8 characters</div>
+            <div class="rule pass"><div class="rule-dot"></div>contains a number or symbol</div>
+          </div>
+        </div>
+        <div class="field">
+          <label class="field-label">confirm password</label>
+          <div class="field-input success-state">••••••••••</div>
+        </div>
+        <div class="btn-primary" style="margin-top:10px;background:linear-gradient(180deg,#1a6b2a,#0f4a1a);border-color:rgba(74,222,128,0.3);color:#4ade80">ENTERING THE REALM...</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- VALIDATION SPEC -->
+<div class="spec-section">
+  <div class="spec-title">Validation rules — for Amir</div>
+  <div class="spec-grid">
+
+    <div class="spec-card">
+      <div class="spec-card-title">warrior name (username)</div>
+      <div class="spec-row"><div class="spec-field">min length</div><div><div class="spec-rule">3 characters</div><div class="spec-err">warrior name too short — min 3 characters</div></div></div>
+      <div class="spec-row"><div class="spec-field">max length</div><div><div class="spec-rule">12 characters</div><div class="spec-err">warrior name too long — max 12 characters</div></div></div>
+      <div class="spec-row"><div class="spec-field">allowed chars</div><div><div class="spec-rule">letters, numbers, underscore only</div><div class="spec-err">no special characters allowed (except _)</div></div></div>
+      <div class="spec-row"><div class="spec-field">unique</div><div><div class="spec-rule">checked on submit via API</div><div class="spec-err">warrior name already taken — try another</div></div></div>
+      <div class="spec-row"><div class="spec-field">display</div><div><div class="spec-rule">shown exactly as typed in-game and on scoreboard</div></div></div>
+    </div>
+
+    <div class="spec-card">
+      <div class="spec-card-title">password</div>
+      <div class="spec-row"><div class="spec-field">min length</div><div><div class="spec-rule">8 characters</div><div class="spec-err">password must be at least 8 characters</div></div></div>
+      <div class="spec-row"><div class="spec-field">complexity</div><div><div class="spec-rule">at least 1 number or symbol</div><div class="spec-err">add a number or symbol to strengthen it</div></div></div>
+      <div class="spec-row"><div class="spec-field">max length</div><div><div class="spec-rule">64 characters</div></div></div>
+      <div class="spec-row"><div class="spec-field">strength meter</div><div><div class="spec-rule">3 bars: weak (8 chars only) / ok (+ number) / strong (+ symbol + 12+ chars)</div></div></div>
+      <div class="spec-row"><div class="spec-field">visibility</div><div><div class="spec-rule">eye icon toggles plain text. Both password fields.</div></div></div>
+      <div class="spec-row"><div class="spec-field">confirm field</div><div><div class="spec-rule">must match exactly</div><div class="spec-err">passwords don't match</div></div></div>
+    </div>
+
+    <div class="spec-card">
+      <div class="spec-card-title">email</div>
+      <div class="spec-row"><div class="spec-field">format</div><div><div class="spec-rule">standard email regex on blur</div><div class="spec-err">enter a valid email address</div></div></div>
+      <div class="spec-row"><div class="spec-field">unique</div><div><div class="spec-rule">checked on submit via API</div><div class="spec-err">an account with this email already exists</div></div></div>
+      <div class="spec-row"><div class="spec-field">when to validate</div><div><div class="spec-rule">on blur (when field loses focus), not on every keystroke</div></div></div>
+    </div>
+
+    <div class="spec-card">
+      <div class="spec-card-title">date of birth</div>
+      <div class="spec-row"><div class="spec-field">format</div><div><div class="spec-rule">DD / MM / YYYY — native date picker on mobile</div></div></div>
+      <div class="spec-row"><div class="spec-field">min age</div><div><div class="spec-rule">must be 13 or older on date of submission</div><div class="spec-err">must be 13 or older to play BomSlerf</div></div></div>
+      <div class="spec-row"><div class="spec-field">max date</div><div><div class="spec-rule">today's date (can't enter future DOB)</div><div class="spec-err">date of birth can't be in the future</div></div></div>
+      <div class="spec-row"><div class="spec-field">min date</div><div><div class="spec-rule">January 1, 1900</div><div class="spec-err">enter a valid date of birth</div></div></div>
+      <div class="spec-row"><div class="spec-field">storage</div><div><div class="spec-rule">stored server-side only, never shown again to user</div></div></div>
+    </div>
+
+    <div class="spec-card">
+      <div class="spec-card-title">empty field submit</div>
+      <div class="spec-row"><div class="spec-field">behavior</div><div><div class="spec-rule">button disabled until all required fields have content</div></div></div>
+      <div class="spec-row"><div class="spec-field">on tap anyway</div><div><div class="spec-rule">highlight all empty fields in red border + individual error below each</div></div></div>
+      <div class="spec-row"><div class="spec-field">no toasts</div><div><div class="spec-rule">all errors inline, directly below the relevant field</div></div></div>
+    </div>
+
+    <div class="spec-card">
+      <div class="spec-card-title">server error handling</div>
+      <div class="spec-row"><div class="spec-field">wrong credentials</div><div><div class="spec-rule">red banner at top of form. Reset button. Keep fields filled.</div><div class="spec-err">wrong username or password</div></div></div>
+      <div class="spec-row"><div class="spec-field">network error</div><div><div class="spec-rule">red banner with retry option</div><div class="spec-err">can't reach the server — check your connection</div></div></div>
+      <div class="spec-row"><div class="spec-field">server error</div><div><div class="spec-rule">red banner, suggest retry</div><div class="spec-err">something went wrong — try again in a moment</div></div></div>
+      <div class="spec-row"><div class="spec-field">button state</div><div><div class="spec-rule">loading spinner while request in flight. Reset to normal on any error.</div></div></div>
+    </div>
+
+  </div>
+</div>
+
+<div class="footnote">
+  <strong>Note to Steve:</strong> The castle silhouette and red sky are CSS placeholders to establish mood and layout. The final background should be an AI-generated illustration in BomSlerf's dark fantasy style — fortress walls, torchlight, war banners. The gold/crimson palette shown here should be confirmed or revised based on the main screen aesthetic. The form card needs backdrop blur to work with whatever background is chosen.<br><br>
+  <strong>Note to Amir:</strong> This is landscape orientation only. The form card is center-anchored and width-constrained. Validation fires on blur for each field, not on keystroke. The submit button stays disabled until all fields pass client-side validation. Server errors display as a banner above the form, never as toasts.
+</div>
+
+</body>
+</html>

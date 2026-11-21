@@ -1,0 +1,2089 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BomSlerf — Sprint 4 · Blocks B & C</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+--bg:#05040c;--surf:#0a0816;--card:#0e0c1b;--card2:#121020;
+--bd:rgba(130,110,210,.14);--bds:rgba(130,110,210,.32);
+--tx:#e2ddf2;--dim:#8f89ab;--mut:#4e4a66;
+--gold:#c9a84c;--goldd:#7a6230;
+--be:#e8743c;--beb:rgba(232,116,60,.3);--bebg:rgba(232,116,60,.09);
+--fe:#8878e0;--feb:rgba(136,120,224,.3);--febg:rgba(136,120,224,.09);
+--vfx:#22d3ee;--vfxb:rgba(34,211,238,.3);--vfxbg:rgba(34,211,238,.09);
+--art:#3db86a;--artb:rgba(61,184,106,.3);--artbg:rgba(61,184,106,.09);
+--aud:#e85d8a;--audb:rgba(232,93,138,.3);--audbg:rgba(232,93,138,.09);
+--warn:#eab308;--warnb:rgba(234,179,8,.3);--warnbg:rgba(234,179,8,.08);
+--err:#ef4444;--errb:rgba(239,68,68,.3);--errbg:rgba(239,68,68,.08);
+--aldric:#c9a84c;--greta:#b07a3c;
+}
+body{background:var(--bg);color:var(--tx);font-family:Inter,sans-serif;font-size:14px;line-height:1.55}
+
+/* nav */
+.nav{position:sticky;top:0;z-index:200;background:rgba(5,4,12,.97);backdrop-filter:blur(12px);border-bottom:1px solid var(--bds);padding:0 36px;display:flex;align-items:center;overflow-x:auto}
+.nav::-webkit-scrollbar{height:0}
+.nlogo{font-family:Cinzel,serif;font-size:13px;font-weight:700;color:var(--gold);padding:13px 20px 13px 0;border-right:1px solid var(--bd);margin-right:6px;white-space:nowrap}
+.nav a{padding:13px 13px;font-size:11px;color:var(--mut);text-decoration:none;border-bottom:2px solid transparent;white-space:nowrap;transition:.15s}
+.nav a:hover{color:var(--gold);border-bottom-color:var(--goldd)}
+
+/* hero */
+.hero{padding:44px 36px 36px;background:linear-gradient(135deg,#0a0816,#120a1c 50%,#0a0e18);border-bottom:1px solid var(--bds)}
+.eyebrow{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--mut);letter-spacing:.14em;margin-bottom:10px}
+.htitle{font-family:Cinzel,serif;font-size:30px;font-weight:700;color:var(--gold);margin-bottom:10px}
+.hsub{font-size:14px;color:var(--dim);max-width:720px;line-height:1.75}
+.hstats{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px}
+.hs{background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:12px 18px}
+.hsn{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:500}
+.hsl{font-size:10px;color:var(--mut);margin-top:2px}
+
+/* sections */
+.sec{padding:44px 36px;border-bottom:1px solid rgba(130,110,210,.06)}
+.sech{display:flex;align-items:baseline;gap:14px;margin-bottom:6px;flex-wrap:wrap}
+.sect{font-family:Cinzel,serif;font-size:21px;font-weight:600;color:var(--gold)}
+.secs{font-size:12px;color:var(--dim)}
+.secd{font-size:13px;color:var(--dim);line-height:1.8;max-width:740px;margin:14px 0 26px;padding-left:15px;border-left:3px solid var(--bds)}
+
+/* callouts */
+.co{border-radius:8px;padding:14px 18px;font-size:13px;color:var(--dim);line-height:1.8;margin-bottom:18px}
+.co strong{color:var(--tx)}
+.co.err{background:var(--errbg);border:1px solid var(--errb);border-left:3px solid var(--err)}
+.co.warn{background:var(--warnbg);border:1px solid var(--warnb);border-left:3px solid var(--warn)}
+.co.info{background:var(--vfxbg);border:1px solid var(--vfxb);border-left:3px solid var(--vfx)}
+.co.ok{background:var(--artbg);border:1px solid var(--artb);border-left:3px solid var(--art)}
+
+/* ticket */
+.tk{background:var(--card);border:1px solid var(--bd);border-radius:12px;overflow:hidden;margin-bottom:20px}
+.tk.be{border-left:4px solid var(--be)}
+.tk.fe{border-left:4px solid var(--fe)}
+.tk.vfx{border-left:4px solid var(--vfx)}
+.tk.art{border-left:4px solid var(--art)}
+.tkh{padding:16px 20px;border-bottom:1px solid var(--bd);background:rgba(255,255,255,.012);display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap}
+.tkid{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--mut);letter-spacing:.06em;margin-bottom:5px}
+.tkt{font-size:15px;font-weight:600;color:var(--tx);line-height:1.4}
+.tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:9px}
+.tg{font-size:9px;font-weight:600;padding:2px 8px;border-radius:3px;font-family:'JetBrains Mono',monospace;border:1px solid;letter-spacing:.03em}
+.g-be{background:var(--bebg);color:var(--be);border-color:var(--beb)}
+.g-fe{background:var(--febg);color:var(--fe);border-color:var(--feb)}
+.g-vfx{background:var(--vfxbg);color:var(--vfx);border-color:var(--vfxb)}
+.g-art{background:var(--artbg);color:var(--art);border-color:var(--artb)}
+.g-aud{background:var(--audbg);color:var(--aud);border-color:var(--audb)}
+.g-blk{background:var(--errbg);color:var(--err);border-color:var(--errb)}
+.g-new{background:rgba(34,211,238,.1);color:#22d3ee;border-color:rgba(34,211,238,.3)}
+.g-fix{background:var(--warnbg);color:var(--warn);border-color:var(--warnb)}
+.tkb{padding:20px}
+
+/* ticket inner blocks */
+.bl{margin-bottom:22px}
+.bl:last-child{margin-bottom:0}
+.bll{font-size:10px;font-weight:600;color:var(--mut);letter-spacing:.12em;text-transform:uppercase;font-family:'JetBrains Mono',monospace;margin-bottom:9px;display:flex;align-items:center;gap:8px}
+.bll::after{content:'';flex:1;height:1px;background:var(--bd)}
+.tx{font-size:13px;color:var(--dim);line-height:1.8}
+.tx p{margin-bottom:7px}
+.tx p:last-child{margin-bottom:0}
+.tx strong{color:var(--tx);font-weight:500}
+.tx code{font-family:'JetBrains Mono',monospace;font-size:11px;background:rgba(130,110,210,.1);padding:1px 5px;border-radius:3px;color:#c4b5fd}
+
+/* prereq */
+.pq{display:flex;flex-direction:column;gap:6px}
+.pqi{display:flex;align-items:flex-start;gap:10px;font-size:12px;padding:7px 11px;background:var(--card2);border:1px solid var(--bd);border-radius:6px}
+.pqk{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--mut);width:92px;flex-shrink:0;padding-top:1px;letter-spacing:.04em}
+.pqv{color:var(--dim);flex:1}
+.pqv b{color:var(--tx);font-weight:500}
+.pqi.block{border-color:var(--errb);background:var(--errbg)}
+.pqi.block .pqk{color:var(--err)}
+
+/* parts */
+.part{background:var(--card2);border:1px solid var(--bd);border-radius:9px;padding:16px 18px;margin-bottom:12px}
+.part:last-child{margin-bottom:0}
+.parth{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.partn{width:20px;height:20px;border-radius:5px;background:rgba(130,110,210,.14);border:1px solid var(--bds);display:flex;align-items:center;justify-content:center;font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--dim);flex-shrink:0}
+.partt{font-size:13px;font-weight:600;color:var(--tx)}
+.partmeta{margin-left:auto;font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--mut)}
+
+/* dod */
+.dod{display:flex;flex-direction:column;gap:5px}
+.di{font-size:12px;color:var(--dim);display:flex;gap:9px;line-height:1.6}
+.di.c{color:#fca5a5}
+.da{color:var(--bds);flex-shrink:0;font-family:'JetBrains Mono',monospace;font-size:10px;padding-top:2px}
+.di.c .da{color:var(--err)}
+
+/* spec table */
+.st{width:100%;border-collapse:collapse;font-size:12px;margin-top:4px}
+.st th{text-align:left;padding:6px 10px;color:var(--mut);font-weight:500;font-size:10px;letter-spacing:.07em;text-transform:uppercase;border-bottom:1px solid var(--bd);font-family:'JetBrains Mono',monospace}
+.st td{padding:6px 10px;border-bottom:1px solid rgba(130,110,210,.05);color:var(--dim)}
+.st td:first-child{color:var(--tx);width:34%}
+.st tr:last-child td{border-bottom:none}
+.st .mono{font-family:'JetBrains Mono',monospace;font-size:11px;color:#c4b5fd}
+.st .was{color:var(--err);text-decoration:line-through;opacity:.7}
+.st .now{color:var(--art);font-weight:500}
+
+/* game frame */
+.gf{position:relative;border-radius:9px;overflow:hidden;aspect-ratio:16/9;background:#0a1208;border:1px solid var(--bd)}
+.gfbg{position:absolute;inset:0;background:radial-gradient(ellipse at 28% 32%,rgba(22,54,22,.55),transparent 58%),radial-gradient(ellipse at 78% 78%,rgba(70,14,14,.4),transparent 52%),linear-gradient(170deg,#0b1409,#070a05)}
+.gfin{position:absolute;inset:0;z-index:3}
+.ui{position:absolute;inset:0;z-index:4}
+.utop{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:flex-start;padding:8px 10px}
+.ubot{position:absolute;bottom:0;left:0;right:0;display:flex;justify-content:space-between;align-items:flex-end;padding:8px 10px}
+.tmr{background:rgba(6,5,14,.86);border:.5px solid rgba(201,168,76,.34);border-radius:5px;padding:3px 11px;text-align:center}
+.tmrv{font-family:Cinzel,serif;font-size:14px;color:var(--gold)}
+.flg{display:flex;gap:4px}
+.fl{background:rgba(6,5,14,.8);border:.5px solid var(--bd);border-radius:3px;padding:2px 7px;font-size:9px}
+.fl.s{border-color:rgba(61,184,106,.4);color:#4ade80}
+.fl.t{border-color:rgba(239,68,68,.4);color:#fca5a5}
+.hpr{display:flex;align-items:center;gap:5px}
+.av{width:19px;height:19px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0;border:1px solid}
+.av.al{background:#2a2410;border-color:var(--aldric)}
+.av.gr{background:#2a1c0e;border-color:var(--greta)}
+.hb{width:58px;height:4px;background:rgba(255,255,255,.09);border-radius:3px;overflow:hidden}
+.hf{height:100%;border-radius:3px}
+.joy{width:36px;height:36px;background:rgba(0,0,0,.45);border:.5px solid rgba(255,255,255,.13);border-radius:50%;display:flex;align-items:center;justify-content:center}
+.joyi{width:12px;height:12px;border-radius:50%;border:1.5px solid rgba(255,255,255,.26)}
+.abs{display:flex;gap:5px;align-items:flex-end}
+.ab{border-radius:6px;display:flex;align-items:center;justify-content:center;position:relative;background:#120c1a}
+.ab.u{width:29px;height:29px;border:1.5px solid #7c3aed}
+.ab.s{width:33px;height:33px;border:1.5px solid #0ea5e9;background:#0d1a1f}
+.ab.a{width:43px;height:43px;border:2px solid #dc2626;background:#1a0d0d}
+.cdn{position:absolute;top:1px;right:2px;font-size:7px;font-family:'JetBrains Mono',monospace;color:var(--dim)}
+.psv{width:19px;height:19px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:9px;margin-bottom:3px;border:1px solid rgba(61,184,106,.45);background:#0d1a10}
+.mlab{font-size:10px;color:var(--mut);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
+.mnote{font-size:11px;color:var(--mut);margin-top:7px;font-style:italic;line-height:1.6}
+
+/* char hero card */
+.chc{display:flex;gap:18px;padding:18px;background:linear-gradient(135deg,var(--card2),rgba(14,12,27,.5));border:1px solid var(--bd);border-radius:10px;align-items:flex-start}
+.chp{width:92px;height:124px;border-radius:9px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:42px;position:relative;overflow:hidden}
+.chp.al{background:linear-gradient(170deg,#3a3418,#1a1608);border:1px solid rgba(201,168,76,.35)}
+.chp.gr{background:linear-gradient(170deg,#3a2a14,#1a1208);border:1px solid rgba(176,122,60,.4)}
+.chn{font-family:Cinzel,serif;font-size:19px;margin-bottom:2px}
+.chn.al{color:var(--aldric)}
+.chn.gr{color:var(--greta)}
+.cht{font-size:11px;color:var(--dim);margin-bottom:12px}
+.chq{font-size:11px;color:var(--mut);font-style:italic;margin-bottom:12px;padding-left:9px;border-left:2px solid var(--bds)}
+.chs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.chsi{background:rgba(0,0,0,.3);border:1px solid var(--bd);border-radius:5px;padding:6px 9px}
+.chsk{font-size:9px;color:var(--mut);margin-bottom:2px}
+.chsv{font-size:13px;font-weight:600;color:var(--tx);font-family:'JetBrains Mono',monospace}
+
+/* ability row */
+.abr{background:rgba(0,0,0,.26);border:1px solid var(--bd);border-radius:7px;padding:11px 13px;margin-bottom:7px}
+.abr:last-child{margin-bottom:0}
+.abrh{display:flex;align-items:center;gap:9px;margin-bottom:5px;flex-wrap:wrap}
+.abri{width:24px;height:24px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;border:1px solid}
+.abri.p{background:rgba(61,184,106,.12);border-color:var(--artb)}
+.abri.b{background:rgba(239,68,68,.12);border-color:var(--errb)}
+.abri.s{background:rgba(14,165,233,.12);border-color:rgba(14,165,233,.35)}
+.abri.u{background:rgba(124,58,237,.12);border-color:rgba(124,58,237,.35)}
+.abrn{font-size:12px;font-weight:600;color:var(--tx)}
+.abrty{font-size:9px;padding:1px 6px;border-radius:3px;font-family:'JetBrains Mono',monospace;border:1px solid}
+.ty-p{background:rgba(61,184,106,.1);color:var(--art);border-color:var(--artb)}
+.ty-b{background:rgba(239,68,68,.1);color:#f87171;border-color:var(--errb)}
+.ty-s{background:rgba(14,165,233,.1);color:#38bdf8;border-color:rgba(14,165,233,.3)}
+.ty-u{background:rgba(124,58,237,.1);color:#a78bfa;border-color:rgba(124,58,237,.3)}
+.abrd{font-size:11px;color:var(--dim);line-height:1.6}
+.abrm{font-size:10px;color:var(--mut);font-family:'JetBrains Mono',monospace;margin-top:4px}
+
+/* grids */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media(max-width:1000px){.g2,.g3{grid-template-columns:1fr}}
+
+/* timeline */
+.tl{display:flex;flex-direction:column;gap:6px}
+.tlr{display:flex;align-items:center;gap:9px}
+.tln{font-size:11px;color:var(--tx);width:88px;flex-shrink:0;font-weight:500}
+.tlb{flex:1;height:5px;background:rgba(34,211,238,.1);border-radius:3px;overflow:hidden}
+.tlf{height:100%;border-radius:3px;background:var(--vfx)}
+.tll{font-size:9px;color:var(--dim);width:84px;flex-shrink:0;font-family:'JetBrains Mono',monospace}
+.tlt{font-size:9px;color:var(--mut);width:108px;flex-shrink:0;text-align:right}
+
+/* seq */
+.sq{background:rgba(0,0,0,.26);border:1px solid var(--bd);border-radius:6px;padding:9px 12px;display:flex;align-items:center;gap:10px;margin-bottom:5px}
+.sqi{font-size:14px;flex-shrink:0;width:20px;text-align:center}
+.sql{font-size:11px;color:var(--tx)}
+.sqs{font-size:10px;color:var(--mut)}
+.sqm{font-size:9px;font-family:'JetBrains Mono',monospace;margin-left:auto;flex-shrink:0;color:var(--vfx)}
+.sqa{text-align:center;font-size:12px;color:var(--mut);margin-bottom:5px}
+
+/* dep map */
+.dep{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:18px 20px}
+.depr{display:flex;align-items:center;gap:0;margin-bottom:9px;flex-wrap:wrap;font-size:11px}
+.depr:last-child{margin-bottom:0}
+.dn{border-radius:5px;padding:4px 10px;white-space:nowrap;border:1px solid;font-family:'JetBrains Mono',monospace;font-size:10px}
+.dn.be{background:var(--bebg);border-color:var(--beb);color:var(--be)}
+.dn.fe{background:var(--febg);border-color:var(--feb);color:var(--fe)}
+.dn.art{background:var(--artbg);border-color:var(--artb);color:var(--art)}
+.dn.vfx{background:var(--vfxbg);border-color:var(--vfxb);color:var(--vfx)}
+.da2{padding:0 8px;color:var(--mut);font-size:10px}
+.dnote{font-size:10px;color:var(--mut);margin-left:8px}
+
+/* out of scope */
+.oos{font-size:12px;color:var(--mut);line-height:1.7}
+.oos b{color:var(--dim)}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nlogo">BOMSLERF</div>
+  <a href="#fix">⚠ Corrections</a>
+  <a href="#b0">B0 Combat Core</a>
+  <a href="#b1">B1 Greta Art</a>
+  <a href="#b2">B2 Greta Model</a>
+  <a href="#b3">B3 Greta Anims</a>
+  <a href="#b4">B4 Bear Form</a>
+  <a href="#b5">B5 Greta Server</a>
+  <a href="#b6">B6 Greta Client</a>
+  <a href="#b7">B7 Ally Target</a>
+  <a href="#b8">B8 Combos</a>
+  <a href="#b9">B9 Char Select</a>
+  <a href="#c1">C1 Hit Feedback</a>
+  <a href="#c2">C2 Screen Shake</a>
+  <a href="#c3">C3 Aldric VFX</a>
+  <a href="#c4">C4 Greta VFX</a>
+  <a href="#c5">C5 CC Visuals</a>
+  <a href="#c6">C6 Death/Respawn</a>
+  <a href="#c7">C7 Flag Carrier</a>
+  <a href="#deps">Dependencies</a>
+</nav>
+
+<div class="hero">
+  <div class="eyebrow">BomSlerfScrum · Sprint 4 · Blocks B + C · End-to-end spec</div>
+  <h1 class="htitle">Characters, Skills & Effects</h1>
+  <p class="hsub">Sprint 3 closed the loop. Sprint 4 gives it a soul. Mother Greta joins Sir Aldric, every ability gets real mechanics behind it, and the game finally has visual feedback — hits land, screens shake, deaths mean something. Source of truth: <strong>BomSlerf Tank Category Spec v1.0, July 2026</strong>. Every number below comes from that document verbatim.</p>
+  <div class="hstats">
+    <div class="hs"><div class="hsn" style="color:var(--err)">3</div><div class="hsl">Spec corrections needed</div></div>
+    <div class="hs"><div class="hsn" style="color:var(--be)">4</div><div class="hsl">Backend tickets</div></div>
+    <div class="hs"><div class="hsn" style="color:var(--fe)">5</div><div class="hsl">Frontend tickets</div></div>
+    <div class="hs"><div class="hsn" style="color:var(--vfx)">7</div><div class="hsl">Effects tickets</div></div>
+    <div class="hs"><div class="hsn" style="color:var(--art)">1</div><div class="hsl">Steve deliverable</div></div>
+    <div class="hs"><div class="hsn" style="color:var(--tx)">17</div><div class="hsl">Total in Blocks B + C</div></div>
+  </div>
+</div>
+
+<!-- ══ CORRECTIONS ══ -->
+<div class="sec" id="fix">
+  <div class="sech"><div class="sect">⚠ Corrections before Sprint 4 opens</div><div class="secs">Existing Jira tickets contradict the Tank Spec</div></div>
+  <p class="secd">These were written from an outdated summary. If Amir builds against the current Jira text, every Aldric number will be wrong and the model will be built with a team-tinting system the design explicitly forbids. Fix these on Thursday when the sprint flips.</p>
+
+  <div class="co err">
+    <strong>Correction 1 — Sir Aldric's stats and abilities are wrong in BOM-43 and BOM-102.</strong><br>
+    The names, cooldowns, damage values and mechanics in Jira do not match the Tank Spec. Everything below is from the spec document, which Steve marked as approved for build with no open values.
+  </div>
+
+  <div class="tk fe">
+    <div class="tkh">
+      <div>
+        <div class="tkid">BOM-43 + BOM-102 · EDIT EXISTING</div>
+        <div class="tkt">Sir Aldric — correct all stats and ability definitions</div>
+        <div class="tags"><span class="tg g-fix">Correction</span><span class="tg g-fe">Frontend · Amir</span><span class="tg g-be">Backend · Leon</span></div>
+      </div>
+    </div>
+    <div class="tkb">
+      <table class="st">
+        <thead><tr><th>Parameter</th><th>Currently in Jira</th><th>Tank Spec (correct)</th></tr></thead>
+        <tbody>
+          <tr><td>HP</td><td class="was">2,200</td><td class="now mono">2,240</td></tr>
+          <tr><td>Basic damage</td><td class="was">200</td><td class="now mono">165</td></tr>
+          <tr><td>Attack speed</td><td class="was">not specified</td><td class="now mono">1.0s (1 hit/sec)</td></tr>
+          <tr><td>Range</td><td class="mono">2.5 m</td><td class="now mono">2.5 m ✓ correct</td></tr>
+          <tr><td>Move speed</td><td class="mono">1.8 m/s</td><td class="now mono">1.8 m/s ✓ correct</td></tr>
+          <tr><td>Passive name</td><td class="was">Iron Bastion</td><td class="now mono">Stone Wall</td></tr>
+          <tr><td>Passive trigger</td><td class="was">0.5s standing still</td><td class="now mono">2.0s standing still</td></tr>
+          <tr><td>Passive shield</td><td class="mono">224 HP</td><td class="now mono">224 HP ✓ (= 10% of max)</td></tr>
+          <tr><td>Skill name</td><td class="was">Divine Shield</td><td class="now mono">Defensive Stance</td></tr>
+          <tr><td>Skill effect</td><td class="was">invincibility 2.5s + 350 AOE</td><td class="now mono">−40% damage for 4s, speed drops 1.8 → 1.2</td></tr>
+          <tr><td>Skill cooldown</td><td class="was">14s</td><td class="now mono">12s</td></tr>
+          <tr><td>Ultimate name</td><td class="was">Last Stand</td><td class="now mono">Hero's Sacrifice</td></tr>
+          <tr><td>Ultimate effect</td><td class="was">zone at base, 200 dmg/s</td><td class="now mono">costs 30% current HP · 5s total immunity (damage + all CC) · 2s stun in 3m radius</td></tr>
+          <tr><td>Ultimate cooldown</td><td class="was">90s</td><td class="now mono">75s</td></tr>
+          <tr><td>Ultimate one-liner</td><td class="was">"None shall pass!"</td><td class="now mono">"FOR THE KINGDOM!"</td></tr>
+          <tr><td>Hidden combos</td><td class="was">not mentioned</td><td class="now mono">None — deliberately. Document this so nobody thinks it was forgotten.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="co err">
+    <strong>Correction 2 — team colour tinting must be removed from BOM-110.</strong><br>
+    The Tank Spec has a Golden Rule: <em>a character keeps its own colours always, regardless of side.</em> The only ally/enemy difference is the <strong>HP bar colour — green for ally, red for enemy</strong>. Each character's visual is built once, never twice. Mother Greta proves the point: she is Blue Realm but her palette is brown-and-gold, because the colour comes from her story (Mother Bear), not her team.
+  </div>
+
+  <div class="co warn">
+    <strong>Correction 3 — there is no critical-hit system.</strong><br>
+    Nothing in the GDD or the Tank Spec defines crits. Damage is flat and server-validated. A "critical hit sound" therefore has no event to hook to. If we want crits, that is a combat-design decision for Steve first (chance %, multiplier, per-character or global), then a backend ticket, then a sound. Recommend: <strong>skip for Sprint 4</strong> — flat damage keeps a 4v4 mobile fight readable, and we already have seven unbuilt audio tickets.
+  </div>
+</div>
+
+<!-- ══ BLOCK B INTRO ══ -->
+<div class="sec">
+  <div class="sech"><div class="sect">Block B — Characters & Skills</div><div class="secs">9 tickets</div></div>
+  <p class="secd">Mother Greta is not "another Sir Aldric with different numbers." She introduces four mechanics the game has never had: damage redirection between players, ally targeting, a mid-match model transformation, and a hidden-combo system. Each of those is a system, not a stat. B0 builds the foundation they all sit on — nothing else in Block B can start before it lands.</p>
+
+  <div class="chc" style="margin-bottom:14px">
+    <div class="chp gr">🐻</div>
+    <div style="flex:1">
+      <div class="chn gr">Mother Greta</div>
+      <div class="cht">The Bear Mother Protector · Support Tank · 🔵 Blue Realm · Character #2</div>
+      <div class="chq">"Whoever hurts my children — will not see the light."</div>
+      <div class="chs">
+        <div class="chsi"><div class="chsk">HP</div><div class="chsv">1,900</div></div>
+        <div class="chsi"><div class="chsk">Speed</div><div class="chsv">1.8</div></div>
+        <div class="chsi"><div class="chsk">Basic</div><div class="chsv">140</div></div>
+        <div class="chsi"><div class="chsk">Range</div><div class="chsv">2.5m</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div>
+      <div class="bll">Her four abilities</div>
+      <div class="abr">
+        <div class="abrh"><div class="abri p">🐻</div><div class="abrn">Mother Bear's Aura</div><span class="abrty ty-p">Passive</span></div>
+        <div class="abrd">Allies within 3 m take −5% damage from all sources. Does <strong>not</strong> apply to Greta herself. Permanent while in range.</div>
+        <div class="abrm">radius 3m · allies only · constant</div>
+      </div>
+      <div class="abr">
+        <div class="abrh"><div class="abri b">🐾</div><div class="abrn">Bear Claw Strike</div><span class="abrty ty-b">Basic</span></div>
+        <div class="abrd">Golden claw energy strikes a single target.</div>
+        <div class="abrm">140 dmg · 1.0s CD · 2.5m range · single target</div>
+      </div>
+      <div class="abr">
+        <div class="abrh"><div class="abri s">🤝</div><div class="abrn">Guardian's Embrace</div><span class="abrty ty-s">Skill · 12s CD</span></div>
+        <div class="abrd">Greta selects <strong>one ally within 8 m</strong>. For 4 seconds, 50% of all damage that ally would take is redirected to Greta instead.</div>
+        <div class="abrm">12s CD · 8m select range · 4s duration · 50% redirect</div>
+      </div>
+      <div class="abr">
+        <div class="abrh"><div class="abri u">💥</div><div class="abrn">Mother Bear's Wrath</div><span class="abrty ty-u">Ultimate · 75s CD</span></div>
+        <div class="abrd">Greta <strong>transforms into a giant bear for 6 seconds</strong>. On activation: all enemies within 4 m take 320 damage + 1.5s stun. While transformed she gains +30% damage (basic 140 → 182) and −20% damage taken.</div>
+        <div class="abrm">75s CD · 6s form · 4m AoE · 320 dmg · 1.5s stun · +30% dmg · −20% taken</div>
+      </div>
+    </div>
+    <div>
+      <div class="bll">Hidden combos — new system</div>
+      <div class="abr">
+        <div class="abrh"><div class="abri b">🔮</div><div class="abrn">Bear Mother's Fury</div><span class="abrty ty-b">Combo #1</span></div>
+        <div class="abrd"><strong>Trigger:</strong> 3 consecutive basic attacks on the <em>same</em> enemy within 5 seconds.<br><strong>Bonus:</strong> +25 damage per hit from the 4th hit onward (140 → 165).<br><strong>Breaks when:</strong> gap between hits on that target exceeds 3.0s, target is switched, or target dies. Must be rebuilt from 3 hits.</div>
+        <div class="abrm">type: DMG · per-target tracking required</div>
+      </div>
+      <div class="abr">
+        <div class="abrh"><div class="abri s">🔮</div><div class="abrn">Guardian's Charge</div><span class="abrty ty-s">Combo #2</span></div>
+        <div class="abrd"><strong>Trigger:</strong> cast Ultimate, then cast Guardian's Embrace on an ally within 2 seconds.<br><strong>Bonus:</strong> that ally receives +80 HP instant heal on top of the normal redirect effect.</div>
+        <div class="abrm">type: HP · 2s window after Ultimate</div>
+      </div>
+      <div class="co info" style="margin-top:12px;margin-bottom:0">
+        <strong>Sir Aldric has no combos, on purpose.</strong> Steve asked specifically that this be written into Jira so nobody reads it as a gap in the spec. Greta is the first character with the combo system, and it needs building from scratch.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ B0 ══ -->
+<div class="sec" id="b0">
+  <div class="sech"><div class="sect">B0 — Combat Mechanics Core</div><div class="secs">Backend · blocks everything in Block B</div></div>
+  <p class="secd">Greta's kit needs six mechanics that do not exist anywhere in the codebase today. Combat is currently flat damage only. This ticket builds the shared systems so Greta, and every future character, has something to plug into.</p>
+
+  <div class="tk be">
+    <div class="tkh">
+      <div>
+        <div class="tkid">NEW · Sprint 4 · Block B · highest priority in block</div>
+        <div class="tkt">Combat Mechanics Core — Status Effects, Shields & Damage Modifiers</div>
+        <div class="tags"><span class="tg g-be">Backend · Leon</span><span class="tg g-new">New system</span><span class="tg g-blk">Blocks B5 B6 B8</span></div>
+      </div>
+    </div>
+    <div class="tkb">
+
+      <div class="bl">
+        <div class="bll">Purpose</div>
+        <div class="tx"><p>Today the server knows how to do exactly one thing to a player: subtract HP. Every Tank in the roster — all four, not just Greta — depends on mechanics that do not exist: stuns, knockback, slows, temporary shields, percentage damage reduction, and damage redirection between players. Without these, Greta's Skill and Ultimate cannot be built, Aldric's corrected abilities cannot be built, and Vargoth and Lorvak in a later sprint are blocked too.</p>
+        <p>This ticket builds them once, generically, as a status-effect layer the server owns. It is the single highest-value backend ticket in Sprint 4.</p></div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Prerequisites</div>
+        <div class="pq">
+          <div class="pqi"><div class="pqk">Blocked by</div><div class="pqv">Nothing — this can start day 1 of the sprint</div></div>
+          <div class="pqi"><div class="pqk">Builds on</div><div class="pqv"><b>BOM-87</b> game config system — all durations and magnitudes read from config, not hardcoded</div></div>
+          <div class="pqi"><div class="pqk">Authority</div><div class="pqv">Server-only. The client renders effects and never applies them. A client claiming "I am stunned" is ignored.</div></div>
+          <div class="pqi"><div class="pqk">Spec source</div><div class="pqv">Tank Category Spec v1.0 — Golden Rule section + all four character ability tables</div></div>
+        </div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Part 1 — Status effect framework</div>
+        <div class="part">
+          <div class="parth"><div class="partn">1</div><div class="partt">Generic status effect container</div><div class="partmeta">foundation</div></div>
+          <div class="tx"><p>A player entity carries a list of active status effects. Each effect has: <code>type</code>, <code>magnitude</code>, <code>duration_remaining</code>, <code>source_player_id</code>, <code>source_ability_id</code>. The server ticks them down and expires them. Effects of the same type from different sources stack by the rule defined per type below.</p></div>
+          <table class="st">
+            <thead><tr><th>Effect type</th><th>Behaviour</th><th>Stacking rule</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">STUN</td><td>No movement, no abilities, no basic attack. Camera stays live.</td><td>Longest duration wins — never additive</td></tr>
+              <tr><td class="mono">SLOW</td><td>Movement speed multiplied by magnitude</td><td>Strongest slow wins</td></tr>
+              <tr><td class="mono">KNOCKBACK</td><td>Forced displacement over a set time. No player control during it.</td><td>Does not stack — second one is ignored while active</td></tr>
+              <tr><td class="mono">SHIELD</td><td>Temporary HP pool absorbed before real HP</td><td>Multiple shields stack as separate pools, consumed oldest first</td></tr>
+              <tr><td class="mono">DMG_REDUCTION</td><td>Incoming damage multiplied by (1 − magnitude)</td><td>Multiplicative, not additive — two −40% effects give −64%, not −80%</td></tr>
+              <tr><td class="mono">DMG_AMPLIFY</td><td>Outgoing damage multiplied by (1 + magnitude)</td><td>Multiplicative</td></tr>
+              <tr><td class="mono">CC_IMMUNITY</td><td>Rejects all STUN / SLOW / KNOCKBACK / PULL on application</td><td>Longest duration wins</td></tr>
+              <tr><td class="mono">DMG_REDIRECT</td><td>A % of damage to this player is dealt to a linked player instead</td><td>Does not stack — one redirect per target at a time</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="part">
+          <div class="parth"><div class="partn">2</div><div class="partt">Damage pipeline — strict order of operations</div><div class="partmeta">critical</div></div>
+          <div class="tx"><p>Every point of damage in the game flows through one function, in this exact order. Getting the order wrong changes the balance of every character.</p></div>
+          <table class="st">
+            <thead><tr><th>Step</th><th>Operation</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">1</td><td>Start with raw ability damage</td></tr>
+              <tr><td class="mono">2</td><td>Apply attacker's DMG_AMPLIFY (Greta's bear form +30%)</td></tr>
+              <tr><td class="mono">3</td><td>Apply defender's DMG_REDUCTION (Aldric's Defensive Stance −40%, Greta's aura −5%, bear form −20%)</td></tr>
+              <tr><td class="mono">4</td><td>Check defender's CC_IMMUNITY — if the damage carried CC, the CC is dropped but damage still lands</td></tr>
+              <tr><td class="mono">5</td><td>Apply DMG_REDIRECT — split the result, send the redirected share to the linked player as a <em>separate</em> damage event that re-enters this pipeline at step 3 for that player</td></tr>
+              <tr><td class="mono">6</td><td>Subtract from SHIELD pools (oldest first) before real HP</td></tr>
+              <tr><td class="mono">7</td><td>Subtract remainder from HP. If HP ≤ 0, fire death event.</td></tr>
+            </tbody>
+          </table>
+          <div class="co warn" style="margin-top:10px;margin-bottom:0;font-size:12px">
+            <strong>Redirect recursion guard:</strong> redirected damage must never itself be redirected. If Greta is shielding an ally and another Greta is shielding her, damage resolves one hop only. Depth limit = 1.
+          </div>
+        </div>
+
+        <div class="part">
+          <div class="parth"><div class="partn">3</div><div class="partt">Client event broadcast</div><div class="partmeta">for Block C</div></div>
+          <div class="tx"><p>Every status change fires a typed event to the clients that can see that player. Block C's visual effects all hook to these. Without this, the VFX tickets have nothing to listen to.</p>
+          <p>Events: <code>status_applied</code>, <code>status_expired</code>, <code>damage_dealt</code> (with amount, source, whether shielded, whether redirected), <code>shield_broken</code>, <code>cc_immunity_blocked</code>.</p></div>
+        </div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Out of scope</div>
+        <div class="oos">PULL is listed in the type table for future use (Vargoth's Throne of Iron) but is <b>not implemented in this ticket</b> — Vargoth is not in Sprint 4. Crit chance and crit multiplier are not part of this system and are not being built. Per-character ability logic lives in B5, not here — this ticket only builds the mechanics those abilities call.</div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Definition of Done</div>
+        <div class="dod">
+          <div class="di c"><div class="da">←</div>All 8 effect types applied, ticked and expired server-side, with their stacking rules verified by test</div>
+          <div class="di c"><div class="da">←</div>Damage pipeline runs in the exact 7-step order; a test proves two −40% reductions produce −64%, not −80%</div>
+          <div class="di c"><div class="da">←</div>Stunned player cannot move, attack or cast — verified on a real device, not just server-side</div>
+          <div class="di"><div class="da">←</div>Shield absorbs before HP; a 224 shield + 2,240 HP player survives exactly 2,464 damage</div>
+          <div class="di"><div class="da">←</div>Redirect sends the correct share to the linked player and recursion depth never exceeds 1</div>
+          <div class="di"><div class="da">←</div>CC_IMMUNITY blocks stun/slow/knockback but still allows damage through</div>
+          <div class="di"><div class="da">←</div>All durations and magnitudes read from the BOM-87 config object — no hardcoded numbers</div>
+          <div class="di"><div class="da">←</div>All five client events fire and carry the fields Block C needs</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ B1 ══ -->
+<div class="sec" id="b1">
+  <div class="sech"><div class="sect">B1 — Mother Greta Art Package</div><div class="secs">Steve deliverable · blocks B2 B3 B4</div></div>
+
+  <div class="tk art">
+    <div class="tkh">
+      <div>
+        <div class="tkid">NEW · Sprint 4 · Steve · needed week 1</div>
+        <div class="tkt">Mother Greta — Character Art Package Delivery</div>
+        <div class="tags"><span class="tg g-art">Steve</span><span class="tg g-blk">Blocks B2 B3 B4</span></div>
+      </div>
+    </div>
+    <div class="tkb">
+      <div class="bl">
+        <div class="bll">Purpose</div>
+        <div class="tx"><p>Amir cannot start any Greta work without the model. Sprint 3 showed exactly what happens when the art arrives late: the entire character chain sat at To Do while the backend finished early. Greta's package needs to land in week 1, same as Aldric's.</p></div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Prerequisites</div>
+        <div class="pq">
+          <div class="pqi"><div class="pqk">Blocked by</div><div class="pqv">Nothing — Steve has the AI prompt already written in the Tank Spec, section 7</div></div>
+          <div class="pqi"><div class="pqk">Reference</div><div class="pqv">Tank Category Spec v1.0 § Mother Greta — visual description and AI prompt are complete</div></div>
+        </div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Part 1 — What Steve delivers</div>
+        <div class="part">
+          <div class="parth"><div class="partn">1</div><div class="partt">Base model, three views</div></div>
+          <div class="tx"><p>Front, back and top-down isometric, clean background, same pipeline as Aldric. The AI prompt in the spec is ready to run as-is.</p></div>
+          <table class="st">
+            <thead><tr><th>Element</th><th>Specification</th></tr></thead>
+            <tbody>
+              <tr><td>Palette</td><td><strong>Warm browns and gold — explicitly NOT blue</strong>, despite being Blue Realm. The colour comes from Mother Bear, not the team.</td></tr>
+              <tr><td>Hair / eyes</td><td>Thick long brown hair in a side braid · warm green eyes</td></tr>
+              <tr><td>Clothing</td><td>Brown bear-pelt cloak over shoulders · light brown leather tunic · thick gold belt · brown leather trousers · knee-high boots</td></tr>
+              <tr><td>Jewellery</td><td>Gold Mother Bear pendant on the chest</td></tr>
+              <tr><td>Claws</td><td>Golden glowing claws at the fingertips — <strong>always present, even out of combat</strong></td></tr>
+              <tr><td>Build / age</td><td>~1.75 m · strong build, strong arms · age 35–40</td></tr>
+              <tr><td>Face</td><td>Worry lines, but warmth and strength · small scar above the right eyebrow</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="part">
+          <div class="parth"><div class="partn">2</div><div class="partt">Bear form model</div><div class="partmeta">second mesh</div></div>
+          <div class="tx"><p>Her Ultimate turns her into a giant brown bear for 6 seconds. That is a <strong>separate model</strong>, not a scaled-up human. Steve needs to deliver it alongside the base model or B4 cannot start.</p>
+          <p>From the spec: giant brown bear, deep growl, <strong>eyes glowing gold</strong>. It should read as the same character — the gold pendant and gold claws carry across.</p></div>
+        </div>
+        <div class="part">
+          <div class="parth"><div class="partn">3</div><div class="partt">Ability icons</div><div class="partmeta">for the HUD bar</div></div>
+          <div class="tx"><p>Four icons matching the BOM-64 ability-bar frame system: Mother Bear's Aura (passive indicator), Bear Claw Strike, Guardian's Embrace, Mother Bear's Wrath. Same dimensions Amir already built for Aldric — the frame never changes, only the icon inside it.</p></div>
+        </div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Out of scope</div>
+        <div class="oos">Vargoth and Lorvak art is <b>not</b> part of this ticket — they are a later sprint. Rigging and import are Amir's job in B2, not Steve's.</div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Definition of Done</div>
+        <div class="dod">
+          <div class="di c"><div class="da">←</div>Base model delivered in week 1 of the sprint — three views, clean background</div>
+          <div class="di c"><div class="da">←</div>Bear form model delivered alongside it</div>
+          <div class="di"><div class="da">←</div>Four ability icons delivered at the BOM-64 frame dimensions</div>
+          <div class="di"><div class="da">←</div>Palette confirmed as brown-gold, not blue</div>
+          <div class="di"><div class="da">←</div>Amir confirms the files are usable and correctly rigged or riggable</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ B2 ══ -->
+<div class="sec" id="b2">
+  <div class="sech"><div class="sect">B2 — Greta Model Import</div><div class="secs">Frontend · mirrors BOM-110</div></div>
+
+  <div class="tk fe">
+    <div class="tkh">
+      <div>
+        <div class="tkid">NEW · Sprint 4 · under the Greta epic</div>
+        <div class="tkt">Mother Greta — Import Model, Rig & HP Bar Identity</div>
+        <div class="tags"><span class="tg g-fe">Frontend · Amir</span><span class="tg g-fix">No team tinting</span></div>
+      </div>
+    </div>
+    <div class="tkb">
+      <div class="bl">
+        <div class="bll">Purpose</div>
+        <div class="tx"><p>Get Greta into the game as a selectable, visible character. Same pipeline as Aldric's BOM-110, with one deliberate difference: <strong>no team colour tinting</strong>. Her palette is fixed. Ally and enemy are distinguished only by the HP bar above the head — green for ally, red for enemy.</p></div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Prerequisites</div>
+        <div class="pq">
+          <div class="pqi block"><div class="pqk">Blocked by</div><div class="pqv"><b>B1</b> — Steve's art package. Cannot start without the model file.</div></div>
+          <div class="pqi"><div class="pqk">Pattern</div><div class="pqv"><b>BOM-110</b> — Aldric's import, minus the tinting step</div></div>
+          <div class="pqi"><div class="pqk">Needs from Leon</div><div class="pqv"><b>BOM-39</b> character system — Greta seeded in the DB with her stats before she can be selected</div></div>
+        </div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Part 1 — Import and rig</div>
+        <div class="part">
+          <div class="parth"><div class="partn">1</div><div class="partt">Model into Unity with a humanoid rig</div></div>
+          <div class="tx"><p>Import Steve's model, set up the humanoid rig so Mixamo animations retarget onto it in B3. Scale to match Aldric's footprint so neither clips the existing map collision. Greta is ~1.75 m against Aldric's ~1.95 m — the height difference should read on screen.</p></div>
+        </div>
+        <div class="part">
+          <div class="parth"><div class="partn">2</div><div class="partt">Ally / enemy identity — HP bar only</div><div class="partmeta">replaces tinting</div></div>
+          <div class="tx"><p>The character model is <strong>never recoloured</strong>. Identity is carried entirely by the HP bar floating above the character:</p></div>
+          <div class="g2" style="margin-top:10px">
+            <div style="background:rgba(0,0,0,.3);border:1px solid var(--artb);border-radius:7px;padding:12px;text-align:center">
+              <div style="font-size:26px;margin-bottom:6px">🐻</div>
+              <div style="width:52px;height:5px;background:rgba(255,255,255,.1);border-radius:3px;margin:0 auto 5px;overflow:hidden"><div style="width:78%;height:100%;background:#3db86a;border-radius:3px"></div></div>
+              <div style="font-size:10px;color:#4ade80;font-family:'JetBrains Mono',monospace">ALLY — green bar</div>
+            </div>
+            <div style="background:rgba(0,0,0,.3);border:1px solid var(--errb);border-radius:7px;padding:12px;text-align:center">
+              <div style="font-size:26px;margin-bottom:6px">🐻</div>
+              <div style="width:52px;height:5px;background:rgba(255,255,255,.1);border-radius:3px;margin:0 auto 5px;overflow:hidden"><div style="width:78%;height:100%;background:#ef4444;border-radius:3px"></div></div>
+              <div style="font-size:10px;color:#f87171;font-family:'JetBrains Mono',monospace">ENEMY — red bar</div>
+            </div>
+          </div>
+          <div class="mnote">Identical model, identical colours. Only the bar differs. This rule applies to Aldric too — BOM-110 must be corrected to match.</div>
+        </div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Out of scope</div>
+        <div class="oos">Animations are <b>B3</b>. The bear form model is <b>B4</b>. Ability logic is <b>B5/B6</b>.</div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Definition of Done</div>
+        <div class="dod">
+          <div class="di c"><div class="da">←</div>Greta renders in-game as her own model with her own brown-gold palette</div>
+          <div class="di c"><div class="da">←</div>No colour tinting applied anywhere — same visual for both teams</div>
+          <div class="di c"><div class="da">←</div>HP bar is green above allies, red above enemies, confirmed in a 2v2 test</div>
+          <div class="di"><div class="da">←</div>Humanoid rig accepts Mixamo retargeting</div>
+          <div class="di"><div class="da">←</div>Height difference from Aldric is visible on screen</div>
+          <div class="di"><div class="da">←</div>No clipping through map geometry</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ B3 ══ -->
+<div class="sec" id="b3">
+  <div class="sech"><div class="sect">B3 — Greta Animation Set</div><div class="secs">Frontend · 7 animations</div></div>
+
+  <div class="tk fe">
+    <div class="tkh">
+      <div>
+        <div class="tkid">NEW · Sprint 4 · depends on B2</div>
+        <div class="tkt">Mother Greta — Full Animation Set</div>
+        <div class="tags"><span class="tg g-fe">Frontend · Amir</span></div>
+      </div>
+    </div>
+    <div class="tkb">
+      <div class="bl">
+        <div class="bll">Purpose</div>
+        <div class="tx"><p>Greta's animations are listed verbatim in the Tank Spec and each one carries character. Her death animation in particular — she falls to the side with her hand reaching toward a nearby ally, a last act of protection — is the kind of detail that makes a character feel written rather than assembled.</p></div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Prerequisites</div>
+        <div class="pq">
+          <div class="pqi block"><div class="pqk">Blocked by</div><div class="pqv"><b>B2</b> — model must be imported and rigged first</div></div>
+          <div class="pqi"><div class="pqk">Needs from B0</div><div class="pqv">Death and respawn must fire from server events, not client prediction</div></div>
+          <div class="pqi"><div class="pqk">Source</div><div class="pqv">Mixamo free library, retargeted onto the humanoid rig from B2</div></div>
+        </div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Part 1 — The seven animations</div>
+        <div class="part">
+          <div class="tl">
+            <div class="tlr"><div class="tln">Walk</div><div class="tlb"><div class="tlf" style="width:70%"></div></div><div class="tll">2.5s loop</div><div class="tlt">slow movement</div></div>
+            <div class="tlr"><div class="tln">Run</div><div class="tlb"><div class="tlf" style="width:55%"></div></div><div class="tll">2s loop</div><div class="tlt">joystick held</div></div>
+            <div class="tlr"><div class="tln">Attack</div><div class="tlb"><div class="tlf" style="width:28%;background:#ef4444"></div></div><div class="tll">1.0s cycle</div><div class="tlt">on ATK tap</div></div>
+            <div class="tlr"><div class="tln">Death</div><div class="tlb"><div class="tlf" style="width:48%;background:#ef4444"></div></div><div class="tll">0.9s one-shot</div><div class="tlt">server death event</div></div>
+            <div class="tlr"><div class="tln">Victory</div><div class="tlb"><div class="tlf" style="width:60%;background:var(--gold)"></div></div><div class="tll">2s one-shot</div><div class="tlt">match won</div></div>
+            <div class="tlr"><div class="tln">Respawn</div><div class="tlb"><div class="tlf" style="width:52%;background:var(--art)"></div></div><div class="tll">1.2s one-shot</div><div class="tlt">respawn event</div></div>
+            <div class="tlr"><div class="tln">Skill cast</div><div class="tlb"><div class="tlf" style="width:40%;background:#0ea5e9"></div></div><div class="tll">0.6s one-shot</div><div class="tlt">Guardian's Embrace</div></div>
+          </div>
+        </div>
+        <div class="part">
+          <div class="parth"><div class="partn">1</div><div class="partt">Spec per animation — from the Tank Spec verbatim</div></div>
+          <table class="st">
+            <thead><tr><th>Animation</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr><td>Walk</td><td>Measured, phlegmatic, powerful. Not hurried.</td></tr>
+              <tr><td>Run</td><td>Heavy but determined.</td></tr>
+              <tr><td>Attack</td><td>Sweeping hand motion — glowing golden claws connect with the enemy.</td></tr>
+              <tr><td>Death</td><td><strong>Falls to the side, hand outstretched toward a nearby ally — a final gesture of protection.</strong> If no ally is near, the hand still reaches out.</td></tr>
+              <tr><td>Victory</td><td>Raises both arms to the sky, soft mother-bear growl.</td></tr>
+              <tr><td>Respawn</td><td>Mother Bear's golden light surrounds her and she rises from it.</td></tr>
+              <tr><td>Skill cast</td><td>Reaches toward the selected ally as the golden link forms.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Out of scope</div>
+        <div class="oos">The <b>bear transformation</b> and all bear-form animations are <b>B4</b> — a separate model with its own animation set. The golden visual effects that accompany these animations are Block C (<b>C4</b>) — this ticket is skeletal animation only.</div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Definition of Done</div>
+        <div class="dod">
+          <div class="di c"><div class="da">←</div>All 7 animations play at the correct trigger with correct timing</div>
+          <div class="di c"><div class="da">←</div>Death fires on the server death event and holds prone until respawn</div>
+          <div class="di"><div class="da">←</div>Walk and run loop seamlessly, blend ~0.15s between states</div>
+          <div class="di"><div class="da">←</div>Death animation shows the outstretched hand clearly from the default camera angle</div>
+          <div class="di"><div class="da">←</div>No animation interrupts another mid-play unless the server overrides it</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ B4 ══ -->
+<div class="sec" id="b4">
+  <div class="sech"><div class="sect">B4 — Bear Transformation</div><div class="secs">Frontend · the signature moment</div></div>
+  <p class="secd">Greta's Ultimate is the most visually dramatic thing in the game. For six seconds she stops being a woman and becomes a giant bear. This is a model swap, not a scale change, and it deserves its own ticket.</p>
+
+  <div class="tk fe">
+    <div class="tkh">
+      <div>
+        <div class="tkid">NEW · Sprint 4 · depends on B1 B2 B3</div>
+        <div class="tkt">Mother Greta — Bear Form Transformation & Animation Set</div>
+        <div class="tags"><span class="tg g-fe">Frontend · Amir</span><span class="tg g-vfx">VFX overlap</span><span class="tg g-new">New pattern</span></div>
+      </div>
+    </div>
+    <div class="tkb">
+      <div class="bl">
+        <div class="bll">Purpose</div>
+        <div class="tx"><p>No character in BomSlerf changes model mid-match. Greta is the first, and the pattern built here will be reused by any future transformation character. The moment has to land visually or the Ultimate feels like a stat buff with a particle effect.</p></div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Prerequisites</div>
+        <div class="pq">
+          <div class="pqi block"><div class="pqk">Blocked by</div><div class="pqv"><b>B1</b> bear model from Steve · <b>B2</b> base model imported · <b>B3</b> base animations working</div></div>
+          <div class="pqi"><div class="pqk">Needs from Leon</div><div class="pqv"><b>B5</b> — server fires <code>transform_start</code> and <code>transform_end</code> with authoritative timing. The client never decides when the form ends.</div></div>
+          <div class="pqi"><div class="pqk">Config</div><div class="pqv"><code>GRETA_ULT_DURATION_SECONDS = 6</code> from BOM-87</div></div>
+        </div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Part 1 — The transformation sequence</div>
+        <div class="part">
+          <div class="sq"><div class="sqi">⚡</div><div style="flex:1"><div class="sql">Ultimate tapped — server validates and fires transform_start</div><div class="sqs">ability goes on 75s cooldown immediately</div></div><div class="sqm">t = 0.0s</div></div>
+          <div class="sqa">↓</div>
+          <div class="sq"><div class="sqi">🌀</div><div style="flex:1"><div class="sql">Greta rolls forward — the spec's described motion</div><div class="sqs">base model plays a forward roll, golden light builds around her</div></div><div class="sqm">t = 0.0 – 0.4s</div></div>
+          <div class="sqa">↓</div>
+          <div class="sq"><div class="sqi">💥</div><div style="flex:1"><div class="sql">Model swap at the peak of the roll</div><div class="sqs">base model hidden, bear model shown, swap masked by a golden burst so no pop is visible</div></div><div class="sqm">t = 0.4s</div></div>
+          <div class="sqa">↓</div>
+          <div class="sq"><div class="sqi">🐻</div><div style="flex:1"><div class="sql">Bear rises, deep growl, eyes glowing gold</div><div class="sqs">AoE hits here — 320 damage + 1.5s stun to everyone within 4 m</div></div><div class="sqm">t = 0.4 – 0.9s</div></div>
+          <div class="sqa">↓</div>
+          <div class="sq"><div class="sqi">⚔</div><div style="flex:1"><div class="sql">Bear form active — full control returns</div><div class="sqs">bear walk, run and attack animations · +30% damage · −20% damage taken</div></div><div class="sqm">t = 0.9 – 6.0s</div></div>
+          <div class="sqa">↓</div>
+          <div class="sq"><div class="sqi">✨</div><div style="flex:1"><div class="sql">transform_end from server — reverse the swap</div><div class="sqs">golden flash, bear hidden, base model shown at the same position and facing</div></div><div class="sqm">t = 6.0s</div></div>
+        </div>
+
+        <div class="part">
+          <div class="parth"><div class="partn">1</div><div class="partt">Bear form needs its own animations</div></div>
+          <div class="tx"><p>The bear is a quadruped. Human animations will not retarget onto it. Minimum set required: <strong>bear idle, bear run, bear attack</strong>. Death while transformed is an edge case — see below.</p></div>
+        </div>
+
+        <div class="part">
+          <div class="parth"><div class="partn">2</div><div class="partt">Edge cases that will break this if unhandled</div><div class="partmeta">test these</div></div>
+          <table class="st">
+            <thead><tr><th>Case</th><th>Required behaviour</th></tr></thead>
+            <tbody>
+              <tr><td>Greta dies while transformed</td><td>Bear plays a death animation and the body stays as a bear until respawn. She does <strong>not</strong> revert to human on death — reverting mid-death reads as a bug.</td></tr>
+              <tr><td>Greta is carrying the flag when she transforms</td><td>Flag stays attached, now mounted on the bear. Flag carrier rules still apply: 15% slower, visible to everyone.</td></tr>
+              <tr><td>Match ends mid-transformation</td><td>Form is dropped, scoreboard shows her human portrait.</td></tr>
+              <tr><td>Greta is stunned during the 6 seconds</td><td>She stays a bear and remains stunned. The form does not grant CC immunity — only Aldric's Ultimate does that.</td></tr>
+              <tr><td>Final Stage teleport fires mid-transformation</td><td>Form is cancelled on teleport, cooldowns reset per the Final Stage rules.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Out of scope</div>
+        <div class="oos">The AoE damage and stun are applied by the <b>server in B5</b> — this ticket renders the moment, it does not deal the damage. The golden burst particle system is specified in <b>C4</b> but built here since it masks the model swap.</div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Definition of Done</div>
+        <div class="dod">
+          <div class="di c"><div class="da">←</div>Model swap is invisible — no pop, no frame of both models, no frame of neither</div>
+          <div class="di c"><div class="da">←</div>Form ends exactly on the server's transform_end, never on a client timer</div>
+          <div class="di c"><div class="da">←</div>Bear idle, run and attack all play correctly</div>
+          <div class="di"><div class="da">←</div>All five edge cases in the table behave as specified</div>
+          <div class="di"><div class="da">←</div>Other players see the transformation at the same moment the casting player does</div>
+          <div class="di"><div class="da">←</div>Position and facing are preserved exactly across both swaps</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ B5 ══ -->
+<div class="sec" id="b5">
+  <div class="sech"><div class="sect">B5 — Greta Abilities, Server</div><div class="secs">Backend · the logic behind all four</div></div>
+
+  <div class="tk be">
+    <div class="tkh">
+      <div>
+        <div class="tkid">NEW · Sprint 4 · depends on B0</div>
+        <div class="tkt">Mother Greta — Ability Logic, Server Authoritative</div>
+        <div class="tags"><span class="tg g-be">Backend · Leon</span><span class="tg g-blk">Blocks B6</span></div>
+      </div>
+    </div>
+    <div class="tkb">
+      <div class="bl">
+        <div class="bll">Purpose</div>
+        <div class="tx"><p>All four of Greta's abilities resolve on the server. The client requests, the server decides. Her Skill in particular — redirecting damage from one player to another — is exploitable if the client has any say in it.</p></div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Prerequisites</div>
+        <div class="pq">
+          <div class="pqi block"><div class="pqk">Blocked by</div><div class="pqv"><b>B0</b> — needs DMG_REDIRECT, DMG_REDUCTION, DMG_AMPLIFY, STUN from the status-effect layer</div></div>
+          <div class="pqi"><div class="pqk">Needs</div><div class="pqv"><b>BOM-39</b> — Greta seeded in the character DB with HP 1,900 / speed 1.8 / damage 140 / range 2.5</div></div>
+          <div class="pqi"><div class="pqk">Config</div><div class="pqv">All cooldowns, radii and magnitudes in BOM-87 config</div></div>
+        </div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Part 1 — Passive · Mother Bear's Aura</div>
+        <div class="part">
+          <div class="tx"><p>Continuous proximity check. Every ally within 3 m of Greta carries a −5% DMG_REDUCTION effect, refreshed while in range and removed the moment they leave.</p>
+          <p><strong>The trap:</strong> the aura does <strong>not</strong> apply to Greta herself. The spec is explicit about this. It is the easiest thing in her kit to get wrong.</p></div>
+          <table class="st">
+            <tbody>
+              <tr><td>Radius</td><td class="mono">3.0 m</td></tr>
+              <tr><td>Effect</td><td class="mono">DMG_REDUCTION, magnitude 0.05</td></tr>
+              <tr><td>Applies to</td><td class="mono">allies only — never Greta</td></tr>
+              <tr><td>Update rate</td><td class="mono">every server tick — leaving range removes it immediately</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Part 2 — Skill · Guardian's Embrace</div>
+        <div class="part">
+          <div class="tx"><p>The most mechanically novel ability in the game. Greta names an ally; for 4 seconds half of everything that hits them hits her instead.</p></div>
+          <table class="st">
+            <thead><tr><th>Parameter</th><th>Value</th></tr></thead>
+            <tbody>
+              <tr><td>Cooldown</td><td class="mono">12 s</td></tr>
+              <tr><td>Select range</td><td class="mono">8 m</td></tr>
+              <tr><td>Duration</td><td class="mono">4 s</td></tr>
+              <tr><td>Redirect share</td><td class="mono">50% of incoming damage</td></tr>
+              <tr><td>Valid target</td><td class="mono">living ally, not self, within 8 m at cast time</td></tr>
+            </tbody>
+          </table>
+          <div class="co warn" style="margin-top:10px;margin-bottom:0;font-size:12px">
+            <strong>Cases the server must decide, not the client:</strong><br>
+            • Target walks beyond 8 m after the cast → link <strong>persists</strong> for the full 4 s. Range is checked at cast time only.<br>
+            • Target dies during the link → link ends immediately, no further redirect.<br>
+            • <strong>Greta dies while a link is active</strong> → link ends immediately. The ally takes full damage from that point. Greta's death is not delayed or prevented by the link.<br>
+            • Redirected damage kills Greta → she dies normally, the killer credited is whoever dealt the original damage.<br>
+            • Greta transforms into a bear with a link active → link persists, and the bear's −20% reduction applies to the redirected damage.
+          </div>
+        </div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Part 3 — Ultimate · Mother Bear's Wrath</div>
+        <div class="part">
+          <table class="st">
+            <thead><tr><th>Parameter</th><th>Value</th></tr></thead>
+            <tbody>
+              <tr><td>Cooldown</td><td class="mono">75 s</td></tr>
+              <tr><td>Duration</td><td class="mono">6 s</td></tr>
+              <tr><td>AoE on cast</td><td class="mono">4 m radius · 320 damage · 1.5 s stun</td></tr>
+              <tr><td>Self buff — damage</td><td class="mono">DMG_AMPLIFY 0.30 — basic goes 140 → 182</td></tr>
+              <tr><td>Self buff — defence</td><td class="mono">DMG_REDUCTION 0.20</td></tr>
+              <tr><td>Client events</td><td class="mono">transform_start, transform_end</td></tr>
+            </tbody>
+          </table>
+          <div class="tx" style="margin-top:9px"><p>The +30% amplify applies to <strong>all</strong> her damage during the form, not just basics — the spec says "other abilities scale accordingly."</p></div>
+        </div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Out of scope</div>
+        <div class="oos">The <b>hidden combo system</b> is <b>B8</b> — a separate ticket because it is a generic system, not Greta-specific logic. All client rendering is <b>B6</b>.</div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Definition of Done</div>
+        <div class="dod">
+          <div class="di c"><div class="da">←</div>Passive applies −5% to allies in 3 m and provably never to Greta</div>
+          <div class="di c"><div class="da">←</div>Guardian's Embrace redirects exactly 50% — a 200-damage hit on the ally deals 100 to each</div>
+          <div class="di c"><div class="da">←</div>All five Embrace edge cases in the warning box behave as written, each with a test</div>
+          <div class="di c"><div class="da">←</div>Ultimate deals 320 + 1.5s stun in 4 m and applies both self-buffs for exactly 6 s</div>
+          <div class="di"><div class="da">←</div>Bear form basic attack deals 182, verified in a live match</div>
+          <div class="di"><div class="da">←</div>Every cast is validated server-side; a forged client cast request is rejected</div>
+          <div class="di"><div class="da">←</div>All values read from BOM-87 config</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ B6 ══ -->
+<div class="sec" id="b6">
+  <div class="sech"><div class="sect">B6 — Greta Abilities, Client</div><div class="secs">Frontend · HUD and input</div></div>
+
+  <div class="tk fe">
+    <div class="tkh">
+      <div>
+        <div class="tkid">NEW · Sprint 4 · depends on B5 B7</div>
+        <div class="tkt">Mother Greta — Ability HUD, Input & Cooldown Rendering</div>
+        <div class="tags"><span class="tg g-fe">Frontend · Amir</span></div>
+      </div>
+    </div>
+    <div class="tkb">
+      <div class="bl">
+        <div class="bll">Purpose</div>
+        <div class="tx"><p>Wire Greta's four abilities into the BOM-64 ability bar. Three of the four behave like Aldric's — tap to fire. The Skill does not: it needs the player to pick an ally first, which no ability in the game has ever required.</p></div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Prerequisites</div>
+        <div class="pq">
+          <div class="pqi block"><div class="pqk">Blocked by</div><div class="pqv"><b>B5</b> server logic · <b>B7</b> ally-targeting UI · <b>B1</b> ability icons from Steve</div></div>
+          <div class="pqi"><div class="pqk">Builds on</div><div class="pqv"><b>BOM-64</b> ability bar frame system — frames never change, only the icons inside</div></div>
+        </div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Part 1 — Greta's HUD in play</div>
+        <div class="g2">
+          <div>
+            <div class="mlab">Normal state — passive active, skill ready</div>
+            <div class="gf">
+              <div class="gfbg"></div>
+              <div class="ui">
+                <div class="utop">
+                  <div class="flg"><div class="fl s">our flag SAFE</div><div class="fl t">enemy flag TAKEN</div></div>
+                  <div class="tmr"><div class="tmrv">7:12</div></div>
+                </div>
+                <div style="position:absolute;left:50%;top:46%;transform:translate(-50%,-50%);text-align:center">
+                  <div style="width:46px;height:46px;border-radius:50%;border:1px dashed rgba(176,122,60,.5);display:flex;align-items:center;justify-content:center;background:radial-gradient(circle,rgba(176,122,60,.18),transparent 70%)">
+                    <div style="font-size:19px">🐻</div>
+                  </div>
+                  <div style="font-size:7px;color:#b07a3c;margin-top:3px;font-family:'JetBrains Mono',monospace">aura 3m</div>
+                </div>
+                <div style="position:absolute;left:38%;top:52%;font-size:13px;opacity:.85">⚔</div>
+                <div style="position:absolute;left:38%;top:58%;font-size:6px;color:#4ade80;font-family:'JetBrains Mono',monospace">−5%</div>
+                <div class="ubot">
+                  <div>
+                    <div class="hpr"><div class="av gr">🐻</div><div class="hb"><div class="hf" style="width:82%;background:#3db86a"></div></div><div style="font-size:7px;color:var(--mut)">1558/1900</div></div>
+                    <div class="joy" style="margin-top:5px"><div class="joyi"></div></div>
+                  </div>
+                  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px">
+                    <div class="psv" title="aura active">🐻</div>
+                    <div class="abs">
+                      <div class="ab u"><div style="font-size:11px">💥</div><div class="cdn">41</div></div>
+                      <div class="ab s"><div style="font-size:12px">🤝</div></div>
+                      <div class="ab a"><div style="font-size:15px">🐾</div></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="mnote">The passive indicator sits above the ability row and glows while at least one ally is inside the 3 m aura. The ally shows a small −5% tag.</div>
+          </div>
+          <div>
+            <div class="mlab">Bear form — 6 seconds, everything changes</div>
+            <div class="gf">
+              <div class="gfbg"></div>
+              <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 55%,rgba(201,168,76,.16),transparent 62%);z-index:2"></div>
+              <div class="ui">
+                <div class="utop">
+                  <div class="flg"><div class="fl s">our flag SAFE</div><div class="fl t">enemy flag TAKEN</div></div>
+                  <div class="tmr"><div class="tmrv">7:04</div></div>
+                  <div style="background:rgba(201,168,76,.18);border:.5px solid rgba(201,168,76,.45);border-radius:4px;padding:2px 8px;font-size:9px;color:var(--gold);font-family:'JetBrains Mono',monospace">BEAR FORM 4.2s</div>
+                </div>
+                <div style="position:absolute;left:50%;top:48%;transform:translate(-50%,-50%);text-align:center">
+                  <div style="width:40px;height:40px;border-radius:9px;background:linear-gradient(170deg,#6b4a1e,#2a1c0a);border:1.5px solid var(--gold);display:flex;align-items:center;justify-content:center;font-size:21px;box-shadow:0 0 18px rgba(201,168,76,.4)">🐻</div>
+                  <div style="font-size:7px;color:var(--gold);margin-top:3px;font-family:'JetBrains Mono',monospace">+30% dmg · −20% taken</div>
+                </div>
+                <div style="position:absolute;left:62%;top:40%;font-size:11px;opacity:.6">⚔</div>
+                <div style="position:absolute;left:62%;top:35%;font-size:8px;color:#fbbf24">💫</div>
+                <div class="ubot">
+                  <div>
+                    <div class="hpr"><div class="av gr" style="border-color:var(--gold)">🐻</div><div class="hb"><div class="hf" style="width:82%;background:#3db86a"></div></div></div>
+                    <div class="joy" style="margin-top:5px"><div class="joyi"></div></div>
+                  </div>
+                  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px">
+                    <div class="psv" style="border-color:rgba(201,168,76,.5);background:rgba(201,168,76,.12)">🐻</div>
+                    <div class="abs">
+                      <div class="ab u" style="border-color:var(--gold);opacity:.45"><div style="font-size:11px">💥</div><div class="cdn">75</div></div>
+                      <div class="ab s"><div style="font-size:12px">🤝</div></div>
+                      <div class="ab a" style="border-color:var(--gold)"><div style="font-size:15px">🐾</div></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="mnote">A form timer appears top-right counting the 6 seconds down. The attack button border shifts to gold so the player feels the buff is live. Stunned enemies show the stun indicator from C5.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Out of scope</div>
+        <div class="oos">The ally-selection interaction itself is <b>B7</b>. All particle and light effects are <b>C4</b>. The transformation model swap is <b>B4</b>.</div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Definition of Done</div>
+        <div class="dod">
+          <div class="di c"><div class="da">←</div>All four abilities fire the correct server request and render the correct server response</div>
+          <div class="di c"><div class="da">←</div>Cooldown rings and countdowns match the server's actual cooldown, never a local timer</div>
+          <div class="di"><div class="da">←</div>Passive indicator glows only while an ally is genuinely inside the 3 m radius</div>
+          <div class="di"><div class="da">←</div>Bear form timer counts down accurately and disappears on transform_end</div>
+          <div class="di"><div class="da">←</div>Attack button visually signals the +30% buff during bear form</div>
+          <div class="di"><div class="da">←</div>Tapping an ability on cooldown does nothing — no request sent, no error toast</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ B7 ══ -->
+<div class="sec" id="b7">
+  <div class="sech"><div class="sect">B7 — Ally Targeting System</div><div class="secs">Frontend · new input paradigm</div></div>
+  <p class="secd">Every ability in BomSlerf today fires instantly in the direction you are facing. Guardian's Embrace is the first that asks the player to choose a person. On a phone, mid-fight, with one thumb on a joystick. This needs to be fast or the ability is unusable.</p>
+
+  <div class="tk fe">
+    <div class="tkh">
+      <div>
+        <div class="tkid">NEW · Sprint 4 · blocks B6</div>
+        <div class="tkt">Ally Targeting — Select a Teammate for a Targeted Ability</div>
+        <div class="tags"><span class="tg g-fe">Frontend · Amir</span><span class="tg g-new">New interaction</span><span class="tg g-blk">Blocks B6</span></div>
+      </div>
+    </div>
+    <div class="tkb">
+      <div class="bl">
+        <div class="bll">Purpose</div>
+        <div class="tx"><p>Build a reusable ally-selection interaction. Greta needs it now; any future healer or buffer will need the same thing. It must resolve in well under a second — if picking a target costs the player two seconds of a four-second fight, nobody will use the ability.</p></div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Prerequisites</div>
+        <div class="pq">
+          <div class="pqi"><div class="pqk">Needs from Leon</div><div class="pqv"><b>B5</b> — server validates the chosen target and rejects an invalid one. The client's pick is a request, not a decision.</div></div>
+          <div class="pqi"><div class="pqk">Constraint</div><div class="pqv">Landscape, one thumb already on the joystick, the other on the ability bar</div></div>
+        </div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Part 1 — The interaction, two modes</div>
+        <div class="part">
+          <div class="parth"><div class="partn">1</div><div class="partt">Tap-to-cast — the fast path</div><div class="partmeta">default</div></div>
+          <div class="tx"><p>Single tap on the Skill button casts on the <strong>lowest-HP ally within 8 m</strong>, instantly. No selection step. This is what players will use 90% of the time, and it is almost always the correct target anyway.</p></div>
+        </div>
+        <div class="part">
+          <div class="parth"><div class="partn">2</div><div class="partt">Hold-to-choose — the deliberate path</div><div class="partmeta">power users</div></div>
+          <div class="tx"><p>Press and hold the Skill button for more than 0.2 s and a selection overlay appears: every valid ally within 8 m gets a tappable portrait near their position on screen. Release over a portrait to cast on them; release elsewhere to cancel without consuming the cooldown.</p></div>
+        </div>
+
+        <div class="mlab" style="margin-top:14px">Hold-to-choose overlay</div>
+        <div class="gf" style="max-width:560px">
+          <div class="gfbg"></div>
+          <div style="position:absolute;inset:0;background:rgba(5,4,12,.42);z-index:2"></div>
+          <div class="ui">
+            <div class="utop">
+              <div class="flg"><div class="fl s">our flag SAFE</div></div>
+              <div class="tmr"><div class="tmrv">6:48</div></div>
+            </div>
+            <!-- greta -->
+            <div style="position:absolute;left:46%;top:56%;transform:translate(-50%,-50%);text-align:center">
+              <div style="font-size:17px">🐻</div>
+            </div>
+            <!-- range ring -->
+            <div style="position:absolute;left:46%;top:56%;transform:translate(-50%,-50%);width:150px;height:150px;border-radius:50%;border:1px dashed rgba(201,168,76,.32);background:radial-gradient(circle,rgba(201,168,76,.05),transparent 70%)"></div>
+            <div style="position:absolute;left:46%;top:56%;transform:translate(-50%,62px);font-size:7px;color:var(--goldd);font-family:'JetBrains Mono',monospace">8 m</div>
+            <!-- ally 1 - low hp, highlighted -->
+            <div style="position:absolute;left:30%;top:40%;text-align:center">
+              <div style="width:26px;height:26px;border-radius:50%;background:#2a2410;border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;font-size:12px;box-shadow:0 0 12px rgba(201,168,76,.5)">⚔</div>
+              <div style="width:28px;height:3px;background:rgba(255,255,255,.1);border-radius:2px;margin:3px auto 0;overflow:hidden"><div style="width:22%;height:100%;background:#ef4444"></div></div>
+              <div style="font-size:7px;color:var(--gold);margin-top:2px;font-family:'JetBrains Mono',monospace">22%</div>
+            </div>
+            <!-- ally 2 -->
+            <div style="position:absolute;left:62%;top:48%;text-align:center">
+              <div style="width:22px;height:22px;border-radius:50%;background:#1e2d45;border:1.5px solid rgba(136,120,224,.6);display:flex;align-items:center;justify-content:center;font-size:10px">🗡</div>
+              <div style="width:24px;height:3px;background:rgba(255,255,255,.1);border-radius:2px;margin:3px auto 0;overflow:hidden"><div style="width:74%;height:100%;background:#3db86a"></div></div>
+              <div style="font-size:7px;color:var(--dim);margin-top:2px;font-family:'JetBrains Mono',monospace">74%</div>
+            </div>
+            <!-- ally 3 - out of range, dimmed -->
+            <div style="position:absolute;left:80%;top:28%;text-align:center;opacity:.3">
+              <div style="width:20px;height:20px;border-radius:50%;background:#2a2020;border:1px solid var(--mut);display:flex;align-items:center;justify-content:center;font-size:9px">✦</div>
+              <div style="font-size:6px;color:var(--mut);margin-top:3px;font-family:'JetBrains Mono',monospace">out of range</div>
+            </div>
+            <div class="ubot">
+              <div><div class="joy"><div class="joyi"></div></div></div>
+              <div class="abs">
+                <div class="ab u"><div style="font-size:11px">💥</div><div class="cdn">41</div></div>
+                <div class="ab s" style="border-color:var(--gold);box-shadow:0 0 12px rgba(201,168,76,.4)"><div style="font-size:12px">🤝</div></div>
+                <div class="ab a"><div style="font-size:15px">🐾</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="mnote">Background dims so portraits read clearly. The lowest-HP ally is pre-highlighted in gold — it is what a tap would have chosen, so holding and releasing immediately gives the same result. Out-of-range allies are visible but dimmed and unselectable, so the player understands why rather than wondering where their teammate went.</div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Part 2 — Active link indicator</div>
+        <div class="part">
+          <div class="tx"><p>Once cast, the player needs to know the link is live and who it is on, without looking away from the fight. A small portrait of the linked ally appears beside the Skill button with a 4-second ring draining around it. The in-world golden tether between Greta and the ally is specified in <strong>C4</strong>.</p></div>
+        </div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Out of scope</div>
+        <div class="oos">Enemy targeting is <b>not</b> built here — no ability in the current roster targets a specific enemy. The visual tether is <b>C4</b>. Server validation is <b>B5</b>.</div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Definition of Done</div>
+        <div class="dod">
+          <div class="di c"><div class="da">←</div>Single tap casts on the lowest-HP ally in 8 m with no selection step</div>
+          <div class="di c"><div class="da">←</div>Hold longer than 0.2 s opens the overlay; release on a portrait casts; release elsewhere cancels with no cooldown consumed</div>
+          <div class="di"><div class="da">←</div>Out-of-range allies are shown dimmed and cannot be selected</div>
+          <div class="di"><div class="da">←</div>Lowest-HP ally is pre-highlighted</div>
+          <div class="di"><div class="da">←</div>With no valid ally in range, the Skill button is visibly disabled and a tap does nothing</div>
+          <div class="di"><div class="da">←</div>Active link indicator shows the linked ally and drains over the 4 s</div>
+          <div class="di"><div class="da">←</div>Whole interaction is usable one-thumbed in landscape without covering the joystick</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ B8 ══ -->
+<div class="sec" id="b8">
+  <div class="sech"><div class="sect">B8 — Hidden Combo System</div><div class="secs">Backend + Frontend · new system</div></div>
+
+  <div class="tk be">
+    <div class="tkh">
+      <div>
+        <div class="tkid">NEW · Sprint 4 · depends on B0 B5</div>
+        <div class="tkt">Hidden Combo System — Detection, Bonuses & Player Feedback</div>
+        <div class="tags"><span class="tg g-be">Backend · Leon</span><span class="tg g-fe">Frontend · Amir</span><span class="tg g-new">New system</span></div>
+      </div>
+    </div>
+    <div class="tkb">
+      <div class="bl">
+        <div class="bll">Purpose</div>
+        <div class="tx"><p>Three of the four Tanks have hidden combos. Aldric deliberately has none. Greta is the first character to need the system, and building it generically now means Vargoth and Lorvak drop in without new plumbing later.</p>
+        <p>"Hidden" means undocumented in-game — players discover them. It does <strong>not</strong> mean invisible: when a combo fires, the player must be able to tell something good happened, or they will never learn the pattern.</p></div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Prerequisites</div>
+        <div class="pq">
+          <div class="pqi block"><div class="pqk">Blocked by</div><div class="pqv"><b>B0</b> status layer · <b>B5</b> Greta's abilities must exist to combo off</div></div>
+          <div class="pqi"><div class="pqk">Design note</div><div class="pqv">Steve asked explicitly that <b>Aldric having no combos</b> be recorded in Jira so it is not read as a missing spec</div></div>
+        </div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Part 1 — Generic combo tracker, server-side</div>
+        <div class="part">
+          <div class="tx"><p>Per player, the server keeps a small combo state: which combo is in progress, how far along, when it expires. A combo is defined declaratively — a sequence of conditions and a bonus — so adding Vargoth's two later is data, not code.</p></div>
+        </div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Part 2 — Greta's two combos</div>
+        <div class="part">
+          <div class="parth"><div class="partn">1</div><div class="partt">Bear Mother's Fury — damage ramp</div><div class="partmeta">type: DMG</div></div>
+          <table class="st">
+            <tbody>
+              <tr><td>Trigger</td><td class="mono">3 consecutive basic attacks on the <strong>same</strong> enemy within 5 s</td></tr>
+              <tr><td>Bonus</td><td class="mono">+25 damage per hit from the 4th hit onward · 140 → 165</td></tr>
+              <tr><td>Maintained while</td><td class="mono">gap between hits on that target ≤ 3.0 s</td></tr>
+              <tr><td>Resets on</td><td class="mono">gap &gt; 3.0 s · target switched · target dies</td></tr>
+              <tr><td>After reset</td><td class="mono">must rebuild from 3 fresh hits</td></tr>
+            </tbody>
+          </table>
+          <div class="tx" style="margin-top:8px"><p><strong>Per-target tracking is required.</strong> Hitting enemy A twice then enemy B once is not progress toward anything — it is two separate stalled counters.</p></div>
+        </div>
+        <div class="part">
+          <div class="parth"><div class="partn">2</div><div class="partt">Guardian's Charge — ability sequence</div><div class="partmeta">type: HP</div></div>
+          <table class="st">
+            <tbody>
+              <tr><td>Trigger</td><td class="mono">cast Ultimate, then cast Guardian's Embrace on an ally within 2 s</td></tr>
+              <tr><td>Bonus</td><td class="mono">that ally gets +80 HP instant heal, on top of the normal 50% redirect</td></tr>
+              <tr><td>Window</td><td class="mono">2.0 s from the Ultimate cast</td></tr>
+              <tr><td>Overheal</td><td class="mono">capped at the ally's max HP — no temporary overheal</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Part 3 — Player feedback</div>
+        <div class="part">
+          <div class="tx"><p>Deliberately subtle. Enough to notice, not so much that it reads as a scripted tutorial.</p></div>
+          <div class="sq"><div class="sqi">⚡</div><div style="flex:1"><div class="sql">Combo fires</div><div class="sqs">brief gold flash on the ability bar icon that completed it</div></div><div class="sqm">0.3s</div></div>
+          <div class="sq"><div class="sqi">💛</div><div style="flex:1"><div class="sql">Damage number tinted gold</div><div class="sqs">instead of the normal white, for bonus-boosted hits (needs C1)</div></div><div class="sqm">per hit</div></div>
+          <div class="sq"><div class="sqi">🔊</div><div style="flex:1"><div class="sql">Soft ascending chime</div><div class="sqs">distinct from the normal hit sound — a future audio ticket, not this one</div></div><div class="sqm">0.2s</div></div>
+        </div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Out of scope</div>
+        <div class="oos">Vargoth's and Lorvak's combos are <b>not built</b> — they are not in Sprint 4. No in-game combo list, tutorial or codex: they stay hidden by design. The combo sound is a later audio ticket.</div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Definition of Done</div>
+        <div class="dod">
+          <div class="di c"><div class="da">←</div>Fury: 3 hits on one enemy then a 4th deals 165, verified with server logs</div>
+          <div class="di c"><div class="da">←</div>Fury resets correctly on all three reset conditions, each tested separately</div>
+          <div class="di c"><div class="da">←</div>Fury tracks per target — hitting A, A, B, A does not grant the bonus</div>
+          <div class="di"><div class="da">←</div>Charge: Ultimate then Embrace within 2 s heals the ally +80; at 2.1 s it does not</div>
+          <div class="di"><div class="da">←</div>Heal never exceeds the ally's max HP</div>
+          <div class="di"><div class="da">←</div>Combo definitions are declarative — adding a new one needs no new system code</div>
+          <div class="di"><div class="da">←</div>Gold flash and gold damage numbers appear when a combo bonus lands</div>
+          <div class="di"><div class="da">←</div>A comment on BOM-43 records that Aldric has no combos by design</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ B9 ══ -->
+<div class="sec" id="b9">
+  <div class="sech"><div class="sect">B9 — Character Select Screen</div><div class="secs">Frontend · two characters, real choice</div></div>
+
+  <div class="tk fe">
+    <div class="tkh">
+      <div>
+        <div class="tkid">NEW · Sprint 4 · extends BOM-41</div>
+        <div class="tkt">Character Select Screen — Two Characters, Stats & Ability Preview</div>
+        <div class="tags"><span class="tg g-fe">Frontend · Amir</span><span class="tg g-aud">Needs select sound</span></div>
+      </div>
+    </div>
+    <div class="tkb">
+      <div class="bl">
+        <div class="bll">Purpose</div>
+        <div class="tx"><p>BOM-41 gave the home screen a character card with one selectable character — enough when there was only Aldric. With Greta there is a real choice to make, and the player needs enough information to make it: stats side by side, what each ability does, and who the character is.</p></div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Prerequisites</div>
+        <div class="pq">
+          <div class="pqi"><div class="pqk">Blocked by</div><div class="pqv"><b>B1</b> Greta portrait and ability icons · <b>BOM-39</b> both characters seeded server-side</div></div>
+          <div class="pqi"><div class="pqk">Extends</div><div class="pqv"><b>BOM-41</b> character select button · <b>BOM-94</b> home screen layout</div></div>
+        </div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Part 1 — The screen</div>
+        <div class="gf" style="aspect-ratio:16/8">
+          <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 70% 30%,rgba(139,26,26,.3),transparent 55%),linear-gradient(170deg,#0d0a1a,#080514)"></div>
+          <div class="ui" style="padding:10px 12px;display:flex;flex-direction:column">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+              <div style="font-family:Cinzel,serif;font-size:12px;color:var(--gold);letter-spacing:.1em">CHOOSE YOUR WARRIOR</div>
+              <div style="font-size:9px;color:var(--mut);font-family:'JetBrains Mono',monospace">2 of 12 unlocked</div>
+            </div>
+            <div style="flex:1;display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:7px">
+              <!-- Aldric -->
+              <div style="background:rgba(201,168,76,.07);border:1.5px solid rgba(201,168,76,.45);border-radius:7px;padding:8px;display:flex;flex-direction:column;align-items:center">
+                <div style="width:100%;height:42px;background:linear-gradient(170deg,#3a3418,#1a1608);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:21px;margin-bottom:5px">⚔</div>
+                <div style="font-family:Cinzel,serif;font-size:10px;color:var(--aldric)">Sir Aldric</div>
+                <div style="font-size:7px;color:var(--mut);margin-bottom:5px">Guardian Tank</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:3px;width:100%">
+                  <div style="background:rgba(0,0,0,.35);border-radius:3px;padding:2px 4px;text-align:center"><div style="font-size:6px;color:var(--mut)">HP</div><div style="font-size:9px;color:var(--tx);font-family:'JetBrains Mono',monospace">2240</div></div>
+                  <div style="background:rgba(0,0,0,.35);border-radius:3px;padding:2px 4px;text-align:center"><div style="font-size:6px;color:var(--mut)">DMG</div><div style="font-size:9px;color:var(--tx);font-family:'JetBrains Mono',monospace">165</div></div>
+                </div>
+                <div style="display:flex;gap:2px;margin-top:5px">
+                  <div style="width:13px;height:13px;border-radius:3px;background:rgba(61,184,106,.15);border:.5px solid var(--artb);font-size:6px;display:flex;align-items:center;justify-content:center">🛡</div>
+                  <div style="width:13px;height:13px;border-radius:3px;background:rgba(239,68,68,.15);border:.5px solid var(--errb);font-size:6px;display:flex;align-items:center;justify-content:center">⚔</div>
+                  <div style="width:13px;height:13px;border-radius:3px;background:rgba(14,165,233,.15);border:.5px solid rgba(14,165,233,.35);font-size:6px;display:flex;align-items:center;justify-content:center">🛡</div>
+                  <div style="width:13px;height:13px;border-radius:3px;background:rgba(124,58,237,.15);border:.5px solid rgba(124,58,237,.35);font-size:6px;display:flex;align-items:center;justify-content:center">💥</div>
+                </div>
+                <div style="margin-top:auto;padding-top:5px;font-size:7px;color:var(--gold);font-family:'JetBrains Mono',monospace">SELECTED</div>
+              </div>
+              <!-- Greta -->
+              <div style="background:rgba(176,122,60,.05);border:1px solid rgba(176,122,60,.3);border-radius:7px;padding:8px;display:flex;flex-direction:column;align-items:center">
+                <div style="width:100%;height:42px;background:linear-gradient(170deg,#3a2a14,#1a1208);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:21px;margin-bottom:5px">🐻</div>
+                <div style="font-family:Cinzel,serif;font-size:10px;color:var(--greta)">M. Greta</div>
+                <div style="font-size:7px;color:var(--mut);margin-bottom:5px">Support Tank</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:3px;width:100%">
+                  <div style="background:rgba(0,0,0,.35);border-radius:3px;padding:2px 4px;text-align:center"><div style="font-size:6px;color:var(--mut)">HP</div><div style="font-size:9px;color:var(--tx);font-family:'JetBrains Mono',monospace">1900</div></div>
+                  <div style="background:rgba(0,0,0,.35);border-radius:3px;padding:2px 4px;text-align:center"><div style="font-size:6px;color:var(--mut)">DMG</div><div style="font-size:9px;color:var(--tx);font-family:'JetBrains Mono',monospace">140</div></div>
+                </div>
+                <div style="display:flex;gap:2px;margin-top:5px">
+                  <div style="width:13px;height:13px;border-radius:3px;background:rgba(61,184,106,.15);border:.5px solid var(--artb);font-size:6px;display:flex;align-items:center;justify-content:center">🐻</div>
+                  <div style="width:13px;height:13px;border-radius:3px;background:rgba(239,68,68,.15);border:.5px solid var(--errb);font-size:6px;display:flex;align-items:center;justify-content:center">🐾</div>
+                  <div style="width:13px;height:13px;border-radius:3px;background:rgba(14,165,233,.15);border:.5px solid rgba(14,165,233,.35);font-size:6px;display:flex;align-items:center;justify-content:center">🤝</div>
+                  <div style="width:13px;height:13px;border-radius:3px;background:rgba(124,58,237,.15);border:.5px solid rgba(124,58,237,.35);font-size:6px;display:flex;align-items:center;justify-content:center">💥</div>
+                </div>
+              </div>
+              <!-- locked -->
+              <div style="background:rgba(255,255,255,.015);border:1px dashed rgba(130,110,210,.18);border-radius:7px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px">
+                <div style="font-size:17px;opacity:.22">🔒</div>
+                <div style="font-size:7px;color:var(--mut)">Vargoth</div>
+                <div style="font-size:6px;color:var(--mut);opacity:.6">coming soon</div>
+              </div>
+              <div style="background:rgba(255,255,255,.015);border:1px dashed rgba(130,110,210,.18);border-radius:7px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px">
+                <div style="font-size:17px;opacity:.22">🔒</div>
+                <div style="font-size:7px;color:var(--mut)">Lorvak</div>
+                <div style="font-size:6px;color:var(--mut);opacity:.6">coming soon</div>
+              </div>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+              <div style="font-size:8px;color:var(--mut);font-style:italic">"The shield is the beginning of everything."</div>
+              <div style="background:linear-gradient(180deg,#9a1f1f,#6b1313);border:1px solid rgba(201,168,76,.32);border-radius:4px;padding:5px 18px;font-family:Cinzel,serif;font-size:10px;color:var(--gold);letter-spacing:.08em">CONFIRM</div>
+            </div>
+          </div>
+        </div>
+        <div class="mnote">Four slots on screen — two playable, two locked placeholders so the roster reads as growing rather than finished. Each card carries HP, damage and the four ability icons. Tapping a card shows its full ability text; the quote line changes to that character's. Selected card gets a gold border.</div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Out of scope</div>
+        <div class="oos">Unlocking characters with SlerfCoin is <b>not</b> built — both are free and available. Character skins, the lore/backstory panel and the 3D rotating preview are later sprints. The select confirm <b>sound</b> is a separate audio ticket.</div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Definition of Done</div>
+        <div class="dod">
+          <div class="di c"><div class="da">←</div>Both characters selectable; the selection persists across app restarts</div>
+          <div class="di c"><div class="da">←</div>Selected character_id is what reaches the server on PLAY</div>
+          <div class="di"><div class="da">←</div>Stats shown match the server values exactly — Aldric 2240/165, Greta 1900/140</div>
+          <div class="di"><div class="da">←</div>Tapping a card reveals its four abilities with names and short descriptions</div>
+          <div class="di"><div class="da">←</div>Locked slots are visibly locked and do nothing on tap</div>
+          <div class="di"><div class="da">←</div>Layout works in landscape with no overflow</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ BLOCK C INTRO ══ -->
+<div class="sec">
+  <div class="sech"><div class="sect">Block C — Effects</div><div class="secs">7 tickets · the game currently has zero VFX</div></div>
+  <p class="secd">From the APK playtest: "attack button works, damage registers, no animation or sound or effect whatsoever." Hitting an enemy today feels like nothing happened. Block C is the cheapest sprint-wide upgrade to game feel available — most of these are a few hours of work each and together they change the entire experience of playing.</p>
+  <div class="co info">
+    <strong>Everything in Block C hooks to the events built in B0.</strong> No new server work is required for these tickets — if B0 fires the events correctly, Block C is pure client-side rendering. That makes it parallelisable: Amir can work through Block C while Leon finishes Block B's backend.
+  </div>
+</div>
+
+<!-- ══ C1 ══ -->
+<div class="sec" id="c1">
+  <div class="sech"><div class="sect">C1 — Hit Feedback</div><div class="secs">Frontend · highest impact per hour in the sprint</div></div>
+
+  <div class="tk vfx">
+    <div class="tkh">
+      <div>
+        <div class="tkid">NEW · Sprint 4 · Block C · do this first</div>
+        <div class="tkt">Hit Feedback — Flash, Damage Numbers & Impact Particles</div>
+        <div class="tags"><span class="tg g-vfx">VFX</span><span class="tg g-fe">Frontend · Amir</span></div>
+      </div>
+    </div>
+    <div class="tkb">
+      <div class="bl">
+        <div class="bll">Purpose</div>
+        <div class="tx"><p>Right now the only evidence that an attack connected is an HP bar shrinking. There is no flash, no number, no particle, no sound. Players cannot tell whether they hit, missed, or were out of range. This single ticket does more for how the game feels than anything else in the sprint.</p>
+        <p>It also carries a mechanic the game needs for Block B: <strong>gold damage numbers</strong> are how a player learns a hidden combo fired.</p></div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Prerequisites</div>
+        <div class="pq">
+          <div class="pqi block"><div class="pqk">Blocked by</div><div class="pqv"><b>B0</b> — needs the <code>damage_dealt</code> event with amount, source, shielded flag and redirected flag</div></div>
+          <div class="pqi"><div class="pqk">Pairs with</div><div class="pqv"><b>BOM-104</b> hit and kill sound — the sound and the flash must land on the same frame</div></div>
+        </div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Part 1 — Hit flash</div>
+        <div class="part">
+          <div class="tx"><p>On every confirmed hit, the target's model flashes white for 0.08 s then returns to normal over 0.12 s. Short enough not to be annoying at one hit per second, long enough to register.</p></div>
+          <div class="tl">
+            <div class="tlr"><div class="tln">Flash in</div><div class="tlb"><div class="tlf" style="width:18%"></div></div><div class="tll">0.08s</div><div class="tlt">to white</div></div>
+            <div class="tlr"><div class="tln">Flash out</div><div class="tlb"><div class="tlf" style="width:28%"></div></div><div class="tll">0.12s</div><div class="tlt">back to normal</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Part 2 — Floating damage numbers</div>
+        <div class="part">
+          <div class="tx"><p>A number rises from the hit point, drifting up and fading over 0.8 s. Colour carries meaning:</p></div>
+          <table class="st">
+            <thead><tr><th>Colour</th><th>Meaning</th><th>When</th></tr></thead>
+            <tbody>
+              <tr><td><span style="color:#fff">White</span></td><td>Normal damage</td><td class="mono">default</td></tr>
+              <tr><td><span style="color:var(--gold)">Gold</span></td><td>Combo bonus active</td><td class="mono">B8 combo firing</td></tr>
+              <tr><td><span style="color:#38bdf8">Blue</span></td><td>Absorbed by a shield</td><td class="mono">Aldric's Stone Wall soaking a hit</td></tr>
+              <tr><td><span style="color:var(--greta)">Brown-gold</span></td><td>Redirected to Greta</td><td class="mono">Guardian's Embrace — shows on Greta, not the ally</td></tr>
+              <tr><td><span style="color:#6b7280">Grey</span></td><td>Reduced by damage reduction</td><td class="mono">Defensive Stance, aura, bear form</td></tr>
+            </tbody>
+          </table>
+          <div class="tx" style="margin-top:8px"><p><strong>Scope control:</strong> only show numbers for damage the local player dealt, or damage the local player took. Rendering every number in a 4v4 fight is unreadable on a phone.</p></div>
+        </div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Part 3 — Impact particles</div>
+        <div class="part">
+          <div class="tx"><p>A small burst at the point of contact, oriented away from the attacker. Per-character so hits read differently: <strong>Aldric</strong> throws metallic sparks from the sword, <strong>Greta</strong> leaves golden claw-slash streaks. 6–10 particles, 0.3 s lifetime, no lingering smoke.</p></div>
+        </div>
+
+        <div class="mlab" style="margin-top:14px">All three together — one confirmed hit</div>
+        <div class="gf" style="max-width:560px">
+          <div class="gfbg"></div>
+          <div class="ui">
+            <div class="utop">
+              <div class="flg"><div class="fl s">our flag SAFE</div></div>
+              <div class="tmr"><div class="tmrv">5:33</div></div>
+            </div>
+            <div style="position:absolute;left:38%;top:52%;font-size:16px">🐻</div>
+            <!-- target flashing -->
+            <div style="position:absolute;left:56%;top:48%;text-align:center">
+              <div style="font-size:16px;filter:brightness(2.6) saturate(.3)">⚔</div>
+              <div style="width:30px;height:3px;background:rgba(255,255,255,.1);border-radius:2px;margin:3px auto 0;overflow:hidden"><div style="width:56%;height:100%;background:#ef4444"></div></div>
+            </div>
+            <!-- particles -->
+            <div style="position:absolute;left:60%;top:46%;font-size:9px;color:var(--gold)">✦</div>
+            <div style="position:absolute;left:62%;top:50%;font-size:7px;color:var(--gold);opacity:.75">✦</div>
+            <div style="position:absolute;left:59%;top:53%;font-size:6px;color:var(--gold);opacity:.5">✦</div>
+            <!-- damage number -->
+            <div style="position:absolute;left:57%;top:38%;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;color:var(--gold);text-shadow:0 1px 4px rgba(0,0,0,.9)">165</div>
+            <div style="position:absolute;left:57%;top:33%;font-size:6px;color:var(--goldd);font-family:'JetBrains Mono',monospace">combo</div>
+            <div class="ubot">
+              <div><div class="joy"><div class="joyi"></div></div></div>
+              <div class="abs">
+                <div class="ab u"><div style="font-size:11px">💥</div><div class="cdn">58</div></div>
+                <div class="ab s"><div style="font-size:12px">🤝</div></div>
+                <div class="ab a" style="border-color:#f87171;box-shadow:0 0 10px rgba(239,68,68,.35)"><div style="font-size:15px">🐾</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="mnote">Target flashes white, gold claw particles burst from the contact point, and a gold "165" rises because a combo is active. The attack button briefly glows to confirm the input registered. All on the same frame as the hit sound from BOM-104.</div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Out of scope</div>
+        <div class="oos">Screen shake is <b>C2</b>. Ability-specific VFX are <b>C3</b> and <b>C4</b>. Hit and kill <b>sounds</b> are BOM-104, already in the backlog.</div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Definition of Done</div>
+        <div class="dod">
+          <div class="di c"><div class="da">←</div>Flash, number and particles all fire on the server's damage_dealt event, never on button tap</div>
+          <div class="di c"><div class="da">←</div>All five number colours appear in their correct cases, verified in a live match</div>
+          <div class="di"><div class="da">←</div>Numbers show only for damage the local player dealt or took</div>
+          <div class="di"><div class="da">←</div>Particles differ visibly between Aldric and Greta</div>
+          <div class="di"><div class="da">←</div>At 1 hit per second over 30 seconds, nothing accumulates or leaks — frame rate holds</div>
+          <div class="di"><div class="da">←</div>Flash and the BOM-104 hit sound land on the same frame</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ C2 ══ -->
+<div class="sec" id="c2">
+  <div class="sech"><div class="sect">C2 — Screen Shake & Camera Feel</div><div class="secs">Frontend · weight and impact</div></div>
+
+  <div class="tk vfx">
+    <div class="tkh">
+      <div>
+        <div class="tkid">NEW · Sprint 4 · Block C</div>
+        <div class="tkt">Screen Shake & Camera Impact Response</div>
+        <div class="tags"><span class="tg g-vfx">VFX</span><span class="tg g-fe">Frontend · Amir</span></div>
+      </div>
+    </div>
+    <div class="tkb">
+      <div class="bl">
+        <div class="bll">Purpose</div>
+        <div class="tx"><p>Shake is what makes a heavy character feel heavy. The Tank Spec literally calls for it — Greta's Ultimate is described as "bear growl + slight screen shake." Used sparingly it adds weight; used on every hit it induces nausea. The intensity table below is the whole ticket.</p></div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Prerequisites</div>
+        <div class="pq">
+          <div class="pqi block"><div class="pqk">Blocked by</div><div class="pqv"><b>B0</b> — needs damage and status events to hook to</div></div>
+          <div class="pqi"><div class="pqk">Config</div><div class="pqv">A master shake multiplier in BOM-87 so the whole system can be dialled down after playtest without touching code</div></div>
+        </div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Part 1 — Intensity table</div>
+        <div class="part">
+          <table class="st">
+            <thead><tr><th>Event</th><th>Amplitude</th><th>Duration</th><th>Applies to</th></tr></thead>
+            <tbody>
+              <tr><td>Local player takes a basic hit</td><td class="mono">very light</td><td class="mono">0.08 s</td><td class="mono">local only</td></tr>
+              <tr><td>Local player takes ability damage</td><td class="mono">light</td><td class="mono">0.15 s</td><td class="mono">local only</td></tr>
+              <tr><td>Local player dies</td><td class="mono">medium</td><td class="mono">0.4 s</td><td class="mono">local only</td></tr>
+              <tr><td>Greta's Ultimate AoE lands on you</td><td class="mono">strong</td><td class="mono">0.5 s</td><td class="mono">everyone in the 4 m radius</td></tr>
+              <tr><td>Greta's bear transformation nearby</td><td class="mono">medium</td><td class="mono">0.3 s</td><td class="mono">everyone within 8 m</td></tr>
+              <tr><td>Aldric's Hero's Sacrifice stun</td><td class="mono">medium</td><td class="mono">0.3 s</td><td class="mono">everyone stunned by it</td></tr>
+              <tr><td>Knockdown Mode activates</td><td class="mono">strong</td><td class="mono">0.6 s</td><td class="mono">all 4 players</td></tr>
+              <tr><td>Final Stage teleport</td><td class="mono">strong</td><td class="mono">0.5 s</td><td class="mono">all 8 players</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Part 2 — Rules that keep it comfortable</div>
+        <div class="part">
+          <div class="tx">
+            <p><strong>Never on dealing damage.</strong> Shake on your own attacks at one per second is unplayable. Only on taking damage or on big events.</p>
+            <p><strong>Never stacks.</strong> Two events in the same window use the stronger one, they do not add. Three simultaneous hits should not triple the shake.</p>
+            <p><strong>Always decays.</strong> Every shake eases out to zero. A hard cut back to centre reads as a glitch.</p>
+            <p><strong>Settings toggle.</strong> A "reduce screen shake" option in settings that scales everything to zero. Some players get motion sick, and this is standard accessibility practice.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Out of scope</div>
+        <div class="oos">Camera zoom effects, slow motion and the deathcam camera move (BOM-51) are separate. Controller rumble — there are no controllers.</div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Definition of Done</div>
+        <div class="dod">
+          <div class="di c"><div class="da">←</div>All 8 events shake at their specified amplitude and duration</div>
+          <div class="di c"><div class="da">←</div>No shake on dealing damage — only on receiving it or on major events</div>
+          <div class="di"><div class="da">←</div>Simultaneous events never stack — strongest wins</div>
+          <div class="di"><div class="da">←</div>Every shake eases out rather than cutting</div>
+          <div class="di"><div class="da">←</div>Settings toggle scales all shake to zero and persists across restarts</div>
+          <div class="di"><div class="da">←</div>Master multiplier in config lets Steve retune after playtest with no rebuild</div>
+          <div class="di"><div class="da">←</div>A full 11-minute match played start to finish causes no discomfort</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ C3 ══ -->
+<div class="sec" id="c3">
+  <div class="sech"><div class="sect">C3 — Sir Aldric VFX</div><div class="secs">Frontend · three abilities made visible</div></div>
+
+  <div class="tk vfx">
+    <div class="tkh">
+      <div>
+        <div class="tkid">NEW · Sprint 4 · uses corrected ability spec</div>
+        <div class="tkt">Sir Aldric — Ability Visual Effects</div>
+        <div class="tags"><span class="tg g-vfx">VFX</span><span class="tg g-fe">Frontend · Amir</span><span class="tg g-fix">Corrected spec</span></div>
+      </div>
+    </div>
+    <div class="tkb">
+      <div class="bl">
+        <div class="bll">Purpose</div>
+        <div class="tx"><p>Aldric's abilities currently have no visual presence. A −40% damage reduction that looks like nothing is a stat the player has to take on faith. Each of his three abilities needs a visual that communicates its actual mechanic.</p></div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Prerequisites</div>
+        <div class="pq">
+          <div class="pqi block"><div class="pqk">Blocked by</div><div class="pqv">The <b>BOM-43 correction</b> at the top of this document. Building VFX for "Divine Shield" wastes the work — the ability is Defensive Stance and behaves completely differently.</div></div>
+          <div class="pqi"><div class="pqk">Needs</div><div class="pqv"><b>B0</b> status events — SHIELD applied, DMG_REDUCTION applied, CC_IMMUNITY applied</div></div>
+        </div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Part 1 — Passive · Stone Wall</div>
+        <div class="part">
+          <div class="tx"><p>The hardest to communicate and the most important, because the player controls it by <em>not moving</em> — which feels like doing nothing.</p></div>
+          <div class="sq"><div class="sqi">⏱</div><div style="flex:1"><div class="sql">Player stops moving</div><div class="sqs">faint stone-grey particles begin gathering at his feet</div></div><div class="sqm">0 – 2.0s charge</div></div>
+          <div class="sqa">↓</div>
+          <div class="sq"><div class="sqi">🛡</div><div style="flex:1"><div class="sql">2 seconds reached — shield applies</div><div class="sqs">translucent stone-textured shell snaps around him with a brief flash · HUD passive icon lights up</div></div><div class="sqm">at 2.0s</div></div>
+          <div class="sqa">↓</div>
+          <div class="sq"><div class="sqi">💔</div><div style="flex:1"><div class="sql">He moves, or the 224 is depleted</div><div class="sqs">shell shatters into fragments and fades over 0.3s</div></div><div class="sqm">on break</div></div>
+          <div class="tx" style="margin-top:9px"><p>The shell's opacity tracks the remaining shield HP, so a player under fire can see their 224 draining in real time.</p></div>
+        </div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Part 2 — Skill · Defensive Stance</div>
+        <div class="part">
+          <div class="tx"><p>4 seconds, −40% damage, speed drops 1.8 → 1.2. The visual has to sell both halves: he is tougher <em>and</em> he is slower.</p></div>
+          <table class="st">
+            <tbody>
+              <tr><td>Shield plant</td><td>Shield slams forward, a faint blue hexagonal barrier flickers in front of him in the facing direction</td></tr>
+              <tr><td>Body aura</td><td>Steady dim blue glow outlining the model for the full 4 s — signals "reduced damage" to allies and enemies alike</td></tr>
+              <tr><td>Slowed movement</td><td>Heavy dust puffs at his feet each step, selling the weight of the reduced speed</td></tr>
+              <tr><td>Hits while active</td><td>Damage numbers go <strong>grey</strong> (from C1) and impact particles spark off the barrier rather than the body</td></tr>
+              <tr><td>Expiry</td><td>Barrier dissolves, aura fades over 0.3 s, dust stops</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Part 3 — Ultimate · Hero's Sacrifice</div>
+        <div class="part">
+          <div class="tx"><p>The spec describes it precisely: <em>golden light bursts from Aldric, the sword is raised to the sky, a noble shout animation.</em> He pays 30% of his current HP for 5 seconds of total immunity and stuns everything within 3 m for 2 seconds.</p></div>
+          <div class="sq"><div class="sqi">⚡</div><div style="flex:1"><div class="sql">Cast — sword raised</div><div class="sqs">golden light gathers at the blade</div></div><div class="sqm">0 – 0.3s</div></div>
+          <div class="sqa">↓</div>
+          <div class="sq"><div class="sqi">💥</div><div style="flex:1"><div class="sql">Golden shockwave expands to exactly 3 m</div><div class="sqs">the ring must match the real radius so players learn the range by eye · "FOR THE KINGDOM!" appears above him</div></div><div class="sqm">0.3s</div></div>
+          <div class="sqa">↓</div>
+          <div class="sq"><div class="sqi">✨</div><div style="flex:1"><div class="sql">5 seconds of immunity</div><div class="sqs">persistent golden outline · incoming damage numbers show <strong>0</strong> and spark off the aura</div></div><div class="sqm">0.3 – 5.3s</div></div>
+          <div class="sqa">↓</div>
+          <div class="sq"><div class="sqi">🩸</div><div style="flex:1"><div class="sql">HP cost shown at cast</div><div class="sqs">his own HP bar visibly drops 30% with a red flash — the player must feel the price</div></div><div class="sqm">at cast</div></div>
+        </div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Out of scope</div>
+        <div class="oos">Ability <b>sounds</b> including the "FOR THE KINGDOM!" voice line are a separate audio ticket. The animations themselves are <b>BOM-102</b>, which also needs correcting to the new ability names.</div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Definition of Done</div>
+        <div class="dod">
+          <div class="di c"><div class="da">←</div>Stone Wall shell appears at exactly 2.0 s of standing still and shatters the instant he moves</div>
+          <div class="di c"><div class="da">←</div>Shell opacity visibly tracks the remaining shield HP</div>
+          <div class="di c"><div class="da">←</div>Hero's Sacrifice shockwave ring matches the real 3 m radius</div>
+          <div class="di"><div class="da">←</div>Defensive Stance aura is visible to enemies, not just to the casting player</div>
+          <div class="di"><div class="da">←</div>Immunity shows incoming damage as 0 for the full 5 s</div>
+          <div class="di"><div class="da">←</div>The 30% HP cost is visually obvious at cast time</div>
+          <div class="di"><div class="da">←</div>All effects clean up on death, respawn and match end — nothing persists</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ C4 ══ -->
+<div class="sec" id="c4">
+  <div class="sech"><div class="sect">C4 — Mother Greta VFX</div><div class="secs">Frontend · the golden tether is the star</div></div>
+
+  <div class="tk vfx">
+    <div class="tkh">
+      <div>
+        <div class="tkid">NEW · Sprint 4 · depends on B5 B6</div>
+        <div class="tkt">Mother Greta — Ability Visual Effects</div>
+        <div class="tags"><span class="tg g-vfx">VFX</span><span class="tg g-fe">Frontend · Amir</span></div>
+      </div>
+    </div>
+    <div class="tkb">
+      <div class="bl">
+        <div class="bll">Purpose</div>
+        <div class="tx"><p>Greta's whole identity is protecting other people, and protection is invisible by nature. Without strong visuals, playing her feels like watching other people fight. The golden tether of Guardian's Embrace is the single most important effect in Block C — it is the only thing that shows a player they are being protected.</p></div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Prerequisites</div>
+        <div class="pq">
+          <div class="pqi block"><div class="pqk">Blocked by</div><div class="pqv"><b>B5</b> ability logic · <b>B6</b> HUD wiring · <b>B2</b> model imported</div></div>
+          <div class="pqi"><div class="pqk">Overlaps</div><div class="pqv">The transformation burst is built in <b>B4</b> because it masks the model swap — specified here, implemented there</div></div>
+        </div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Part 1 — Passive · Mother Bear's Aura</div>
+        <div class="part">
+          <div class="tx"><p>A soft brown-gold light radiates from Greta out to 3 m. Allies standing inside it carry a faint matching glow at their feet, so each protected player can see for themselves that they are in range.</p>
+          <p>The aura must be <strong>subtle</strong> — it is on permanently for the whole match. Anything bright becomes visual noise within a minute.</p></div>
+        </div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Part 2 — Skill · Guardian's Embrace — the golden tether</div>
+        <div class="part">
+          <div class="parth"><div class="partn">★</div><div class="partt">The signature effect of the character</div><div class="partmeta">highest priority in C4</div></div>
+          <div class="tx"><p>From the spec: <em>a golden line connects Greta to the ally. When the ally is hit, the light pulses and the damage flows along it to her.</em></p></div>
+          <div class="sq"><div class="sqi">🤝</div><div style="flex:1"><div class="sql">Cast — tether forms</div><div class="sqs">golden line draws from Greta's chest to the ally's chest over 0.2s</div></div><div class="sqm">at cast</div></div>
+          <div class="sqa">↓</div>
+          <div class="sq"><div class="sqi">〰</div><div style="flex:1"><div class="sql">Idle state — gentle pulse</div><div class="sqs">soft travelling shimmer along the line so it reads as alive, not a static debug line</div></div><div class="sqm">4s duration</div></div>
+          <div class="sqa">↓</div>
+          <div class="sq"><div class="sqi">⚡</div><div style="flex:1"><div class="sql">Ally takes damage — the moment that sells it</div><div class="sqs">bright pulse travels <strong>from the ally to Greta</strong> in 0.25s · brown-gold damage number appears over Greta (C1)</div></div><div class="sqm">per hit</div></div>
+          <div class="sqa">↓</div>
+          <div class="sq"><div class="sqi">✂</div><div style="flex:1"><div class="sql">Link ends — 4s expiry, ally dies, or Greta dies</div><div class="sqs">line retracts toward Greta and fades over 0.3s</div></div><div class="sqm">on end</div></div>
+          <div class="tx" style="margin-top:9px"><p><strong>Visible to everyone.</strong> The enemy seeing the tether is a feature — it tells them to kill Greta first, which is exactly the counterplay the design wants.</p></div>
+        </div>
+
+        <div class="mlab" style="margin-top:12px">Tether active, ally under fire</div>
+        <div class="gf" style="max-width:560px">
+          <div class="gfbg"></div>
+          <div class="ui">
+            <div class="utop">
+              <div class="flg"><div class="fl t">our flag TAKEN</div></div>
+              <div class="tmr"><div class="tmrv">4:19</div></div>
+            </div>
+            <!-- tether line -->
+            <svg style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none" viewBox="0 0 560 315" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="teth" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="#c9a84c" stop-opacity=".35"/>
+                  <stop offset="55%" stop-color="#f0d080" stop-opacity=".95"/>
+                  <stop offset="100%" stop-color="#c9a84c" stop-opacity=".5"/>
+                </linearGradient>
+              </defs>
+              <path d="M 196 172 Q 252 140 322 152" stroke="url(#teth)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+              <circle cx="286" cy="148" r="3.5" fill="#f0d080" opacity=".9"/>
+            </svg>
+            <!-- greta -->
+            <div style="position:absolute;left:33%;top:51%;text-align:center">
+              <div style="font-size:16px">🐻</div>
+              <div style="width:28px;height:3px;background:rgba(255,255,255,.1);border-radius:2px;margin:3px auto 0;overflow:hidden"><div style="width:61%;height:100%;background:#3db86a"></div></div>
+            </div>
+            <div style="position:absolute;left:30%;top:42%;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:var(--greta);text-shadow:0 1px 4px rgba(0,0,0,.9)">70</div>
+            <!-- ally being hit -->
+            <div style="position:absolute;left:56%;top:44%;text-align:center">
+              <div style="font-size:14px;filter:brightness(2.2)">🗡</div>
+              <div style="width:26px;height:3px;background:rgba(255,255,255,.1);border-radius:2px;margin:3px auto 0;overflow:hidden"><div style="width:34%;height:100%;background:#ef4444"></div></div>
+            </div>
+            <div style="position:absolute;left:58%;top:36%;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.9)">70</div>
+            <!-- enemy -->
+            <div style="position:absolute;left:72%;top:50%;font-size:13px;opacity:.85">⚔</div>
+            <div class="ubot">
+              <div>
+                <div class="hpr"><div class="av gr">🐻</div><div class="hb"><div class="hf" style="width:61%;background:#3db86a"></div></div></div>
+                <div class="joy" style="margin-top:5px"><div class="joyi"></div></div>
+              </div>
+              <div style="display:flex;align-items:flex-end;gap:5px">
+                <div style="background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.4);border-radius:5px;padding:3px 6px;text-align:center">
+                  <div style="font-size:10px">🗡</div>
+                  <div style="font-size:6px;color:var(--gold);font-family:'JetBrains Mono',monospace">2.4s</div>
+                </div>
+                <div class="abs">
+                  <div class="ab u"><div style="font-size:11px">💥</div><div class="cdn">62</div></div>
+                  <div class="ab s" style="opacity:.4"><div style="font-size:12px">🤝</div><div class="cdn">9</div></div>
+                  <div class="ab a"><div style="font-size:15px">🐾</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="mnote">A 140-damage hit on the ally splits into two 70s — white over the ally, brown-gold over Greta — with a bright pulse travelling the tether between them. The linked ally's portrait sits beside the Skill button with 2.4 s left on the link.</div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Part 3 — Ultimate · Mother Bear's Wrath</div>
+        <div class="part">
+          <table class="st">
+            <thead><tr><th>Moment</th><th>Effect</th></tr></thead>
+            <tbody>
+              <tr><td>Roll and transform</td><td>Golden light builds, then bursts bright enough to fully mask the model swap (built in B4)</td></tr>
+              <tr><td>AoE shockwave</td><td>Brown-gold ring expanding to exactly <strong>4 m</strong> — must match the real radius</td></tr>
+              <tr><td>Eyes</td><td>Glowing gold, clearly visible on the bear model throughout</td></tr>
+              <tr><td>Bear form aura</td><td>Low warm glow around the bear for the full 6 s so everyone can see the buff is live</td></tr>
+              <tr><td>Footfalls</td><td>Small dust puffs with each heavy step — sells the mass</td></tr>
+              <tr><td>Revert</td><td>Golden flash masks the swap back, aura fades over 0.3 s</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Out of scope</div>
+        <div class="oos">The transformation <b>model swap mechanic</b> is B4 — this ticket specifies the visual, B4 implements the swap. The bear growl and all sounds are a separate audio ticket. The stun visual on affected enemies is <b>C5</b>.</div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Definition of Done</div>
+        <div class="dod">
+          <div class="di c"><div class="da">←</div>Tether is visible to all players, not only to Greta and the linked ally</div>
+          <div class="di c"><div class="da">←</div>Damage pulse travels from ally to Greta on every redirected hit</div>
+          <div class="di c"><div class="da">←</div>Tether ends cleanly on all four end conditions, leaving nothing behind</div>
+          <div class="di"><div class="da">←</div>Aura is subtle enough to tolerate for a full 11-minute match</div>
+          <div class="di"><div class="da">←</div>Allies inside the aura carry their own visible indicator</div>
+          <div class="di"><div class="da">←</div>Ultimate shockwave ring matches the real 4 m radius</div>
+          <div class="di"><div class="da">←</div>Bear form aura and glowing eyes are visible for the full 6 s</div>
+          <div class="di"><div class="da">←</div>Nothing persists after death, respawn or match end</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ C5 ══ -->
+<div class="sec" id="c5">
+  <div class="sech"><div class="sect">C5 — Status Effect Visuals</div><div class="secs">Frontend · players must see why they can't move</div></div>
+
+  <div class="tk vfx">
+    <div class="tkh">
+      <div>
+        <div class="tkid">NEW · Sprint 4 · depends on B0</div>
+        <div class="tkt">Status Effect Visuals — Stun, Slow, Knockback, Shield & Immunity</div>
+        <div class="tags"><span class="tg g-vfx">VFX</span><span class="tg g-fe">Frontend · Amir</span></div>
+      </div>
+    </div>
+    <div class="tkb">
+      <div class="bl">
+        <div class="bll">Purpose</div>
+        <div class="tx"><p>B0 introduces states where the player's input stops working. A stun with no visual is indistinguishable from a network freeze or a crash — the player will report it as a bug, and they will be right to. Every status the server can apply needs a visual the player can read instantly.</p></div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Prerequisites</div>
+        <div class="pq">
+          <div class="pqi block"><div class="pqk">Blocked by</div><div class="pqv"><b>B0</b> — needs <code>status_applied</code> and <code>status_expired</code> events</div></div>
+        </div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Part 1 — Visual per status</div>
+        <div class="part">
+          <table class="st">
+            <thead><tr><th>Status</th><th>On the character</th><th>On the local player's HUD</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">STUN</td><td>Spinning stars circling above the head · character frozen mid-pose</td><td>Screen edges dim · joystick visibly greyed out · ability buttons greyed</td></tr>
+              <tr><td class="mono">SLOW</td><td>Heavy blue-grey particles dragging at the feet</td><td>Small downward-arrow icon near the HP bar</td></tr>
+              <tr><td class="mono">KNOCKBACK</td><td>Motion-blur trail along the displacement path</td><td>Joystick greyed for the 0.4 s of travel</td></tr>
+              <tr><td class="mono">SHIELD</td><td>Translucent shell, opacity tracking remaining shield HP</td><td>Shield value shown above the HP bar as a separate segment</td></tr>
+              <tr><td class="mono">DMG_REDUCTION</td><td>Steady coloured outline — blue for Aldric's stance, brown-gold for Greta's aura</td><td>Small shield icon beside the HP bar</td></tr>
+              <tr><td class="mono">DMG_AMPLIFY</td><td>Warm glow on the model · attack button border tinted gold</td><td>Upward-arrow icon beside the HP bar</td></tr>
+              <tr><td class="mono">CC_IMMUNITY</td><td>Golden outline (Aldric's Ultimate)</td><td>Star icon beside the HP bar</td></tr>
+              <tr><td class="mono">DMG_REDIRECT</td><td>Golden tether — specified in C4</td><td>Linked ally's portrait beside the Skill button</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Part 2 — The "blocked" moment</div>
+        <div class="part">
+          <div class="tx"><p>When CC_IMMUNITY rejects an incoming stun, both players need to understand what just happened — the caster especially, or they will think the ability is broken.</p>
+          <p>A brief <strong>golden ring pulse</strong> on the immune player plus the word <strong>IMMUNE</strong> floating up where the damage number would be. Same treatment later for Vargoth's Unbroken passive, which the spec describes as a "breaking chains" flash.</p></div>
+        </div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Part 3 — Stacking indicators</div>
+        <div class="part">
+          <div class="tx"><p>A player can carry several statuses at once — slowed, shielded and reduced simultaneously is normal. Indicators sit in a row beside the HP bar, maximum four visible, with a "+n" if more. The row never grows wide enough to overlap the ability bar.</p></div>
+        </div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Out of scope</div>
+        <div class="oos">PULL has no visual — it is not implemented in Sprint 4. Status effect <b>sounds</b> are a later audio ticket.</div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Definition of Done</div>
+        <div class="dod">
+          <div class="di c"><div class="da">←</div>A stunned player immediately sees stars, dimmed edges and greyed controls — never an unexplained freeze</div>
+          <div class="di c"><div class="da">←</div>All 8 statuses show both their character visual and their HUD indicator</div>
+          <div class="di"><div class="da">←</div>IMMUNE feedback appears on both the immune player's and the caster's screen</div>
+          <div class="di"><div class="da">←</div>Shield value renders as a distinct segment above the HP bar, not mixed into it</div>
+          <div class="di"><div class="da">←</div>Four simultaneous statuses display without overlapping the ability bar</div>
+          <div class="di"><div class="da">←</div>Every visual clears on status_expired with nothing left behind</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ C6 ══ -->
+<div class="sec" id="c6">
+  <div class="sech"><div class="sect">C6 — Death & Respawn Effects</div><div class="secs">Frontend · the spec already wrote these</div></div>
+
+  <div class="tk vfx">
+    <div class="tkh">
+      <div>
+        <div class="tkid">NEW · Sprint 4 · per-character</div>
+        <div class="tkt">Death & Respawn Visual Effects — Per Character</div>
+        <div class="tags"><span class="tg g-vfx">VFX</span><span class="tg g-fe">Frontend · Amir</span></div>
+      </div>
+    </div>
+    <div class="tkb">
+      <div class="bl">
+        <div class="bll">Purpose</div>
+        <div class="tx"><p>Dying is currently a capsule stopping. The Tank Spec gives every character a specific death and respawn visual, and these are free character-building — the player learns who Aldric and Greta are from how they fall and how they return.</p></div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Prerequisites</div>
+        <div class="pq">
+          <div class="pqi block"><div class="pqk">Blocked by</div><div class="pqv"><b>B3</b> Greta animations · <b>BOM-102</b> Aldric animations · <b>B0</b> death and respawn events</div></div>
+          <div class="pqi"><div class="pqk">Pairs with</div><div class="pqv"><b>BOM-108</b> death sound · <b>BOM-51</b> deathcam</div></div>
+        </div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Part 1 — Per character, from the spec</div>
+        <div class="part">
+          <table class="st">
+            <thead><tr><th></th><th>Sir Aldric</th><th>Mother Greta</th></tr></thead>
+            <tbody>
+              <tr><td>Death animation</td><td>Falls backward, sword rolls away to the side</td><td>Falls to the side, hand outstretched toward a nearby ally</td></tr>
+              <tr><td>Death effect</td><td>Dust on impact · gold motes rising and fading from the body</td><td>Dust on impact · a last soft brown-gold pulse from the pendant</td></tr>
+              <tr><td>Body persistence</td><td colspan="2" class="mono">Stays visible for 3 s, then fades over 0.5 s</td></tr>
+              <tr><td>Respawn effect</td><td>Golden light bursts from the ground, Aldric rises out of it</td><td>Mother Bear's golden light surrounds her, she rises renewed</td></tr>
+              <tr><td>Respawn invuln</td><td colspan="2" class="mono">1 s of CC_IMMUNITY with the golden outline from C5 — prevents spawn camping</td></tr>
+            </tbody>
+          </table>
+          <div class="co warn" style="margin-top:10px;margin-bottom:0;font-size:12px">
+            <strong>Respawn invulnerability is a design decision, not just a visual.</strong> It needs Steve's sign-off and a B0 backend change. Without it, a team that pushes to the enemy base can hold a spawn point indefinitely. Recommend 1 second — long enough to move, too short to attack from.
+          </div>
+        </div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Part 2 — Greta dying in bear form</div>
+        <div class="part">
+          <div class="tx"><p>Covered in B4's edge cases: the bear plays its own death and the body stays a bear until respawn. She respawns in human form with the normal respawn effect. Reverting to human at the moment of death would read as a glitch.</p></div>
+        </div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Out of scope</div>
+        <div class="oos">The <b>deathcam</b> camera move is BOM-51, already in the backlog. Death <b>sounds</b> are BOM-108. Kill feed entries are BOM-52.</div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Definition of Done</div>
+        <div class="dod">
+          <div class="di c"><div class="da">←</div>Each character's death and respawn visual matches the Tank Spec description</div>
+          <div class="di c"><div class="da">←</div>Body persists 3 s then fades — never vanishes instantly</div>
+          <div class="di"><div class="da">←</div>Respawn invulnerability applies for 1 s with its visual, pending Steve's confirmation</div>
+          <div class="di"><div class="da">←</div>Greta dying in bear form keeps the bear body until respawn</div>
+          <div class="di"><div class="da">←</div>Effects are visible to all players, not only the dying one</div>
+          <div class="di"><div class="da">←</div>Death effect and the BOM-108 death sound land on the same frame</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ C7 ══ -->
+<div class="sec" id="c7">
+  <div class="sech"><div class="sect">C7 — Flag Carrier Visuals</div><div class="secs">Frontend · the most important player on the field</div></div>
+
+  <div class="tk vfx">
+    <div class="tkh">
+      <div>
+        <div class="tkid">NEW · Sprint 4 · closes a QA gap from Sprint 2</div>
+        <div class="tkt">Flag Carrier — Visual Identity, Off-Screen Indicator & Carry State</div>
+        <div class="tags"><span class="tg g-vfx">VFX</span><span class="tg g-fe">Frontend · Amir</span><span class="tg g-fix">Fixes QA #11</span></div>
+      </div>
+    </div>
+    <div class="tkb">
+      <div class="bl">
+        <div class="bll">Purpose</div>
+        <div class="tx"><p>The flag carrier decides the match. The Tank Spec gives them three rules — they can use all four abilities, they move 15% slower, and they are visible to everyone at all times including in grass. None of that is currently communicated visually.</p>
+        <p>This also closes Steve's QA finding #11 from Sprint 2: you cannot locate the flag carrier when they are off screen, which makes defending impossible.</p></div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Prerequisites</div>
+        <div class="pq">
+          <div class="pqi"><div class="pqk">Needs</div><div class="pqv"><b>BOM-98</b> FOV rework — carrier visibility is an explicit exception to FOV rules</div></div>
+          <div class="pqi"><div class="pqk">Config</div><div class="pqv"><code>FLAG_CARRIER_SPEED_PENALTY = 0.15</code> in BOM-87</div></div>
+          <div class="pqi"><div class="pqk">Source</div><div class="pqv">Tank Spec § Golden Rules — flag carrier clause · QA Sprint 2 finding #11</div></div>
+        </div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Part 1 — Carrying the flag</div>
+        <div class="part">
+          <table class="st">
+            <tbody>
+              <tr><td>Flag attachment</td><td>Flag model mounted on the carrier's back, visible from every angle</td></tr>
+              <tr><td>Carrier glow</td><td>Persistent outline in the flag's team colour — the one place team colour is used, because it marks an <em>object</em>, not a character</td></tr>
+              <tr><td>Always visible</td><td>Never hidden by FOV or by grass. Grass desaturation (BOM-68) does <strong>not</strong> apply while carrying.</td></tr>
+              <tr><td>Slowed movement</td><td>15% speed penalty · subtle strain in the run animation</td></tr>
+              <tr><td>Trail</td><td>Faint particle trail in the flag's colour so recent movement can be read</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Part 2 — Off-screen indicator</div>
+        <div class="part">
+          <div class="parth"><div class="partn">★</div><div class="partt">Fixes QA #11</div></div>
+          <div class="tx"><p>When a carrier is outside the camera view, an arrow pins to the screen edge pointing toward them, with distance in metres. Both carriers get one — your own team's in your colour, the enemy's in theirs.</p></div>
+
+          <div class="mlab" style="margin-top:10px">Both carriers off screen</div>
+          <div class="gf" style="max-width:560px">
+            <div class="gfbg"></div>
+            <div class="ui">
+              <div class="utop">
+                <div class="flg"><div class="fl t">our flag TAKEN</div><div class="fl t">enemy flag TAKEN</div></div>
+                <div class="tmr"><div class="tmrv">3:52</div></div>
+              </div>
+              <!-- enemy carrier indicator, right edge -->
+              <div style="position:absolute;right:3px;top:38%;display:flex;align-items:center;gap:3px">
+                <div style="background:rgba(6,5,14,.88);border:1px solid rgba(239,68,68,.5);border-radius:4px;padding:2px 5px;text-align:center">
+                  <div style="font-size:8px;color:#fca5a5;font-family:'JetBrains Mono',monospace">18m</div>
+                </div>
+                <div style="color:#ef4444;font-size:13px">▶</div>
+              </div>
+              <!-- own carrier indicator, left edge -->
+              <div style="position:absolute;left:3px;top:62%;display:flex;align-items:center;gap:3px">
+                <div style="color:#3b82f6;font-size:13px">◀</div>
+                <div style="background:rgba(6,5,14,.88);border:1px solid rgba(59,130,246,.5);border-radius:4px;padding:2px 5px;text-align:center">
+                  <div style="font-size:8px;color:#93c5fd;font-family:'JetBrains Mono',monospace">11m</div>
+                </div>
+              </div>
+              <div style="position:absolute;left:48%;top:50%;font-size:15px">🐻</div>
+              <div class="ubot">
+                <div>
+                  <div class="hpr"><div class="av gr">🐻</div><div class="hb"><div class="hf" style="width:71%;background:#3db86a"></div></div></div>
+                  <div class="joy" style="margin-top:5px"><div class="joyi"></div></div>
+                </div>
+                <div class="abs">
+                  <div class="ab u"><div style="font-size:11px">💥</div><div class="cdn">33</div></div>
+                  <div class="ab s"><div style="font-size:12px">🤝</div></div>
+                  <div class="ab a"><div style="font-size:15px">🐾</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="mnote">Red arrow right — enemy carrier 18 m away with your flag. Blue arrow left — your teammate 11 m away with theirs. Both flags out means Knockdown Mode is 30 seconds from triggering, and these arrows are the only way to make that situation playable.</div>
+        </div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Part 3 — Pickup and drop moments</div>
+        <div class="part">
+          <div class="sq"><div class="sqi">🚩</div><div style="flex:1"><div class="sql">Pickup</div><div class="sqs">flag snaps to the back with a brief flash · glow fades in over 0.3s</div></div><div class="sqm">on pickup</div></div>
+          <div class="sq"><div class="sqi">💀</div><div style="flex:1"><div class="sql">Carrier dies — flag drops</div><div class="sqs">flag falls to the ground with a pulsing beacon so anyone can find it</div></div><div class="sqm">on death</div></div>
+          <div class="sq"><div class="sqi">↩</div><div style="flex:1"><div class="sql">Dropped flag returns on its timer</div><div class="sqs">beacon brightens in the final 2 s before it resets to base</div></div><div class="sqm">on timer</div></div>
+        </div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Out of scope</div>
+        <div class="oos">The <b>capture fanfare</b> is BOM-103. The flag drop <b>timer value</b> is a known spec conflict — 5 s vs 10 s, tracked in BOM-83 — and this ticket renders whatever the server says rather than resolving it.</div>
+      </div>
+
+      <div class="bl">
+        <div class="bll">Definition of Done</div>
+        <div class="dod">
+          <div class="di c"><div class="da">←</div>Carrier is visible to all players at all distances, including in grass</div>
+          <div class="di c"><div class="da">←</div>Off-screen arrows appear for both carriers with accurate live distances</div>
+          <div class="di"><div class="da">←</div>Flag is mounted and visible from every camera angle</div>
+          <div class="di"><div class="da">←</div>15% slowdown is perceptible in the animation, not only in the numbers</div>
+          <div class="di"><div class="da">←</div>Grass desaturation does not apply while carrying</div>
+          <div class="di"><div class="da">←</div>Dropped flag shows a beacon that brightens before it resets</div>
+          <div class="di"><div class="da">←</div>Carrier visuals work in bear form — flag mounts on the bear</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ DEPENDENCIES ══ -->
+<div class="sec" id="deps">
+  <div class="sech"><div class="sect">Dependencies & Execution Order</div><div class="secs">What unblocks what</div></div>
+
+  <div class="dep" style="margin-bottom:16px">
+    <div style="font-size:11px;color:var(--mut);margin-bottom:14px;font-family:'JetBrains Mono',monospace;letter-spacing:.06em">CRITICAL PATH — everything in Block B flows through B0</div>
+    <div class="depr"><div class="dn be">B0 Combat Core</div><div class="da2">→</div><div class="dn be">B5 Greta server</div><div class="da2">→</div><div class="dn fe">B6 Greta client</div><div class="da2">→</div><div class="dn vfx">C4 Greta VFX</div></div>
+    <div class="depr"><div class="dn be">B0 Combat Core</div><div class="da2">→</div><div class="dn vfx">C1 Hit feedback</div><div class="dnote">C1 needs only the damage event — can start as soon as B0 fires it</div></div>
+    <div class="depr"><div class="dn be">B0 Combat Core</div><div class="da2">→</div><div class="dn vfx">C5 Status visuals</div><div class="da2">·</div><div class="dn vfx">C2 Screen shake</div></div>
+    <div class="depr"><div class="dn art">B1 Greta art</div><div class="da2">→</div><div class="dn fe">B2 Import</div><div class="da2">→</div><div class="dn fe">B3 Animations</div><div class="da2">→</div><div class="dn fe">B4 Bear form</div></div>
+    <div class="depr"><div class="dn fe">B7 Ally targeting</div><div class="da2">→</div><div class="dn fe">B6 Greta client</div><div class="dnote">B7 can be built in parallel with B0 — no backend dependency for the UI itself</div></div>
+    <div class="depr"><div class="dn art">B1 icons</div><div class="da2">+</div><div class="dn fe">B2 portrait</div><div class="da2">→</div><div class="dn fe">B9 Character select</div></div>
+  </div>
+
+  <div class="co warn">
+    <strong>Two things decide whether Sprint 4 lands:</strong><br>
+    <strong>1. B0 must be Leon's first ticket.</strong> Six tickets across both blocks are blocked by it. If B0 slips to week 2, Block B does not finish.<br>
+    <strong>2. B1 must arrive in week 1.</strong> Sprint 3 already demonstrated what happens otherwise — the entire Aldric chain sat untouched while the backend ran ahead. Four tickets wait on Steve's Greta package.
+  </div>
+
+  <div class="co ok">
+    <strong>The good news — Block C is almost fully parallel.</strong> C1, C2 and C5 need only B0's events, not any Greta work. Amir can be building hit feedback, screen shake and status visuals while Leon writes the combat core and Steve draws Greta. C3 needs the Aldric correction landed but nothing else. That means the sprint has real work available for everyone from day one — which Sprint 3 did not.
+  </div>
+
+  <div class="g2" style="margin-top:18px">
+    <div>
+      <div class="bll">Suggested order — Leon</div>
+      <div class="tx">
+        <p><strong>Week 1:</strong> B0 Combat Mechanics Core — the whole week. It is the biggest single piece of backend work in the sprint and everything depends on it.</p>
+        <p><strong>Week 2:</strong> B5 Greta ability logic → B8 combo system (backend half) → support Amir on C1/C5 event wiring.</p>
+      </div>
+    </div>
+    <div>
+      <div class="bll">Suggested order — Amir</div>
+      <div class="tx">
+        <p><strong>Week 1:</strong> C1 hit feedback → C2 screen shake → B7 ally targeting UI → B2 Greta import the moment Steve delivers.</p>
+        <p><strong>Week 2:</strong> B3 animations → B4 bear form → B6 ability HUD → C4 Greta VFX → C5 status visuals → C3 Aldric VFX → C6 death/respawn → C7 flag carrier → B9 character select.</p>
+        <p style="color:var(--mut);font-size:12px">Week 2 is heavy. C3, C6, C7 and B9 are the natural candidates to cut or roll if the sprint runs short — none of them block anything else.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="co info" style="margin-top:18px;margin-bottom:0">
+    <strong>Still needs Steve before the sprint opens:</strong> (1) confirm the Aldric corrections, (2) decide on crits — recommend no, (3) confirm respawn invulnerability at 1 second, (4) confirm Greta's art package can land in week 1.
+  </div>
+</div>
+
+</body>
+</html>

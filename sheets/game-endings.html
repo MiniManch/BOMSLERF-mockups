@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BomSlerf — Game Flow & Endings Mockups</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#080c10; --surface:#0e1419; --card:#111820; --border:#1a2535; --text:#e2e8f0; --dim:#94a3b8; --muted:#475569; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; padding:40px 48px; }
+  h1 { font-size:24px; font-weight:500; margin-bottom:6px; }
+  .sub { font-size:14px; color:var(--dim); margin-bottom:40px; }
+  .section-label { font-size:11px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin-bottom:12px; }
+  .screen { background:#0b0e14; border-radius:12px; border:0.5px solid #1a2535; overflow:hidden; aspect-ratio:16/9; position:relative; display:flex; flex-direction:column; margin-bottom:32px; }
+  .screen-inner { position:relative; z-index:2; flex:1; display:flex; flex-direction:column; justify-content:space-between; padding:14px; }
+  .center { align-items:center; justify-content:center; }
+  .note { background:#111820; border:0.5px solid #1a2535; border-left:3px solid #3b82f6; border-radius:6px; padding:12px 16px; font-size:13px; color:var(--dim); line-height:1.7; margin-bottom:32px; }
+  .note strong { color:var(--text); }
+  .params { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:40px; }
+  .param { background:#111820; border:0.5px solid #1a2535; border-radius:8px; padding:14px; }
+  .param-label { font-size:11px; color:var(--muted); margin-bottom:4px; }
+  .param-value { font-size:22px; font-weight:500; color:var(--text); }
+  .param-note { font-size:11px; color:#3b82f6; margin-top:3px; }
+  .tag { display:inline-block; font-size:10px; padding:2px 8px; border-radius:4px; }
+  .tag-be { background:rgba(249,115,22,.12); color:#fb923c; border:0.5px solid rgba(249,115,22,.3); }
+  .tag-fe { background:rgba(168,85,247,.12); color:#c084fc; border:0.5px solid rgba(168,85,247,.3); }
+  .issues { display:flex; flex-direction:column; gap:10px; }
+  .issue { background:#111820; border:0.5px solid #1a2535; border-radius:8px; padding:12px 16px; display:flex; align-items:flex-start; gap:12px; }
+  .issue-id { font-family:monospace; font-size:11px; color:var(--muted); white-space:nowrap; padding-top:2px; }
+  .issue-title { font-size:13px; color:var(--text); font-weight:500; }
+  .issue-desc { font-size:12px; color:var(--dim); margin-top:3px; }
+  .timer { font-size:22px; font-weight:500; color:#fbbf24; }
+  .flags { display:flex; gap:8px; }
+  .flag-safe { background:rgba(0,80,120,.5); border:0.5px solid rgba(100,200,255,.3); border-radius:6px; padding:4px 10px; font-size:12px; color:#7dd3fc; }
+  .flag-taken { background:rgba(120,0,0,.5); border:0.5px solid rgba(255,100,100,.3); border-radius:6px; padding:4px 10px; font-size:12px; color:#fca5a5; }
+  .hp-bar { width:80px; height:5px; background:#1e293b; border-radius:3px; overflow:hidden; margin-top:3px; }
+  .hp-fill { height:100%; border-radius:3px; }
+  .carrier-card { background:rgba(30,58,95,.5); border:0.5px solid #2563eb; border-radius:8px; padding:10px 16px; text-align:center; }
+  .carrier-card.red { background:rgba(120,10,10,.5); border-color:#dc2626; }
+  .scoreboard { width:100%; background:rgba(10,12,20,.9); border:0.5px solid #1a2535; border-radius:8px; overflow:hidden; }
+  .scoreboard table { width:100%; border-collapse:collapse; font-size:11px; }
+  .scoreboard th { padding:5px 8px; color:var(--muted); border-bottom:0.5px solid #1a2535; text-align:left; }
+  .scoreboard td { padding:5px 8px; border-bottom:0.5px solid rgba(26,37,53,.5); }
+  .scoreboard tr.me td { background:rgba(30,58,95,.3); color:#7dd3fc; }
+  .scoreboard tr:last-child td { border-bottom:none; }
+</style>
+</head>
+<body>
+<h1>BomSlerf — Game Flow & Endings</h1>
+<p class="sub">Mockups for Sprint 3 · Template only — Steve to provide final in-game design direction</p>
+
+<div class="note">
+  <strong>To Steve:</strong> These are structural mockups showing layout and information hierarchy. The actual visual design — colors, fonts, effects, animations — should follow the BomSlerf dark fantasy aesthetic from the main screen. Please review and provide direction on how each state should look in the final game.
+</div>
+
+<div class="params">
+  <div class="param"><div class="param-label">Match duration</div><div class="param-value">11:00</div><div class="param-note">tunable parameter</div></div>
+  <div class="param"><div class="param-label">Captures to win</div><div class="param-value">1</div><div class="param-note">tunable parameter</div></div>
+  <div class="param"><div class="param-label">Gas damage rate</div><div class="param-value">1.5%</div><div class="param-note">HP per second</div></div>
+  <div class="param"><div class="param-label">Knockdown trigger</div><div class="param-value">30s</div><div class="param-note">both flags stolen</div></div>
+</div>
+
+<div class="section-label">Screen 1 — In-game HUD (normal play)</div>
+<div class="screen">
+  <div style="position:absolute;inset:0;background:linear-gradient(135deg,#0d1a0d,#0b0e14 60%,#1a0d0d)"></div>
+  <div class="screen-inner" style="justify-content:space-between">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start">
+      <div class="flags">
+        <div class="flag-safe">our flag <span style="color:#4ade80;font-weight:500">SAFE</span></div>
+        <div class="flag-taken">enemy flag <span style="color:#f87171;font-weight:500">TAKEN</span></div>
+      </div>
+      <div style="background:rgba(10,12,20,.85);border:0.5px solid rgba(245,158,11,.4);border-radius:8px;padding:6px 18px;text-align:center">
+        <div class="timer">9:42</div>
+        <div style="font-size:9px;color:#64748b;letter-spacing:.05em">TIME REMAINING</div>
+      </div>
+      <div style="background:rgba(10,12,20,.8);border:0.5px solid #1a2535;border-radius:6px;padding:4px 10px;font-size:10px;color:#475569">kill feed</div>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:flex-end">
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="width:28px;height:28px;background:#1e3a5f;border:0.5px solid #2563eb;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;color:#60a5fa">⚔</div>
+          <div><div class="hp-bar"><div class="hp-fill" style="width:65%;background:#22c55e"></div></div></div>
+          <span style="font-size:9px;color:#64748b">1430/2200</span>
+        </div>
+        <div style="width:48px;height:48px;background:rgba(0,0,0,.4);border:0.5px solid #334155;border-radius:50%;display:flex;align-items:center;justify-content:center">
+          <div style="width:16px;height:16px;border-radius:50%;border:1.5px solid #4ade80"></div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:flex-end">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:3px">
+          <div style="width:36px;height:36px;background:#120c1a;border:1.5px solid #7c3aed;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:15px;color:#a78bfa">⚡</div>
+          <span style="font-size:8px;color:#7c3aed">72s</span>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:3px">
+          <div style="width:40px;height:40px;background:#0f1a1f;border:1.5px solid #0ea5e9;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:17px;color:#38bdf8">🛡</div>
+          <span style="font-size:8px;color:#38bdf8">ready</span>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:3px">
+          <div style="width:52px;height:52px;background:#1a0f0f;border:2px solid #dc2626;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:22px;color:#f87171">⚔</div>
+          <span style="font-size:8px;color:#f87171">attack</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section-label">Screen 2 — Knockdown Mode activation</div>
+<div class="screen">
+  <div style="position:absolute;inset:0;background:rgba(180,30,30,.07)"></div>
+  <div class="screen-inner center" style="flex-direction:column;gap:10px">
+    <div style="font-size:24px;font-weight:500;color:#f87171;letter-spacing:.1em">KNOCKDOWN MODE</div>
+    <div style="width:140px;height:0.5px;background:rgba(248,113,113,.4)"></div>
+    <div style="font-size:11px;color:#fca5a5">both flags stolen — first carrier to die loses the match</div>
+    <div style="display:flex;gap:20px;margin-top:10px">
+      <div class="carrier-card">
+        <div style="font-size:9px;color:#7dd3fc;margin-bottom:4px">BLUE CARRIER</div>
+        <div style="font-size:13px;color:#e2e8f0;font-weight:500">Sir Aldric</div>
+        <div class="hp-bar" style="margin:5px auto 0"><div class="hp-fill" style="width:75%;background:#22c55e"></div></div>
+      </div>
+      <div class="carrier-card red">
+        <div style="font-size:9px;color:#fca5a5;margin-bottom:4px">RED CARRIER</div>
+        <div style="font-size:13px;color:#e2e8f0;font-weight:500">Mother Greta</div>
+        <div class="hp-bar" style="margin:5px auto 0"><div class="hp-fill" style="width:40%;background:#ef4444"></div></div>
+      </div>
+    </div>
+    <div style="font-size:10px;color:#475569;margin-top:4px">gas closing in from map edges · respawns disabled · flag drop locked</div>
+  </div>
+</div>
+
+<div class="section-label">Screen 3 — Final Stage at 11:00</div>
+<div class="screen">
+  <div style="position:absolute;inset:0;background:rgba(180,140,0,.05)"></div>
+  <div class="screen-inner center" style="flex-direction:column;gap:8px">
+    <div style="font-size:12px;color:#fbbf24;letter-spacing:.15em">TIME'S UP</div>
+    <div style="font-size:30px;font-weight:500;color:#fbbf24;letter-spacing:.06em">FINAL STAGE</div>
+    <div style="width:180px;height:0.5px;background:rgba(251,191,36,.3)"></div>
+    <div style="font-size:11px;color:#fde68a">8 players · one stage · last team standing</div>
+    <div style="background:rgba(10,12,20,.85);border:0.5px solid rgba(251,191,36,.3);border-radius:8px;padding:10px 20px;text-align:center;margin-top:8px">
+      <div style="font-size:28px;font-weight:500;color:#fbbf24">3</div>
+      <div style="font-size:10px;color:#92400e">fight starts in</div>
+    </div>
+    <div style="font-size:10px;color:#475569;margin-top:4px">full HP · all cooldowns reset including Ultimate · flags don't matter · stage expands to 13.5×13.5m</div>
+  </div>
+</div>
+
+<div class="section-label">Screen 4 — Match over / scoreboard</div>
+<div class="screen">
+  <div style="position:absolute;inset:0;background:rgba(20,80,20,.06)"></div>
+  <div class="screen-inner center" style="flex-direction:column;gap:8px;padding:12px 16px">
+    <div style="font-size:11px;color:#4ade80;letter-spacing:.15em">BLUE TEAM</div>
+    <div style="font-size:28px;font-weight:500;color:#4ade80">VICTORY</div>
+    <div style="font-size:10px;color:#64748b">flag captured in 6:14 · +140 SlerfCoin</div>
+    <div class="scoreboard" style="margin-top:6px">
+      <table>
+        <thead><tr><th>player</th><th>kills</th><th>deaths</th><th>caps</th><th>+coins</th></tr></thead>
+        <tbody>
+          <tr class="me"><td>Sir Aldric (you)</td><td>3</td><td>1</td><td style="color:#4ade80">1</td><td style="color:#fbbf24">+140</td></tr>
+          <tr><td style="color:#94a3b8">Leon</td><td style="color:#94a3b8">2</td><td style="color:#94a3b8">2</td><td style="color:#94a3b8">0</td><td style="color:#fbbf24">+100</td></tr>
+          <tr><td style="color:#64748b">Vargoth</td><td style="color:#64748b">1</td><td style="color:#64748b">3</td><td style="color:#64748b">0</td><td style="color:#fbbf24">+50</td></tr>
+          <tr><td style="color:#64748b">Lorvak</td><td style="color:#64748b">0</td><td style="color:#64748b">4</td><td style="color:#64748b">0</td><td style="color:#fbbf24">+40</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:4px">
+      <div style="background:rgba(29,78,216,.4);border:0.5px solid #1d4ed8;border-radius:6px;padding:6px 20px;font-size:11px;color:#60a5fa">play again</div>
+      <div style="background:rgba(15,20,30,.8);border:0.5px solid #1a2535;border-radius:6px;padding:6px 20px;font-size:11px;color:#64748b">home</div>
+    </div>
+  </div>
+</div>
+
+<div class="section-label">Sprint 3 issues — game structure and endings</div>
+<div class="issues">
+  <div class="issue"><div class="issue-id">NEW-BE1</div><div><div style="display:flex;gap:6px;align-items:center;margin-bottom:4px"><span class="tag tag-be">Backend</span></div><div class="issue-title">Game Config — Tunable Parameters System</div><div class="issue-desc">Match duration, captures needed to win, knockdown trigger window — all stored as server-side constants that can be changed without a code deploy. Leon implements a config object that feeds all session logic.</div></div></div>
+  <div class="issue"><div class="issue-id">NEW-BE2</div><div><div style="display:flex;gap:6px;align-items:center;margin-bottom:4px"><span class="tag tag-be">Backend</span></div><div class="issue-title">Game Timer — 11 Minutes, Server Authoritative</div><div class="issue-desc">Replace 2:15 timer. Single round of 11:00. Server broadcasts every second. At 0:00 triggers Final Stage if no winner. Parameter: MATCH_DURATION_SECONDS.</div></div></div>
+  <div class="issue"><div class="issue-id">NEW-BE3</div><div><div style="display:flex;gap:6px;align-items:center;margin-bottom:4px"><span class="tag tag-be">Backend</span></div><div class="issue-title">Flag Capture Win Condition — 1 Capture (Tunable)</div><div class="issue-desc">Carrier reaches own base with enemy flag + own flag safe at base = match_over, team wins. CAPTURES_TO_WIN parameter defaults to 1. Server validates, broadcasts winner.</div></div></div>
+  <div class="issue"><div class="issue-id">NEW-BE4</div><div><div style="display:flex;gap:6px;align-items:center;margin-bottom:4px"><span class="tag tag-be">Backend</span></div><div class="issue-title">Knockdown Mode — Trigger, Rules, Gas</div><div class="issue-desc">Both flags away from base for 30s simultaneously → Knockdown. Lock respawns, lock flag drop. First carrier death = match over. If active at 11:00: gas closes in from map edges at 1.5% HP/s. Knockdown overrides Final Stage.</div></div></div>
+  <div class="issue"><div class="issue-id">NEW-BE5</div><div><div style="display:flex;gap:6px;align-items:center;margin-bottom:4px"><span class="tag tag-be">Backend</span></div><div class="issue-title">Final Stage at 11:00 — Teleport, Reset, Last Team Standing</div><div class="issue-desc">At 11:00 if no Knockdown active: teleport all 8 players to stage, full HP, reset all cooldowns (Ultimate locked 8s), expand stage to 13.5×13.5m, instant gas everywhere outside stage. Last team alive wins. Gas covers stage at 12:30 if still tied.</div></div></div>
+  <div class="issue"><div class="issue-id">NEW-BE6</div><div><div style="display:flex;gap:6px;align-items:center;margin-bottom:4px"><span class="tag tag-be">Backend</span></div><div class="issue-title">Match Over — Clean Session Reset + Return to Queue</div><div class="issue-desc">On match_over: broadcast winner + stats + SlerfCoin earned to all clients. Reset session state completely. Players can queue again without restarting app. Fixes BOM-72.</div></div></div>
+  <div class="issue"><div class="issue-id">NEW-FE1</div><div><div style="display:flex;gap:6px;align-items:center;margin-bottom:4px"><span class="tag tag-fe">Frontend</span></div><div class="issue-title">11-Minute Countdown HUD</div><div class="issue-desc">MM:SS timer top-center, synced to server. Turns red at 1:00 remaining. On 0:00 shows "TIME'S UP" overlay before Final Stage screen.</div></div></div>
+  <div class="issue"><div class="issue-id">NEW-FE2</div><div><div style="display:flex;gap:6px;align-items:center;margin-bottom:4px"><span class="tag tag-fe">Frontend</span></div><div class="issue-title">Knockdown Mode Activation Screen</div><div class="issue-desc">"KNOCKDOWN MODE" full-screen flash on trigger. HUD shifts to show only two carriers' HP bars prominently. Gas visual closing in from edges. Steve to provide design direction.</div></div></div>
+  <div class="issue"><div class="issue-id">NEW-FE3</div><div><div style="display:flex;gap:6px;align-items:center;margin-bottom:4px"><span class="tag tag-fe">Frontend</span></div><div class="issue-title">Final Stage Transition Screen</div><div class="issue-desc">"FINAL STAGE" announcement. 3-second countdown freeze. Teleport animation. Stage expands visually. Gas fills rest of map. Steve to provide design direction for this dramatic moment.</div></div></div>
+</div>
+</body>
+</html>

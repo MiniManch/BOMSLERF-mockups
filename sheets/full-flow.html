@@ -1,0 +1,1386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BomSlerf — Complete UI Flow</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --gold: #c9a84c;
+  --gold-dim: #8a6f30;
+  --gold-faint: rgba(201,168,76,0.15);
+  --crimson: #8b1a1a;
+  --crimson-bright: #c0392b;
+  --deep: #05030e;
+  --card: rgba(10,7,20,0.93);
+  --panel: rgba(14,10,26,0.88);
+  --border: rgba(201,168,76,0.18);
+  --border-s: rgba(201,168,76,0.45);
+  --text: #e4d9c0;
+  --dim: #8a7f6a;
+  --muted: #4a4438;
+  --error: #d94040;
+  --error-bg: rgba(160,30,30,0.18);
+  --success: #3db86a;
+  --success-bg: rgba(30,100,50,0.2);
+  --blue: #2a6db5;
+}
+
+body {
+  background: var(--deep);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* ─── NAV ─────────────────────────────────────────── */
+.doc-nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(5,3,14,0.97);
+  border-bottom: 1px solid var(--border);
+  padding: 0 40px;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  overflow-x: auto;
+}
+.doc-nav a {
+  display: block;
+  padding: 14px 18px;
+  font-size: 11px;
+  color: var(--dim);
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  font-family: 'Cinzel', serif;
+  letter-spacing: .04em;
+  transition: color .15s, border-color .15s;
+}
+.doc-nav a:hover { color: var(--gold); border-bottom-color: var(--gold-dim); }
+.doc-logo {
+  font-family: 'Cinzel', serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--gold);
+  padding: 14px 24px 14px 0;
+  border-right: 1px solid var(--border);
+  margin-right: 8px;
+  white-space: nowrap;
+}
+
+/* ─── SECTION ─────────────────────────────────────── */
+.section {
+  padding: 56px 40px;
+  border-bottom: 1px solid rgba(201,168,76,0.07);
+}
+.section-header {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+.section-title {
+  font-family: 'Cinzel', serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--gold);
+}
+.section-sub {
+  font-size: 13px;
+  color: var(--dim);
+}
+
+/* ─── SCREEN GRID ─────────────────────────────────── */
+.screens {
+  display: grid;
+  gap: 24px;
+}
+.screens.cols-2 { grid-template-columns: 1fr 1fr; }
+.screens.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+.screens.cols-1 { grid-template-columns: 1fr; max-width: 680px; }
+
+.screen-wrap { display: flex; flex-direction: column; gap: 10px; }
+.screen-label {
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  padding-left: 2px;
+}
+.screen-label.active { color: var(--gold-dim); }
+.screen-label.error { color: #a04040; }
+.screen-label.success { color: #3a8050; }
+
+/* ─── THE GAME FRAME ──────────────────────────────── */
+.gf {
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  aspect-ratio: 16/9;
+  background: #080514;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.gf-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 65% 30%, rgba(139,26,26,0.4) 0%, transparent 55%),
+    radial-gradient(ellipse at 15% 85%, rgba(25,12,55,0.7) 0%, transparent 45%),
+    radial-gradient(ellipse at 85% 85%, rgba(20,8,40,0.5) 0%, transparent 40%),
+    linear-gradient(180deg, #0d0a1a 0%, #100816 60%, #080514 100%);
+}
+.gf-castle {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 52%;
+  background: #080514;
+  clip-path: polygon(
+    0% 100%, 0% 55%,
+    2% 55%, 2% 42%, 4% 42%, 4% 55%,
+    7% 55%, 7% 38%, 9% 38%, 9% 55%,
+    12% 55%, 12% 42%, 14% 42%, 14% 55%,
+    18% 55%, 18% 62%,
+    24% 62%, 24% 28%, 26% 28%, 26% 15%, 28% 15%, 28% 28%, 30% 28%, 30% 62%,
+    36% 62%, 36% 55%,
+    39% 55%, 39% 42%, 41% 42%, 41% 55%,
+    44% 55%, 44% 48%,
+    49% 48%, 49% 5%, 50% 0%, 51% 5%, 51% 48%,
+    56% 48%, 56% 55%,
+    59% 55%, 59% 42%, 61% 42%, 61% 55%,
+    64% 55%, 64% 62%,
+    70% 62%, 70% 28%, 72% 28%, 72% 15%, 74% 15%, 74% 28%, 76% 28%, 76% 62%,
+    82% 62%, 82% 55%,
+    85% 55%, 85% 38%, 88% 38%, 88% 55%,
+    91% 55%, 91% 42%, 93% 42%, 93% 55%,
+    96% 55%, 96% 42%, 98% 42%, 98% 55%,
+    100% 55%, 100% 100%
+  );
+}
+.gf-sky { position:absolute;inset:0;background:radial-gradient(ellipse at 50% -10%,rgba(180,40,20,0.5) 0%,transparent 65%);}
+.gf-fog { position:absolute;bottom:48%;left:0;right:0;height:12%;background:linear-gradient(180deg,transparent,rgba(30,15,50,0.4),transparent);}
+.gf-vignette { position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,transparent 40%,rgba(5,3,14,0.6) 100%);}
+.gf-inner { position:relative;z-index:2;width:100%;height:100%;display:flex;align-items:center;justify-content:center; }
+
+/* ─── FORM CARD ───────────────────────────────────── */
+.fc {
+  background: var(--card);
+  border: 1px solid var(--border-s);
+  border-radius: 8px;
+  padding: 22px 26px;
+  backdrop-filter: blur(16px);
+  width: 58%;
+}
+.fc.wide { width: 72%; padding: 18px 22px; }
+.fc.narrow { width: 46%; }
+
+.fc-logo { text-align:center; margin-bottom:16px; }
+.fc-logo-name { font-family:'Cinzel',serif; font-size:18px; font-weight:700; color:var(--gold); letter-spacing:.1em; }
+.fc-logo-tag { font-size:9px; color:var(--muted); letter-spacing:.14em; margin-top:3px; }
+.fc-divider { width:100%; height:1px; background:linear-gradient(90deg,transparent,var(--border-s),transparent); margin:14px 0; }
+.fc-title { font-size:12px; font-weight:500; color:var(--text); text-align:center; margin-bottom:14px; }
+
+/* ─── FIELD ───────────────────────────────────────── */
+.field { margin-bottom:9px; }
+.fl { font-size:10px; color:var(--dim); display:block; margin-bottom:3px; letter-spacing:.03em; }
+.fi {
+  width:100%;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(201,168,76,0.22);
+  border-radius:4px;
+  padding:7px 10px;
+  font-size:11px;
+  color:var(--text);
+  font-family:'Inter',sans-serif;
+}
+.fi.ph { color:var(--muted); font-style:italic; }
+.fi.err { border-color:var(--error); background:var(--error-bg); }
+.fi.ok { border-color:rgba(61,184,106,0.4); }
+.fi.focus { border-color:var(--gold-dim); background:rgba(201,168,76,0.05); }
+.fi-wrap { position:relative; }
+.fi-eye { position:absolute; right:9px; top:50%; transform:translateY(-50%); font-size:11px; color:var(--muted); cursor:pointer; }
+.fe { font-size:9px; color:var(--error); margin-top:3px; display:flex; align-items:center; gap:4px; }
+.fe::before { content:'!'; width:12px;height:12px;border-radius:50%;background:var(--error);color:#fff;font-size:8px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0; }
+.fh { font-size:9px; color:var(--muted); margin-top:3px; }
+.f2 { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+
+/* ─── PASSWORD STRENGTH ───────────────────────────── */
+.pw-strength { display:flex; gap:3px; margin-top:4px; }
+.pw-bar { height:3px; flex:1; border-radius:2px; background:rgba(255,255,255,0.07); }
+.pw-bar.w { background:#c04040; }
+.pw-bar.m { background:#c07820; }
+.pw-bar.s { background:var(--success); }
+.pw-rules { display:flex; flex-direction:column; gap:3px; margin-top:4px; }
+.pw-rule { font-size:9px; display:flex; align-items:center; gap:5px; }
+.pw-rule .dot { width:5px;height:5px;border-radius:50%;background:var(--muted); }
+.pw-rule.ok { color:var(--success); }
+.pw-rule.ok .dot { background:var(--success); }
+.pw-rule.bad { color:var(--error); }
+.pw-rule.bad .dot { background:var(--error); }
+
+/* ─── BUTTONS ─────────────────────────────────────── */
+.btn {
+  width:100%;
+  border-radius:4px;
+  padding:9px;
+  font-size:12px;
+  font-weight:500;
+  font-family:'Cinzel',serif;
+  letter-spacing:.07em;
+  text-align:center;
+  cursor:pointer;
+  margin-top:12px;
+}
+.btn-red { background:linear-gradient(180deg,#9a1f1f,#6b1313); border:1px solid rgba(201,168,76,0.28); color:var(--gold); }
+.btn-red.dim { opacity:.45; pointer-events:none; }
+.btn-red.loading { opacity:.65; }
+.btn-green { background:linear-gradient(180deg,#1e6b2e,#0f4a1b); border:1px solid rgba(61,184,106,0.3); color:#4ade80; }
+.btn-outline { background:transparent; border:1px solid var(--border); color:var(--dim); margin-top:6px; }
+.switch { text-align:center; font-size:10px; color:var(--muted); margin-top:9px; }
+.switch span { color:var(--gold-dim); cursor:pointer; text-decoration:underline; }
+
+/* ─── ALERTS ──────────────────────────────────────── */
+.alert { border-radius:5px; padding:8px 12px; font-size:10px; margin-bottom:10px; display:flex; gap:8px; align-items:flex-start; }
+.alert-icon { font-size:13px; flex-shrink:0; margin-top:1px; }
+.alert.a-err { background:rgba(160,30,30,0.88); border:1px solid rgba(200,60,60,0.4); color:#fca5a5; }
+.alert.a-ok { background:rgba(20,80,40,0.88); border:1px solid rgba(61,184,106,0.3); color:#4ade80; text-align:center; display:block; }
+.alert.a-warn { background:rgba(120,80,10,0.88); border:1px solid rgba(200,140,30,0.4); color:#fcd34d; }
+.alert.a-info { background:rgba(15,40,80,0.88); border:1px solid rgba(42,109,181,0.4); color:#93c5fd; }
+
+/* ─── HOME SCREEN ─────────────────────────────────── */
+.home-layout {
+  width:100%; height:100%;
+  display:grid;
+  grid-template-columns:160px 1fr 180px;
+  gap:0;
+  position:relative;
+  z-index:2;
+}
+.home-left {
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px;
+  padding:12px;
+  border-right:1px solid var(--border);
+}
+.home-hero {
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  position:relative;
+}
+.home-right {
+  display:flex; flex-direction:column; justify-content:space-between;
+  padding:12px;
+  border-left:1px solid var(--border);
+}
+.h-logo { font-family:'Cinzel',serif; font-size:14px; font-weight:700; color:var(--gold); letter-spacing:.1em; margin-bottom:4px; }
+.h-ver { font-size:8px; color:var(--muted); margin-bottom:8px; }
+.h-coins { display:flex; gap:6px; margin-bottom:8px; }
+.h-coin { background:rgba(10,7,20,0.8); border:0.5px solid var(--border); border-radius:4px; padding:3px 8px; font-size:10px; color:var(--gold); display:flex; align-items:center; gap:4px; }
+.h-coin-icon { font-size:11px; }
+.h-playbtn {
+  background:linear-gradient(180deg,#9a1f1f,#6b1313);
+  border:1px solid rgba(201,168,76,0.35);
+  border-radius:6px;
+  padding:10px;
+  width:100%;
+  text-align:center;
+  font-family:'Cinzel',serif;
+  font-size:13px;
+  color:var(--gold);
+  letter-spacing:.1em;
+  cursor:pointer;
+}
+.h-charcard {
+  width:100%;
+  background:rgba(201,168,76,0.05);
+  border:0.5px solid var(--border);
+  border-radius:5px;
+  padding:8px;
+  display:flex;
+  align-items:center;
+  gap:7px;
+  cursor:pointer;
+}
+.h-charicon { width:28px;height:28px;background:#1e2d45;border:0.5px solid #2563eb;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0; }
+.h-charname { font-size:11px;color:var(--text);font-weight:500; }
+.h-chartype { font-size:9px;color:var(--dim); }
+.h-charedit { font-size:10px;color:var(--muted);margin-left:auto; }
+.h-menubtn {
+  background:rgba(201,168,76,0.06);
+  border:0.5px solid var(--border);
+  border-radius:4px;
+  padding:6px 8px;
+  width:100%;
+  text-align:left;
+  font-size:10px;
+  color:var(--dim);
+  display:flex;
+  align-items:center;
+  gap:7px;
+  cursor:pointer;
+}
+.h-menubtn span { font-size:12px; }
+.h-hero-char {
+  width:80px; height:100px;
+  background:linear-gradient(180deg,#1e2d45,#0e1520);
+  border-radius:8px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:36px;
+  border:0.5px solid rgba(37,99,235,0.3);
+}
+.h-hero-name { font-family:'Cinzel',serif; font-size:12px; color:var(--gold); margin-top:6px; }
+.h-hero-sub { font-size:9px; color:var(--dim); }
+.h-hero-level {
+  position:absolute; top:-4px; right:-4px;
+  background:var(--crimson);
+  border:0.5px solid var(--gold-dim);
+  border-radius:50%;
+  width:18px; height:18px;
+  font-size:9px; font-weight:500;
+  display:flex; align-items:center; justify-content:center;
+  color:var(--gold);
+}
+.h-xpbar { width:80px; height:4px; background:rgba(255,255,255,0.08); border-radius:2px; margin-top:6px; overflow:hidden; }
+.h-xpfill { height:100%; width:60%; background:var(--gold-dim); border-radius:2px; }
+.h-match-row { display:flex; justify-content:space-between; align-items:center; padding:5px 0; border-bottom:0.5px solid rgba(201,168,76,0.07); }
+.h-match-row:last-child { border-bottom:none; }
+.h-win { font-size:10px; color:var(--success); font-weight:500; }
+.h-loss { font-size:10px; color:var(--error); font-weight:500; }
+.h-stats { font-size:9px; color:var(--dim); }
+.h-time { font-size:9px; color:var(--muted); }
+.h-quest { background:rgba(201,168,76,0.06); border:0.5px solid var(--border); border-radius:4px; padding:6px 8px; margin-bottom:5px; }
+.h-quest-title { font-size:10px; color:var(--text); margin-bottom:3px; }
+.h-quest-bar { height:3px; background:rgba(255,255,255,0.08); border-radius:2px; overflow:hidden; }
+.h-quest-fill { height:100%; border-radius:2px; background:var(--gold-dim); }
+.h-quest-meta { display:flex; justify-content:space-between; font-size:8px; color:var(--muted); margin-top:2px; }
+.h-section-title { font-size:9px; color:var(--muted); letter-spacing:.07em; margin-bottom:6px; }
+.h-mode { background:rgba(42,109,181,0.12); border:0.5px solid rgba(42,109,181,0.3); border-radius:5px; padding:5px 8px; margin-bottom:5px; }
+.h-mode-name { font-size:11px; color:#93c5fd; }
+.h-mode-sub { font-size:9px; color:#5b8ab5; }
+
+/* ─── QUEUE ───────────────────────────────────────── */
+.queue-screen { width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;position:relative;z-index:2;padding:20px; }
+.q-title { font-family:'Cinzel',serif; font-size:16px; color:var(--gold); letter-spacing:.1em; }
+.q-sub { font-size:11px; color:var(--dim); }
+.q-players { display:flex; gap:10px; margin:6px 0; }
+.q-player { width:36px;height:36px;background:rgba(201,168,76,0.08);border:1px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:16px; }
+.q-player.joined { background:rgba(42,109,181,0.2);border-color:rgba(42,109,181,0.5); }
+.q-player.empty { opacity:.35; }
+.q-timer { font-size:13px; color:var(--dim); font-family:'Cinzel',serif; }
+.q-cancel { font-size:10px;color:var(--error);cursor:pointer;text-decoration:underline;margin-top:4px; }
+.q-found { font-family:'Cinzel',serif; font-size:18px; color:var(--success); letter-spacing:.08em; }
+
+/* ─── LOADING SCREEN ──────────────────────────────── */
+.load-screen { width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;position:relative;z-index:2; }
+.load-logo { font-family:'Cinzel',serif;font-size:22px;font-weight:700;color:var(--gold);letter-spacing:.12em; }
+.load-char { font-size:10px;color:var(--dim);letter-spacing:.08em; }
+.load-tip { background:rgba(201,168,76,0.06);border:0.5px solid var(--border);border-radius:5px;padding:8px 14px;font-size:10px;color:var(--dim);max-width:220px;text-align:center;line-height:1.6; }
+.load-tip strong { color:var(--gold-dim); }
+.load-bar { width:120px;height:3px;background:rgba(255,255,255,0.07);border-radius:2px;overflow:hidden; }
+.load-fill { height:100%;border-radius:2px;background:linear-gradient(90deg,var(--crimson),var(--gold-dim)); }
+.load-status { font-size:9px;color:var(--muted);letter-spacing:.06em; }
+
+/* ─── IN-GAME HUD ─────────────────────────────────── */
+.hud { width:100%;height:100%;position:relative;z-index:2; }
+.hud-top { position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:flex-start;padding:8px 10px; }
+.hud-bot { position:absolute;bottom:0;left:0;right:0;display:flex;justify-content:space-between;align-items:flex-end;padding:8px 10px; }
+.hud-timer { background:rgba(8,5,16,0.85);border:0.5px solid rgba(201,168,76,0.35);border-radius:6px;padding:5px 14px;text-align:center; }
+.hud-timer-val { font-family:'Cinzel',serif;font-size:16px;color:var(--gold); }
+.hud-timer-val.urgent { color:var(--error); }
+.hud-timer-lab { font-size:8px;color:var(--muted); }
+.hud-flags { display:flex;gap:6px; }
+.hud-flag { background:rgba(8,5,16,0.8);border:0.5px solid var(--border);border-radius:5px;padding:3px 9px;font-size:10px; }
+.hud-flag.safe { border-color:rgba(61,184,106,0.4);color:#4ade80; }
+.hud-flag.taken { border-color:rgba(200,60,60,0.4);color:#fca5a5; }
+.hud-kf { background:rgba(8,5,16,0.75);border:0.5px solid var(--border);border-radius:4px;padding:3px 8px;font-size:9px;color:var(--dim); }
+.hud-hp-area { display:flex;flex-direction:column;gap:6px; }
+.hud-hp-row { display:flex;align-items:center;gap:6px; }
+.hud-avatar { width:22px;height:22px;background:#1e2d45;border:0.5px solid #2563eb;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0; }
+.hud-hpbar { width:72px;height:5px;background:rgba(255,255,255,0.08);border-radius:3px;overflow:hidden; }
+.hud-hpfill { height:100%;border-radius:3px; }
+.hud-hpval { font-size:8px;color:var(--muted); }
+.hud-joy { width:44px;height:44px;background:rgba(0,0,0,0.45);border:0.5px solid rgba(255,255,255,0.12);border-radius:50%;display:flex;align-items:center;justify-content:center; }
+.hud-joy-inner { width:16px;height:16px;border-radius:50%;border:1.5px solid rgba(255,255,255,0.25); }
+.hud-abilities { display:flex;gap:6px;align-items:flex-end; }
+.hud-ult { width:34px;height:34px;background:#120c1a;border:1.5px solid #7c3aed;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-direction:column; }
+.hud-skill { width:38px;height:38px;background:#0f1a1f;border:1.5px solid #0ea5e9;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-direction:column; }
+.hud-atk { width:48px;height:48px;background:#1a0f0f;border:2px solid #dc2626;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-direction:column; }
+.hud-btn-ico { font-size:16px; }
+.hud-btn-cd { font-size:7px;margin-top:1px; }
+.hud-cd-overlay { position:absolute;inset:0;background:rgba(0,0,0,0.6);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--dim); }
+.hud-passive { width:22px;height:22px;background:#0f1a10;border:1px solid rgba(61,184,106,0.4);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:10px;margin-bottom:4px; }
+.hud-abil-wrap { display:flex;flex-direction:column;align-items:flex-end;gap:3px; }
+
+/* ─── END GAME ────────────────────────────────────── */
+.eg { width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;z-index:2;padding:10px 14px;gap:8px; }
+.eg-result { font-family:'Cinzel',serif;font-size:22px;letter-spacing:.1em; }
+.eg-result.win { color:#4ade80; }
+.eg-result.loss { color:#f87171; }
+.eg-result.draw { color:var(--gold); }
+.eg-sub { font-size:10px;color:var(--dim); }
+.eg-table { width:100%;background:rgba(8,5,16,0.88);border:0.5px solid var(--border);border-radius:6px;overflow:hidden; }
+.eg-table table { width:100%;border-collapse:collapse;font-size:10px; }
+.eg-table th { padding:4px 7px;color:var(--muted);border-bottom:0.5px solid var(--border);text-align:left;font-weight:400; }
+.eg-table td { padding:4px 7px;border-bottom:0.5px solid rgba(201,168,76,0.05); }
+.eg-table tr:last-child td { border-bottom:none; }
+.eg-table tr.me td { background:rgba(30,45,80,0.4); }
+.eg-table td.win-mark { color:#4ade80; }
+.eg-table td.loss-mark { color:#f87171; }
+.eg-table td.coin { color:var(--gold); }
+.eg-btns { display:flex;gap:8px;margin-top:4px; }
+.eg-btn { border-radius:5px;padding:6px 18px;font-size:11px;font-family:'Cinzel',serif;letter-spacing:.05em;cursor:pointer;border:0.5px solid; }
+.eg-btn.primary { background:rgba(42,109,181,0.3);border-color:rgba(42,109,181,0.5);color:#93c5fd; }
+.eg-btn.secondary { background:transparent;border-color:var(--border);color:var(--dim); }
+.eg-coin-earned { background:rgba(201,168,76,0.08);border:0.5px solid rgba(201,168,76,0.2);border-radius:4px;padding:4px 12px;font-size:11px;color:var(--gold); }
+
+/* ─── KNOCKDOWN ───────────────────────────────────── */
+.kd { width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;z-index:2;gap:8px; }
+.kd-bg { position:absolute;inset:0;background:rgba(120,10,10,0.1); }
+.kd-title { font-family:'Cinzel',serif;font-size:18px;color:#f87171;letter-spacing:.12em; }
+.kd-rule { font-size:10px;color:#fca5a5; }
+.kd-carriers { display:flex;gap:14px; }
+.kd-carrier { background:rgba(8,5,16,0.85);border:0.5px solid;border-radius:7px;padding:9px 14px;text-align:center;min-width:80px; }
+.kd-carrier.blue { border-color:rgba(42,109,181,0.5); }
+.kd-carrier.red { border-color:rgba(180,40,40,0.5); }
+.kd-cname { font-size:10px;color:var(--text);font-weight:500; }
+.kd-chp { height:4px;border-radius:2px;margin-top:5px; }
+.kd-note { font-size:9px;color:var(--muted); }
+
+/* ─── FINAL STAGE ─────────────────────────────────── */
+.fs { width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;z-index:2;gap:7px; }
+.fs-bg { position:absolute;inset:0;background:rgba(100,80,0,0.08); }
+.fs-pre { font-size:10px;color:var(--gold-dim);letter-spacing:.18em; }
+.fs-title { font-family:'Cinzel',serif;font-size:22px;color:var(--gold);letter-spacing:.1em; }
+.fs-divider { width:140px;height:0.5px;background:rgba(201,168,76,0.3); }
+.fs-rule { font-size:10px;color:#fde68a; }
+.fs-countdown { background:rgba(8,5,16,0.88);border:0.5px solid rgba(201,168,76,0.3);border-radius:7px;padding:8px 20px;text-align:center; }
+.fs-count-num { font-family:'Cinzel',serif;font-size:26px;color:var(--gold); }
+.fs-count-lab { font-size:9px;color:var(--muted); }
+.fs-notes { font-size:9px;color:var(--muted);text-align:center; }
+
+/* ─── ERROR OVERLAY ───────────────────────────────── */
+.err-overlay {
+  position:absolute;inset:0;background:rgba(5,3,14,0.88);display:flex;align-items:center;justify-content:center;z-index:10;border-radius:10px;
+}
+.err-modal { background:var(--card);border:1px solid rgba(180,40,40,0.5);border-radius:8px;padding:20px 24px;text-align:center;max-width:60%; }
+.err-modal-icon { font-size:24px;margin-bottom:8px; }
+.err-modal-title { font-family:'Cinzel',serif;font-size:14px;color:#f87171;margin-bottom:6px; }
+.err-modal-msg { font-size:11px;color:var(--dim);line-height:1.6;margin-bottom:12px; }
+.err-modal-btns { display:flex;gap:8px;justify-content:center; }
+.err-modal-btn { border-radius:4px;padding:6px 16px;font-size:10px;font-family:'Cinzel',serif;cursor:pointer;border:0.5px solid; }
+.err-modal-btn.retry { background:rgba(180,40,40,0.3);border-color:rgba(200,60,60,0.5);color:#fca5a5; }
+.err-modal-btn.cancel { background:transparent;border-color:var(--border);color:var(--dim); }
+
+/* ─── SPEC BLOCK ──────────────────────────────────── */
+.spec-block {
+  margin-top:28px;
+  background:rgba(10,7,20,0.7);
+  border:0.5px solid var(--border);
+  border-radius:8px;
+  overflow:hidden;
+}
+.spec-block-title {
+  padding:10px 16px;
+  font-size:11px;
+  font-weight:500;
+  color:var(--gold-dim);
+  background:rgba(201,168,76,0.06);
+  border-bottom:0.5px solid var(--border);
+  font-family:'Cinzel',serif;
+  letter-spacing:.04em;
+}
+.spec-row { display:flex;justify-content:space-between;align-items:flex-start;padding:7px 16px;border-bottom:0.5px solid rgba(201,168,76,0.05);gap:16px; }
+.spec-row:last-child { border-bottom:none; }
+.spec-field { font-size:11px;color:var(--dim);width:130px;flex-shrink:0; }
+.spec-val { font-size:11px;color:var(--text);flex:1;text-align:right; }
+.spec-err { font-size:10px;color:var(--error);text-align:right; }
+
+/* ─── FLOW ARROWS ─────────────────────────────────── */
+.flow-arrow { text-align:center;font-size:11px;color:var(--muted);padding:4px 0;letter-spacing:.06em; }
+.flow-section { display:flex;flex-direction:column;gap:8px;margin-bottom:32px; }
+
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="doc-nav">
+  <div class="doc-logo">BOMSLERF</div>
+  <a href="#auth">Auth</a>
+  <a href="#home">Home</a>
+  <a href="#queue">Queue</a>
+  <a href="#loading">Loading</a>
+  <a href="#ingame">In-Game</a>
+  <a href="#endings">Endings</a>
+  <a href="#errors">Errors</a>
+  <a href="#spec">Spec</a>
+</nav>
+
+<!-- ══════════════════════════════════════════════════════
+     SECTION 1 — AUTH
+══════════════════════════════════════════════════════ -->
+<div class="section" id="auth">
+  <div class="section-header">
+    <div class="section-title">Authentication</div>
+    <div class="section-sub">Sign up · Login · all states · all errors</div>
+  </div>
+
+  <div class="screens cols-3">
+
+    <!-- 1A: Login default -->
+    <div class="screen-wrap">
+      <div class="screen-label active">Login — default</div>
+      <div class="gf">
+        <div class="gf-bg"></div><div class="gf-sky"></div><div class="gf-castle"></div><div class="gf-fog"></div><div class="gf-vignette"></div>
+        <div class="gf-inner">
+          <div class="fc narrow">
+            <div class="fc-logo"><div class="fc-logo-name">BOMSLERF</div><div class="fc-logo-tag">enter the realm</div></div>
+            <div class="fc-divider"></div>
+            <div class="fc-title">Sign in</div>
+            <div class="field"><label class="fl">warrior name</label><div class="fi ph">your warrior name</div></div>
+            <div class="field">
+              <label class="fl">password</label>
+              <div class="fi-wrap"><div class="fi ph">••••••••</div><div class="fi-eye">👁</div></div>
+            </div>
+            <div class="btn btn-red">Enter</div>
+            <div class="switch">new here? <span>forge a warrior</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 1B: Login error -->
+    <div class="screen-wrap">
+      <div class="screen-label error">Login — wrong credentials</div>
+      <div class="gf">
+        <div class="gf-bg"></div><div class="gf-sky"></div><div class="gf-castle"></div><div class="gf-fog"></div><div class="gf-vignette"></div>
+        <div class="gf-inner">
+          <div class="fc narrow">
+            <div class="fc-logo"><div class="fc-logo-name">BOMSLERF</div><div class="fc-logo-tag">enter the realm</div></div>
+            <div class="fc-divider"></div>
+            <div class="alert a-err"><div class="alert-icon">✕</div><div>Wrong warrior name or password. Try again.</div></div>
+            <div class="field"><label class="fl">warrior name</label><div class="fi err">ShadowBlade</div></div>
+            <div class="field">
+              <label class="fl">password</label>
+              <div class="fi-wrap"><div class="fi err">••••••••</div><div class="fi-eye">👁</div></div>
+            </div>
+            <div class="btn btn-red">Enter</div>
+            <div class="switch">forgot your password? <span>reset it</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 1C: Login loading -->
+    <div class="screen-wrap">
+      <div class="screen-label">Login — verifying</div>
+      <div class="gf">
+        <div class="gf-bg"></div><div class="gf-sky"></div><div class="gf-castle"></div><div class="gf-fog"></div><div class="gf-vignette"></div>
+        <div class="gf-inner">
+          <div class="fc narrow">
+            <div class="fc-logo"><div class="fc-logo-name">BOMSLERF</div><div class="fc-logo-tag">enter the realm</div></div>
+            <div class="fc-divider"></div>
+            <div class="fc-title">Sign in</div>
+            <div class="field"><label class="fl">warrior name</label><div class="fi focus">ShadowBlade</div></div>
+            <div class="field">
+              <label class="fl">password</label>
+              <div class="fi-wrap"><div class="fi focus">••••••••</div><div class="fi-eye">👁</div></div>
+            </div>
+            <div class="btn btn-red loading" style="display:flex;align-items:center;justify-content:center;gap:8px">
+              <div style="width:8px;height:8px;border-radius:50%;border:1.5px solid var(--gold);border-top-color:transparent"></div>
+              Summoning...
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 1D: Sign Up default -->
+    <div class="screen-wrap">
+      <div class="screen-label active">Sign up — default</div>
+      <div class="gf">
+        <div class="gf-bg"></div><div class="gf-sky"></div><div class="gf-castle"></div><div class="gf-fog"></div><div class="gf-vignette"></div>
+        <div class="gf-inner">
+          <div class="fc wide">
+            <div class="fc-logo"><div class="fc-logo-name">BOMSLERF</div><div class="fc-logo-tag">forge your warrior</div></div>
+            <div class="fc-divider"></div>
+            <div class="f2">
+              <div class="field"><label class="fl">warrior name</label><div class="fi ph">pick a name</div><div class="fh">3–12 chars · letters & numbers only</div></div>
+              <div class="field"><label class="fl">date of birth</label><div class="fi ph">DD / MM / YYYY</div><div class="fh">must be 13 or older</div></div>
+            </div>
+            <div class="field"><label class="fl">email</label><div class="fi ph">your@email.com</div></div>
+            <div class="field"><label class="fl">password</label><div class="fi-wrap"><div class="fi ph">create a password</div><div class="fi-eye">👁</div></div><div class="fh">8+ chars · 1 number or symbol</div></div>
+            <div class="field"><label class="fl">confirm password</label><div class="fi-wrap"><div class="fi ph">repeat password</div><div class="fi-eye">👁</div></div></div>
+            <div class="btn btn-red dim">Forge my warrior</div>
+            <div class="switch">already a warrior? <span>sign in</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 1E: Sign Up validation errors -->
+    <div class="screen-wrap">
+      <div class="screen-label error">Sign up — validation errors</div>
+      <div class="gf">
+        <div class="gf-bg"></div><div class="gf-sky"></div><div class="gf-castle"></div><div class="gf-fog"></div><div class="gf-vignette"></div>
+        <div class="gf-inner">
+          <div class="fc wide">
+            <div class="fc-logo"><div class="fc-logo-name">BOMSLERF</div><div class="fc-logo-tag">forge your warrior</div></div>
+            <div class="fc-divider"></div>
+            <div class="f2">
+              <div class="field"><label class="fl">warrior name</label><div class="fi err">Wr!</div><div class="fe">3–12 chars, letters & numbers only</div></div>
+              <div class="field"><label class="fl">date of birth</label><div class="fi err">01 / 01 / 2014</div><div class="fe">must be 13 or older to play</div></div>
+            </div>
+            <div class="field"><label class="fl">email</label><div class="fi err">notvalid@</div><div class="fe">enter a valid email address</div></div>
+            <div class="field">
+              <label class="fl">password</label>
+              <div class="fi-wrap"><div class="fi focus">mypass</div><div class="fi-eye">👁</div></div>
+              <div class="pw-strength"><div class="pw-bar w"></div><div class="pw-bar"></div><div class="pw-bar"></div></div>
+              <div class="pw-rules"><div class="pw-rule ok"><div class="dot"></div>at least 8 characters</div><div class="pw-rule bad"><div class="dot"></div>needs a number or symbol</div></div>
+            </div>
+            <div class="field"><label class="fl">confirm password</label><div class="fi err">mypasss</div><div class="fe">passwords don't match</div></div>
+            <div class="btn btn-red dim">Forge my warrior</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 1F: Sign Up success -->
+    <div class="screen-wrap">
+      <div class="screen-label success">Sign up — success</div>
+      <div class="gf">
+        <div class="gf-bg"></div><div class="gf-sky"></div><div class="gf-castle"></div><div class="gf-fog"></div><div class="gf-vignette"></div>
+        <div class="gf-inner">
+          <div class="fc wide">
+            <div class="fc-logo"><div class="fc-logo-name">BOMSLERF</div><div class="fc-logo-tag">forge your warrior</div></div>
+            <div class="fc-divider"></div>
+            <div class="alert a-ok">⚔ Warrior forged — welcome, SirKnight88</div>
+            <div class="f2">
+              <div class="field"><label class="fl">warrior name</label><div class="fi ok">SirKnight88</div></div>
+              <div class="field"><label class="fl">date of birth</label><div class="fi ok">15 / 06 / 1995</div></div>
+            </div>
+            <div class="field"><label class="fl">email</label><div class="fi ok">knight@gmail.com</div></div>
+            <div class="field">
+              <label class="fl">password</label>
+              <div class="fi ok">••••••••••</div>
+              <div class="pw-strength"><div class="pw-bar s"></div><div class="pw-bar s"></div><div class="pw-bar s"></div></div>
+            </div>
+            <div class="field"><label class="fl">confirm password</label><div class="fi ok">••••••••••</div></div>
+            <div class="btn btn-green">Entering the realm...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /screens -->
+</div><!-- /section auth -->
+
+<!-- ══════════════════════════════════════════════════════
+     SECTION 2 — HOME SCREEN
+══════════════════════════════════════════════════════ -->
+<div class="section" id="home">
+  <div class="section-header">
+    <div class="section-title">Home Screen</div>
+    <div class="section-sub">Landscape · 3-column layout · all panels functional</div>
+  </div>
+  <div class="screens cols-2">
+
+    <!-- 2A: Home full -->
+    <div class="screen-wrap">
+      <div class="screen-label active">Home — full state (returning player)</div>
+      <div class="gf" style="aspect-ratio:16/8">
+        <div class="gf-bg"></div><div class="gf-sky"></div><div class="gf-castle"></div><div class="gf-fog"></div><div class="gf-vignette"></div>
+        <div class="gf-inner" style="align-items:stretch;padding:0">
+          <div class="home-layout">
+            <!-- Left -->
+            <div class="home-left">
+              <div class="h-logo">BOMSLERF</div>
+              <div class="h-ver">v0.3.0</div>
+              <div class="h-coins">
+                <div class="h-coin"><span class="h-coin-icon">🪙</span>12,450</div>
+                <div class="h-coin" style="color:#c084fc;border-color:rgba(168,85,247,0.3)"><span class="h-coin-icon">💎</span>320</div>
+              </div>
+              <div class="h-charcard">
+                <div class="h-charicon">⚔</div>
+                <div><div class="h-charname">Sir Aldric</div><div class="h-chartype">Tank · 2200 HP</div></div>
+                <div class="h-charedit">✎</div>
+              </div>
+              <div class="h-playbtn">PLAY</div>
+              <div class="h-menubtn"><span>⚙</span> settings</div>
+            </div>
+            <!-- Center hero -->
+            <div class="home-hero">
+              <div style="position:relative">
+                <div class="h-hero-char">⚔</div>
+                <div class="h-hero-level">18</div>
+              </div>
+              <div class="h-hero-name">Sir Aldric</div>
+              <div class="h-hero-sub">The Immovable Shield</div>
+              <div class="h-xpbar"><div class="h-xpfill"></div></div>
+              <div style="font-size:8px;color:var(--muted);margin-top:2px">720 / 1200 XP</div>
+              <div class="h-mode" style="margin-top:10px;width:130px">
+                <div class="h-mode-name">Capture the Flag</div>
+                <div class="h-mode-sub">4v4 · 1 capture wins</div>
+              </div>
+            </div>
+            <!-- Right -->
+            <div class="home-right">
+              <div>
+                <div class="h-section-title">daily quests</div>
+                <div class="h-quest">
+                  <div class="h-quest-title">Win 3 matches</div>
+                  <div class="h-quest-bar"><div class="h-quest-fill" style="width:33%"></div></div>
+                  <div class="h-quest-meta"><span>1 / 3</span><span style="color:var(--gold-dim)">+100 🪙</span></div>
+                </div>
+                <div class="h-quest">
+                  <div class="h-quest-title">Capture the flag twice</div>
+                  <div class="h-quest-bar"><div class="h-quest-fill" style="width:50%"></div></div>
+                  <div class="h-quest-meta"><span>1 / 2</span><span style="color:var(--gold-dim)">+150 🪙</span></div>
+                </div>
+                <div class="h-quest">
+                  <div class="h-quest-title">Get 5 kills</div>
+                  <div class="h-quest-bar"><div class="h-quest-fill" style="width:0%"></div></div>
+                  <div class="h-quest-meta"><span>0 / 5</span><span style="color:var(--gold-dim)">+80 🪙</span></div>
+                </div>
+              </div>
+              <div>
+                <div class="h-section-title">recent matches</div>
+                <div class="h-match-row"><span class="h-win">Win</span><span class="h-stats">3K · 1D · 1 cap</span><span class="h-time">2h ago</span></div>
+                <div class="h-match-row"><span class="h-loss">Loss</span><span class="h-stats">2K · 4D · 0 cap</span><span class="h-time">5h ago</span></div>
+                <div class="h-match-row"><span class="h-win">Win</span><span class="h-stats">5K · 2D · 2 cap</span><span class="h-time">1d ago</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2B: Home new player -->
+    <div class="screen-wrap">
+      <div class="screen-label">Home — first login (empty state)</div>
+      <div class="gf" style="aspect-ratio:16/8">
+        <div class="gf-bg"></div><div class="gf-sky"></div><div class="gf-castle"></div><div class="gf-fog"></div><div class="gf-vignette"></div>
+        <div class="gf-inner" style="align-items:stretch;padding:0">
+          <div class="home-layout">
+            <div class="home-left">
+              <div class="h-logo">BOMSLERF</div>
+              <div class="h-ver">v0.3.0</div>
+              <div class="h-coins">
+                <div class="h-coin"><span class="h-coin-icon">🪙</span>0</div>
+              </div>
+              <div class="h-charcard" style="border-style:dashed;background:transparent">
+                <div class="h-charicon" style="background:rgba(255,255,255,0.04)">?</div>
+                <div><div class="h-charname" style="color:var(--dim)">choose a warrior</div><div class="h-chartype">tap to select</div></div>
+              </div>
+              <div class="h-playbtn" style="opacity:.4;pointer-events:none">PLAY</div>
+              <div style="font-size:9px;color:var(--muted);text-align:center;margin-top:-6px">choose a warrior first</div>
+            </div>
+            <div class="home-hero" style="gap:8px">
+              <div style="font-family:'Cinzel',serif;font-size:13px;color:var(--gold-dim);text-align:center">Welcome, warrior</div>
+              <div style="font-size:10px;color:var(--dim);text-align:center;max-width:120px;line-height:1.6">Choose your character and enter the battlefield</div>
+              <div class="h-charcard" style="width:130px;border-style:dashed;background:transparent;justify-content:center;padding:10px">
+                <div style="font-size:10px;color:var(--gold-dim)">⚔ pick your warrior</div>
+              </div>
+            </div>
+            <div class="home-right" style="justify-content:center;align-items:center">
+              <div style="font-size:10px;color:var(--muted);text-align:center;line-height:1.8">
+                No matches yet.<br>
+                <span style="color:var(--dim)">Play your first game<br>to see your history here.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     SECTION 3 — QUEUE
+══════════════════════════════════════════════════════ -->
+<div class="section" id="queue">
+  <div class="section-header">
+    <div class="section-title">Matchmaking Queue</div>
+    <div class="section-sub">Searching · players joining · found · error</div>
+  </div>
+  <div class="screens cols-3">
+
+    <!-- 3A: Searching -->
+    <div class="screen-wrap">
+      <div class="screen-label active">Queue — searching</div>
+      <div class="gf">
+        <div class="gf-bg"></div><div class="gf-sky"></div><div class="gf-castle"></div><div class="gf-fog"></div><div class="gf-vignette"></div>
+        <div class="gf-inner">
+          <div class="queue-screen">
+            <div class="q-title">Seeking battle</div>
+            <div class="q-sub">waiting for warriors to join...</div>
+            <div class="q-players">
+              <div class="q-player joined">⚔</div>
+              <div class="q-player empty">·</div>
+              <div class="q-player empty">·</div>
+              <div class="q-player empty">·</div>
+            </div>
+            <div class="q-timer">0:14</div>
+            <div style="font-size:9px;color:var(--muted)">1 of 4 warriors ready</div>
+            <div class="q-cancel">cancel search</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3B: Almost full -->
+    <div class="screen-wrap">
+      <div class="screen-label">Queue — 3 of 4 joined</div>
+      <div class="gf">
+        <div class="gf-bg"></div><div class="gf-sky"></div><div class="gf-castle"></div><div class="gf-fog"></div><div class="gf-vignette"></div>
+        <div class="gf-inner">
+          <div class="queue-screen">
+            <div class="q-title">Seeking battle</div>
+            <div class="q-sub">one more warrior needed...</div>
+            <div class="q-players">
+              <div class="q-player joined">⚔</div>
+              <div class="q-player joined">🛡</div>
+              <div class="q-player joined">🗡</div>
+              <div class="q-player empty">·</div>
+            </div>
+            <div class="q-timer">0:38</div>
+            <div style="font-size:9px;color:var(--dim)">3 of 4 warriors ready</div>
+            <div class="q-cancel">cancel search</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3C: Match found -->
+    <div class="screen-wrap">
+      <div class="screen-label success">Queue — match found</div>
+      <div class="gf">
+        <div class="gf-bg"></div><div class="gf-sky"></div><div class="gf-castle"></div><div class="gf-fog"></div><div class="gf-vignette"></div>
+        <div class="gf-inner">
+          <div class="queue-screen">
+            <div class="q-found">Battle found!</div>
+            <div class="q-players">
+              <div class="q-player joined">⚔</div>
+              <div class="q-player joined">🛡</div>
+              <div class="q-player joined">🗡</div>
+              <div class="q-player joined">⚡</div>
+            </div>
+            <div style="font-size:10px;color:var(--success)">all 4 warriors ready</div>
+            <div style="font-size:9px;color:var(--muted);margin-top:4px">entering the battlefield...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     SECTION 4 — LOADING SCREEN
+══════════════════════════════════════════════════════ -->
+<div class="section" id="loading">
+  <div class="section-header">
+    <div class="section-title">Loading Screen</div>
+    <div class="section-sub">Between queue → game · branding · tip · character</div>
+  </div>
+  <div class="screens cols-2">
+
+    <div class="screen-wrap">
+      <div class="screen-label active">Loading — standard</div>
+      <div class="gf">
+        <div class="gf-bg"></div><div class="gf-sky"></div><div class="gf-castle"></div><div class="gf-fog"></div><div class="gf-vignette"></div>
+        <div class="gf-inner">
+          <div class="load-screen">
+            <div class="load-logo">BOMSLERF</div>
+            <div class="load-char">playing as Sir Aldric</div>
+            <div class="fc-divider" style="width:80px"></div>
+            <div class="load-tip"><strong>Tip:</strong> enemies in grass are only visible within 2 metres. Approach slowly to catch them off guard.</div>
+            <div class="load-bar"><div class="load-fill" style="width:65%"></div></div>
+            <div class="load-status">loading battlefield...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="screen-wrap">
+      <div class="screen-label">Loading — with character info</div>
+      <div class="gf">
+        <div class="gf-bg"></div><div class="gf-sky"></div><div class="gf-castle"></div><div class="gf-fog"></div><div class="gf-vignette"></div>
+        <div class="gf-inner">
+          <div class="load-screen">
+            <div class="load-logo">BOMSLERF</div>
+            <div style="background:rgba(8,5,16,0.8);border:0.5px solid var(--border);border-radius:7px;padding:10px 16px;display:flex;gap:12px;align-items:center;max-width:240px">
+              <div style="width:44px;height:44px;background:#1e2d45;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:22px;border:0.5px solid rgba(37,99,235,0.4)">⚔</div>
+              <div>
+                <div style="font-family:'Cinzel',serif;font-size:13px;color:var(--gold)">Sir Aldric</div>
+                <div style="font-size:9px;color:var(--dim);margin-top:2px">The Immovable Shield</div>
+                <div style="font-size:9px;color:var(--muted);margin-top:3px;line-height:1.5">2200 HP · 1.8 m/s · Tank</div>
+              </div>
+            </div>
+            <div class="load-tip"><strong>Tip:</strong> Sir Aldric's Iron Bastion passive activates while standing still. Plant yourself at the base entrance and outlast anything.</div>
+            <div class="load-bar"><div class="load-fill" style="width:90%"></div></div>
+            <div class="load-status">almost there...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     SECTION 5 — IN-GAME HUD
+══════════════════════════════════════════════════════ -->
+<div class="section" id="ingame">
+  <div class="section-header">
+    <div class="section-title">In-Game HUD</div>
+    <div class="section-sub">Normal play · low HP · ability cooldown</div>
+  </div>
+  <div class="screens cols-2">
+
+    <!-- 5A: Normal play -->
+    <div class="screen-wrap">
+      <div class="screen-label active">In-game — normal play</div>
+      <div class="gf" style="background:#0a1208">
+        <div class="gf-bg" style="background:radial-gradient(ellipse at 30% 30%,rgba(20,50,20,0.5),transparent 60%),radial-gradient(ellipse at 80% 80%,rgba(80,10,10,0.4),transparent 50%),linear-gradient(180deg,#0a1208,#080a06)"></div>
+        <div class="hud">
+          <div class="hud-top">
+            <div class="hud-flags">
+              <div class="hud-flag safe">our flag SAFE</div>
+              <div class="hud-flag taken">enemy flag TAKEN</div>
+            </div>
+            <div class="hud-timer">
+              <div class="hud-timer-val">8:42</div>
+              <div class="hud-timer-lab">remaining</div>
+            </div>
+            <div class="hud-kf">Leon ☠ Amir · 12s ago</div>
+          </div>
+          <div class="hud-bot">
+            <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-start">
+              <div class="hud-hp-area">
+                <div class="hud-hp-row">
+                  <div class="hud-avatar">⚔</div>
+                  <div class="hud-hpbar"><div class="hud-hpfill" style="width:72%;background:#3db86a"></div></div>
+                  <div class="hud-hpval">1584/2200</div>
+                </div>
+                <div class="hud-hp-row" style="opacity:.7">
+                  <div class="hud-avatar" style="width:18px;height:18px;font-size:9px;">⚔</div>
+                  <div class="hud-hpbar" style="width:56px"><div class="hud-hpfill" style="width:45%;background:#d94040"></div></div>
+                  <div class="hud-hpval">990/2200</div>
+                </div>
+              </div>
+              <div class="hud-joy"><div class="hud-joy-inner"></div></div>
+            </div>
+            <div class="hud-abil-wrap">
+              <div class="hud-passive">🛡</div>
+              <div class="hud-abilities">
+                <div style="position:relative">
+                  <div class="hud-ult"><div class="hud-btn-ico" style="font-size:12px">⚡</div><div class="hud-btn-cd" style="color:#7c3aed">68s</div></div>
+                  <div class="hud-cd-overlay">68</div>
+                </div>
+                <div class="hud-skill"><div class="hud-btn-ico" style="font-size:14px">🛡</div><div class="hud-btn-cd" style="color:#0ea5e9">ready</div></div>
+                <div class="hud-atk"><div class="hud-btn-ico">⚔</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5B: Low HP -->
+    <div class="screen-wrap">
+      <div class="screen-label error">In-game — low HP warning</div>
+      <div class="gf" style="background:#0a1208">
+        <div class="gf-bg" style="background:radial-gradient(ellipse at 30% 30%,rgba(20,50,20,0.5),transparent 60%),radial-gradient(ellipse at 80% 80%,rgba(80,10,10,0.4),transparent 50%),linear-gradient(180deg,#0a1208,#080a06)"></div>
+        <!-- Red edge pulse -->
+        <div style="position:absolute;inset:0;border:3px solid rgba(200,40,40,0.5);border-radius:10px;z-index:3;pointer-events:none"></div>
+        <div class="hud">
+          <div class="hud-top">
+            <div class="hud-flags">
+              <div class="hud-flag taken">our flag TAKEN</div>
+              <div class="hud-flag safe">enemy flag SAFE</div>
+            </div>
+            <div class="hud-timer">
+              <div class="hud-timer-val urgent">0:48</div>
+              <div class="hud-timer-lab">remaining</div>
+            </div>
+            <div class="hud-kf" style="color:#fca5a5">Amir ☠ Leon · now</div>
+          </div>
+          <div class="hud-bot">
+            <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-start">
+              <div class="hud-hp-area">
+                <div class="hud-hp-row">
+                  <div class="hud-avatar" style="border-color:#dc2626">⚔</div>
+                  <div class="hud-hpbar"><div class="hud-hpfill" style="width:18%;background:#d94040"></div></div>
+                  <div class="hud-hpval" style="color:#f87171">396/2200</div>
+                </div>
+              </div>
+              <div class="hud-joy"><div class="hud-joy-inner"></div></div>
+            </div>
+            <div class="hud-abil-wrap">
+              <div class="hud-abilities">
+                <div style="position:relative">
+                  <div class="hud-ult"><div class="hud-btn-ico" style="font-size:12px">⚡</div></div>
+                  <div class="hud-cd-overlay">24</div>
+                </div>
+                <div style="position:relative">
+                  <div class="hud-skill"><div class="hud-btn-ico" style="font-size:14px">🛡</div></div>
+                  <div class="hud-cd-overlay">6</div>
+                </div>
+                <div class="hud-atk" style="border-color:#ef4444"><div class="hud-btn-ico">⚔</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     SECTION 6 — GAME ENDINGS
+══════════════════════════════════════════════════════ -->
+<div class="section" id="endings">
+  <div class="section-header">
+    <div class="section-title">Game Endings</div>
+    <div class="section-sub">Knockdown Mode · Final Stage · Victory · Defeat · Scoreboard</div>
+  </div>
+  <div class="screens cols-3">
+
+    <!-- 6A: Knockdown Mode -->
+    <div class="screen-wrap">
+      <div class="screen-label error">Knockdown Mode — activated</div>
+      <div class="gf">
+        <div class="gf-bg"></div><div class="gf-sky"></div><div class="gf-castle"></div><div class="gf-fog"></div><div class="gf-vignette"></div>
+        <div class="kd-bg"></div>
+        <div class="gf-inner">
+          <div class="kd">
+            <div class="kd-title">Knockdown Mode</div>
+            <div class="kd-rule">both flags stolen · first carrier to die loses</div>
+            <div class="kd-carriers">
+              <div class="kd-carrier blue">
+                <div style="font-size:8px;color:#7dd3fc;margin-bottom:3px">blue carrier</div>
+                <div class="kd-cname">Sir Aldric</div>
+                <div class="kd-chp" style="background:#3db86a;width:100%"></div>
+              </div>
+              <div class="kd-carrier red">
+                <div style="font-size:8px;color:#fca5a5;margin-bottom:3px">red carrier</div>
+                <div class="kd-cname">Mother Greta</div>
+                <div class="kd-chp" style="background:#d94040;width:38%"></div>
+              </div>
+            </div>
+            <div class="kd-note">gas closing in from map edges · respawns locked</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6B: Final Stage -->
+    <div class="screen-wrap">
+      <div class="screen-label">Final Stage — 11:00</div>
+      <div class="gf">
+        <div class="gf-bg"></div><div class="gf-sky"></div><div class="gf-castle"></div><div class="gf-fog"></div><div class="gf-vignette"></div>
+        <div class="fs-bg"></div>
+        <div class="gf-inner">
+          <div class="fs">
+            <div class="fs-pre">time's up</div>
+            <div class="fs-title">Final Stage</div>
+            <div class="fs-divider"></div>
+            <div class="fs-rule">8 warriors · one stage · last team standing</div>
+            <div class="fs-countdown">
+              <div class="fs-count-num">3</div>
+              <div class="fs-count-lab">fight begins in</div>
+            </div>
+            <div class="fs-notes">full HP · cooldowns reset · ultimate locked 8s<br>gas fills everything outside the stage</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6C: Victory -->
+    <div class="screen-wrap">
+      <div class="screen-label success">Victory screen</div>
+      <div class="gf">
+        <div class="gf-bg" style="background:radial-gradient(ellipse at 50% 30%,rgba(20,100,40,0.4),transparent 60%),linear-gradient(180deg,#080514,#050d08)"></div>
+        <div class="gf-vignette"></div>
+        <div class="gf-inner">
+          <div class="eg">
+            <div style="font-size:9px;color:#4ade80;letter-spacing:.15em">blue team</div>
+            <div class="eg-result win">Victory</div>
+            <div class="eg-sub">flag captured in 6:14 · 3 kills · 1 death</div>
+            <div class="eg-coin-earned">+140 🪙 SlerfCoin earned</div>
+            <div class="eg-table">
+              <table>
+                <thead><tr><th>warrior</th><th>kills</th><th>deaths</th><th>caps</th><th>coins</th></tr></thead>
+                <tbody>
+                  <tr class="me"><td style="color:#7dd3fc">Sir Aldric (you)</td><td>3</td><td>1</td><td class="win-mark">1</td><td class="coin">+140</td></tr>
+                  <tr><td style="color:#94a3b8">Leon</td><td>2</td><td>2</td><td>0</td><td class="coin">+100</td></tr>
+                  <tr><td style="color:#64748b">Vargoth</td><td>1</td><td>3</td><td>0</td><td class="coin">+50</td></tr>
+                  <tr><td style="color:#64748b">Lorvak</td><td>0</td><td>4</td><td>0</td><td class="coin">+40</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="eg-btns">
+              <div class="eg-btn primary">Play again</div>
+              <div class="eg-btn secondary">Home</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6D: Defeat -->
+    <div class="screen-wrap">
+      <div class="screen-label error">Defeat screen</div>
+      <div class="gf">
+        <div class="gf-bg" style="background:radial-gradient(ellipse at 50% 30%,rgba(80,10,10,0.4),transparent 60%),linear-gradient(180deg,#080514,#0d0508)"></div>
+        <div class="gf-vignette"></div>
+        <div class="gf-inner">
+          <div class="eg">
+            <div style="font-size:9px;color:#f87171;letter-spacing:.15em">red team wins</div>
+            <div class="eg-result loss">Defeat</div>
+            <div class="eg-sub">enemy captured the flag · better luck next time</div>
+            <div class="eg-coin-earned" style="color:var(--dim);background:rgba(255,255,255,0.03);border-color:var(--border)">+40 🪙 SlerfCoin earned</div>
+            <div class="eg-table">
+              <table>
+                <thead><tr><th>warrior</th><th>kills</th><th>deaths</th><th>caps</th><th>coins</th></tr></thead>
+                <tbody>
+                  <tr class="me"><td style="color:#fca5a5">Sir Aldric (you)</td><td>1</td><td>4</td><td class="loss-mark">0</td><td class="coin">+40</td></tr>
+                  <tr><td style="color:#64748b">Leon</td><td>0</td><td>3</td><td>0</td><td class="coin">+40</td></tr>
+                  <tr><td style="color:#64748b">Vargoth</td><td>2</td><td>2</td><td>0</td><td class="coin">+60</td></tr>
+                  <tr><td style="color:#64748b">Lorvak</td><td>0</td><td>1</td><td>0</td><td class="coin">+40</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="eg-btns">
+              <div class="eg-btn primary">Play again</div>
+              <div class="eg-btn secondary">Home</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6E: Deathcam -->
+    <div class="screen-wrap">
+      <div class="screen-label">Deathcam</div>
+      <div class="gf" style="background:#0a1208">
+        <div class="gf-bg" style="background:radial-gradient(ellipse at 30% 30%,rgba(20,50,20,0.5),transparent 60%),linear-gradient(180deg,#0a1208,#080a06)"></div>
+        <div style="position:absolute;inset:0;background:rgba(5,3,14,0.45);z-index:2"></div>
+        <div class="gf-inner" style="z-index:3;flex-direction:column;gap:6px">
+          <div style="background:rgba(8,5,16,0.85);border:0.5px solid var(--border);border-radius:5px;padding:5px 12px;text-align:center">
+            <div style="font-size:9px;color:var(--muted)">eliminated by</div>
+            <div style="font-family:'Cinzel',serif;font-size:13px;color:#f87171">Mother Greta</div>
+            <div style="font-size:9px;color:var(--muted)">Bear Hug</div>
+          </div>
+          <div style="background:rgba(8,5,16,0.85);border:0.5px solid rgba(61,184,106,0.2);border-radius:5px;padding:4px 12px;text-align:center">
+            <div style="font-size:18px;font-weight:500;color:#4ade80;font-family:'Cinzel',serif">3</div>
+            <div style="font-size:8px;color:var(--muted)">respawning in</div>
+          </div>
+          <div style="font-size:9px;color:var(--muted)">watching killer's camera</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6F: Final Stage gas on stage -->
+    <div class="screen-wrap">
+      <div class="screen-label error">Final Stage — gas closing in (12:30)</div>
+      <div class="gf">
+        <div class="gf-bg" style="background:radial-gradient(ellipse at 50% 50%,rgba(60,120,10,0.3),transparent 50%),linear-gradient(180deg,#050d03,#030a02)"></div>
+        <!-- Gas from edges -->
+        <div style="position:absolute;inset:0;background:linear-gradient(90deg,rgba(30,80,10,0.7) 0%,transparent 25%,transparent 75%,rgba(30,80,10,0.7) 100%);z-index:2"></div>
+        <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(30,80,10,0.7) 0%,transparent 22%,transparent 78%,rgba(30,80,10,0.7) 100%);z-index:2"></div>
+        <div class="gf-inner" style="z-index:3;flex-direction:column;gap:6px">
+          <div style="font-family:'Cinzel',serif;font-size:13px;color:var(--gold)">Final Stage</div>
+          <div style="font-size:9px;color:#fde68a">gas closing in · last warrior standing wins</div>
+          <div class="kd-carriers">
+            <div class="kd-carrier blue" style="min-width:70px">
+              <div style="font-size:8px;color:#7dd3fc;margin-bottom:2px">blue</div>
+              <div style="font-size:9px;color:var(--text)">Sir Aldric</div>
+              <div style="height:3px;background:#3db86a;width:60%;border-radius:2px;margin-top:4px"></div>
+            </div>
+            <div class="kd-carrier red" style="min-width:70px">
+              <div style="font-size:8px;color:#fca5a5;margin-bottom:2px">red</div>
+              <div style="font-size:9px;color:var(--text)">Lorvak</div>
+              <div style="height:3px;background:#d94040;width:20%;border-radius:2px;margin-top:4px"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     SECTION 7 — ERROR STATES
+══════════════════════════════════════════════════════ -->
+<div class="section" id="errors">
+  <div class="section-header">
+    <div class="section-title">Error States</div>
+    <div class="section-sub">Network · session · game-breaking · connection lost</div>
+  </div>
+  <div class="screens cols-3">
+
+    <!-- 7A: Connection lost in game -->
+    <div class="screen-wrap">
+      <div class="screen-label error">Connection lost — in match</div>
+      <div class="gf" style="background:#0a1208">
+        <div class="gf-bg" style="background:linear-gradient(180deg,#0a1208,#080a06)"></div>
+        <div class="err-overlay">
+          <div class="err-modal">
+            <div class="err-modal-icon">📡</div>
+            <div class="err-modal-title">Connection lost</div>
+            <div class="err-modal-msg">You disconnected from the match.<br>Reconnecting... 3 attempts remaining.</div>
+            <div class="err-modal-btns">
+              <div class="err-modal-btn retry">Reconnecting...</div>
+              <div class="err-modal-btn cancel">Give up</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 7B: Reconnect failed -->
+    <div class="screen-wrap">
+      <div class="screen-label error">Reconnect failed</div>
+      <div class="gf">
+        <div class="gf-bg"></div>
+        <div class="err-overlay">
+          <div class="err-modal">
+            <div class="err-modal-icon">✕</div>
+            <div class="err-modal-title">Match ended</div>
+            <div class="err-modal-msg">You were disconnected for too long.<br>The match has ended without you.</div>
+            <div class="err-modal-btns">
+              <div class="err-modal-btn retry">Back to home</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 7C: Server error in queue -->
+    <div class="screen-wrap">
+      <div class="screen-label error">Server error — in queue</div>
+      <div class="gf">
+        <div class="gf-bg"></div><div class="gf-sky"></div><div class="gf-castle"></div><div class="gf-vignette"></div>
+        <div class="gf-inner">
+          <div class="queue-screen">
+            <div class="alert a-err" style="max-width:240px"><div class="alert-icon">⚠</div><div>Can't reach the server. Check your connection and try again.</div></div>
+            <div class="btn btn-red" style="width:140px;margin-top:0">Try again</div>
+            <div class="btn-outline" style="width:140px;border-radius:4px;padding:7px;text-align:center;font-size:11px;cursor:pointer;margin-top:4px;color:var(--dim)">Back to home</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     SECTION 8 — FULL SPEC
+══════════════════════════════════════════════════════ -->
+<div class="section" id="spec">
+  <div class="section-header">
+    <div class="section-title">Full Validation Spec</div>
+    <div class="section-sub">Every field · every rule · every error message · for Amir</div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+
+    <div class="spec-block">
+      <div class="spec-block-title">warrior name (username)</div>
+      <div class="spec-row"><div class="spec-field">min length</div><div><div class="spec-val">3 characters</div><div class="spec-err">warrior name too short — min 3 characters</div></div></div>
+      <div class="spec-row"><div class="spec-field">max length</div><div><div class="spec-val">12 characters</div><div class="spec-err">warrior name too long — max 12 characters</div></div></div>
+      <div class="spec-row"><div class="spec-field">allowed chars</div><div><div class="spec-val">letters, numbers, underscore ( _ ) only</div><div class="spec-err">only letters, numbers and underscore allowed</div></div></div>
+      <div class="spec-row"><div class="spec-field">uniqueness</div><div><div class="spec-val">server check on submit</div><div class="spec-err">warrior name already taken — try another</div></div></div>
+      <div class="spec-row"><div class="spec-field">when to validate</div><div class="spec-val">on blur + on submit</div></div>
+      <div class="spec-row"><div class="spec-field">display</div><div class="spec-val">shown exactly as typed in-game, scoreboard, kill feed</div></div>
+    </div>
+
+    <div class="spec-block">
+      <div class="spec-block-title">password</div>
+      <div class="spec-row"><div class="spec-field">min length</div><div><div class="spec-val">8 characters</div><div class="spec-err">password must be at least 8 characters</div></div></div>
+      <div class="spec-row"><div class="spec-field">complexity</div><div><div class="spec-val">at least 1 number or symbol</div><div class="spec-err">add a number or symbol to strengthen it</div></div></div>
+      <div class="spec-row"><div class="spec-field">max length</div><div class="spec-val">64 characters</div></div>
+      <div class="spec-row"><div class="spec-field">strength meter</div><div class="spec-val">weak = 8+ chars only · ok = + number · strong = + symbol + 12+ chars</div></div>
+      <div class="spec-row"><div class="spec-field">eye toggle</div><div class="spec-val">both password fields have eye icon. Tap to show/hide plaintext.</div></div>
+      <div class="spec-row"><div class="spec-field">confirm match</div><div><div class="spec-val">must match exactly, validated on blur</div><div class="spec-err">passwords don't match</div></div></div>
+    </div>
+
+    <div class="spec-block">
+      <div class="spec-block-title">email</div>
+      <div class="spec-row"><div class="spec-field">format</div><div><div class="spec-val">standard email regex (contains @ and domain)</div><div class="spec-err">enter a valid email address</div></div></div>
+      <div class="spec-row"><div class="spec-field">uniqueness</div><div><div class="spec-val">server check on submit</div><div class="spec-err">an account with this email already exists</div></div></div>
+      <div class="spec-row"><div class="spec-field">when to validate</div><div class="spec-val">on blur only — not on every keystroke</div></div>
+    </div>
+
+    <div class="spec-block">
+      <div class="spec-block-title">date of birth</div>
+      <div class="spec-row"><div class="spec-field">input type</div><div class="spec-val">native date picker on mobile · DD/MM/YYYY display</div></div>
+      <div class="spec-row"><div class="spec-field">min age</div><div><div class="spec-val">must be 13+ on date of submission</div><div class="spec-err">must be 13 or older to play BomSlerf</div></div></div>
+      <div class="spec-row"><div class="spec-field">max date</div><div><div class="spec-val">today (no future DOB)</div><div class="spec-err">date of birth can't be in the future</div></div></div>
+      <div class="spec-row"><div class="spec-field">min date</div><div><div class="spec-val">01/01/1900</div><div class="spec-err">enter a valid date of birth</div></div></div>
+      <div class="spec-row"><div class="spec-field">storage</div><div class="spec-val">server only — never shown again to user after registration</div></div>
+    </div>
+
+    <div class="spec-block">
+      <div class="spec-block-title">submit / button states</div>
+      <div class="spec-row"><div class="spec-field">disabled state</div><div class="spec-val">button dimmed until all required fields pass client-side validation</div></div>
+      <div class="spec-row"><div class="spec-field">loading state</div><div class="spec-val">spinner + text change ("Summoning..." / "Forging...") while API request in flight</div></div>
+      <div class="spec-row"><div class="spec-field">on API error</div><div class="spec-val">reset to normal state. Show error banner above form. Keep field values.</div></div>
+      <div class="spec-row"><div class="spec-field">no toasts</div><div class="spec-val">all errors inline below the field or as banner at top of card — never toasts</div></div>
+    </div>
+
+    <div class="spec-block">
+      <div class="spec-block-title">server error messages</div>
+      <div class="spec-row"><div class="spec-field">wrong credentials</div><div class="spec-err" style="text-align:right">Wrong warrior name or password. Try again.</div></div>
+      <div class="spec-row"><div class="spec-field">name taken</div><div class="spec-err" style="text-align:right">Warrior name already taken — try another.</div></div>
+      <div class="spec-row"><div class="spec-field">email taken</div><div class="spec-err" style="text-align:right">An account with this email already exists.</div></div>
+      <div class="spec-row"><div class="spec-field">network error</div><div class="spec-err" style="text-align:right">Can't reach the server — check your connection.</div></div>
+      <div class="spec-row"><div class="spec-field">server error</div><div class="spec-err" style="text-align:right">Something went wrong — try again in a moment.</div></div>
+      <div class="spec-row"><div class="spec-field">session expired</div><div class="spec-err" style="text-align:right">Your session expired — sign in again.</div></div>
+    </div>
+
+    <div class="spec-block">
+      <div class="spec-block-title">game config — tunable parameters</div>
+      <div class="spec-row"><div class="spec-field">match duration</div><div class="spec-val">MATCH_DURATION_SECONDS = 660 (11:00)</div></div>
+      <div class="spec-row"><div class="spec-field">captures to win</div><div class="spec-val">CAPTURES_TO_WIN = 1</div></div>
+      <div class="spec-row"><div class="spec-field">knockdown trigger</div><div class="spec-val">KNOCKDOWN_TRIGGER_SECONDS = 30</div></div>
+      <div class="spec-row"><div class="spec-field">gas damage rate</div><div class="spec-val">GAS_DAMAGE_PERCENT_PER_SECOND = 1.5</div></div>
+      <div class="spec-row"><div class="spec-field">final stage delay</div><div class="spec-val">FINAL_STAGE_COUNTDOWN_SECONDS = 3</div></div>
+      <div class="spec-row"><div class="spec-field">ult lock duration</div><div class="spec-val">FINAL_STAGE_ULT_LOCK_SECONDS = 8</div></div>
+    </div>
+
+    <div class="spec-block">
+      <div class="spec-block-title">SlerfCoin — post-match rewards</div>
+      <div class="spec-row"><div class="spec-field">win base</div><div class="spec-val">+80 coins</div></div>
+      <div class="spec-row"><div class="spec-field">loss base</div><div class="spec-val">+40 coins</div></div>
+      <div class="spec-row"><div class="spec-field">per kill</div><div class="spec-val">+10 coins each</div></div>
+      <div class="spec-row"><div class="spec-field">flag capture</div><div class="spec-val">+30 coins</div></div>
+      <div class="spec-row"><div class="spec-field">match cap</div><div class="spec-val">200 coins max per match</div></div>
+      <div class="spec-row"><div class="spec-field">shown on</div><div class="spec-val">scoreboard screen + home screen coin balance</div></div>
+    </div>
+
+  </div>
+
+  <div style="margin-top:24px;background:rgba(10,7,20,0.7);border:0.5px solid var(--border);border-radius:8px;padding:16px 20px;font-size:12px;color:var(--dim);line-height:1.9">
+    <strong style="color:var(--gold-dim);font-family:'Cinzel',serif;">Note to Steve:</strong> The castle silhouette and red sky are CSS-generated placeholder art to establish mood and layout composition. The final background should be an AI-generated illustration — fortress walls, torchlight, war banners, dark fantasy atmosphere — consistent with the main screen aesthetic you've already created. The gold and crimson palette is a proposal based on the existing game screenshots. The form card uses backdrop blur and needs a visually rich background to look its best.<br><br>
+    <strong style="color:var(--gold-dim);font-family:'Cinzel',serif;">Note to Amir:</strong> This is landscape orientation only. All screens are 16:9 aspect ratio. The nav on this doc links to each section. Implement screens in the order shown — auth first, then home, then queue, then loading, then in-game HUD, then endings, then errors. The spec table at the bottom covers every validation rule and error message to use verbatim.
+  </div>
+</div>
+
+</body>
+</html>

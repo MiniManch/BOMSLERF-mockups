@@ -1,0 +1,576 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sprint 4 Runway</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Public+Sans:wght@400;600;650&display=swap">
+<style>
+  html{-webkit-text-size-adjust:100%}
+  img{max-width:100%}
+  [hidden]{display:none!important}
+</style>
+<style>
+  /* Layout: time-ordered work blocks as the spine, asset specs inline where they're actioned, full reference tables at the end */
+  :root{
+    --bg:#faf8f4; --surface:#ffffff; --surface2:#f3efe7; --line:#e2dcd0;
+    --ink:#1a1814; --dim:#6b6457; --faint:#9a9184;
+    --gold:#9a7416; --gold-soft:#f5ecd6;
+    --red:#a8392f; --red-soft:#faeae8;
+    --green:#3d7a52; --green-soft:#e8f3ec;
+    --blue:#2c5a82; --blue-soft:#e7f0f7;
+    --violet:#5c4a8a; --violet-soft:#ece8f5;
+    --f-disp:"Fraunces",Georgia,"Times New Roman",serif;
+    --f-body:"Public Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    --f-mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+    --bg:#13110e; --surface:#1b1813; --surface2:#242019; --line:#332e26;
+    --ink:#f0ece4; --dim:#a39a8a; --faint:#736b5e;
+    --gold:#d9b359; --gold-soft:#2a2316;
+    --red:#e08478; --red-soft:#2d1b18;
+    --green:#7fc496; --green-soft:#17251c;
+    --blue:#82b4dc; --blue-soft:#161f28;
+    --violet:#a89bd4; --violet-soft:#1e1a2b;
+    color-scheme:dark;
+  }}
+  :root[data-theme="dark"]{
+    --bg:#13110e; --surface:#1b1813; --surface2:#242019; --line:#332e26;
+    --ink:#f0ece4; --dim:#a39a8a; --faint:#736b5e;
+    --gold:#d9b359; --gold-soft:#2a2316;
+    --red:#e08478; --red-soft:#2d1b18;
+    --green:#7fc496; --green-soft:#17251c;
+    --blue:#82b4dc; --blue-soft:#161f28;
+    --violet:#a89bd4; --violet-soft:#1e1a2b;
+    color-scheme:dark;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 var(--f-body)}
+  .wrap{max-width:880px;margin:0 auto;
+    padding-left:max(16px,env(safe-area-inset-left,0px));
+    padding-right:max(16px,env(safe-area-inset-right,0px));
+    padding-block:44px 90px}
+
+  /* masthead */
+  .kicker{font:650 11px/1 var(--f-body);letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}
+  h1{font:600 clamp(32px,6vw,46px)/1.05 var(--f-disp);margin:16px 0 12px;letter-spacing:-.02em;text-wrap:balance}
+  .standfirst{font-size:17px;color:var(--dim);max-width:60ch;margin:0 0 20px}
+  .deadline{padding:13px 16px;background:var(--red-soft);border-radius:8px;
+    border:1px solid color-mix(in srgb,var(--red) 22%,transparent);font-size:14.5px;margin-bottom:10px}
+  .deadline b{color:var(--red)}
+  .headline{padding:14px 17px;background:var(--gold-soft);border-radius:8px;
+    border:1px solid color-mix(in srgb,var(--gold) 26%,transparent);font-size:14.5px}
+  .headline b{color:var(--gold)}
+
+  /* jump nav */
+  .nav{display:flex;flex-wrap:wrap;gap:6px;margin:24px 0 0}
+  .nav a{font:650 11px/1 var(--f-body);letter-spacing:.07em;text-transform:uppercase;
+    text-decoration:none;color:var(--dim);background:var(--surface2);border:1px solid var(--line);
+    padding:7px 10px;border-radius:5px}
+  .nav a:hover{color:var(--gold);border-color:var(--gold)}
+
+  /* day heading */
+  .day{margin-top:54px;padding-bottom:12px;border-bottom:2px solid var(--ink);
+    display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;scroll-margin-top:12px}
+  .day h2{font:600 26px/1.1 var(--f-disp);margin:0;letter-spacing:-.01em}
+  .day .when{font:650 11px/1 var(--f-body);letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
+  .day .theme{font-size:14px;color:var(--dim);flex:1 1 100%;margin-top:4px}
+
+  /* block card */
+  .blk{background:var(--surface);border:1px solid var(--line);border-radius:11px;margin-top:16px;overflow:hidden}
+  .blk-h{padding:15px 18px 13px;border-bottom:1px solid var(--line);background:var(--surface2)}
+  .blk-top{display:flex;align-items:baseline;gap:11px;flex-wrap:wrap;margin-bottom:5px}
+  .clock{font:650 12px/1 var(--f-mono);color:var(--gold);letter-spacing:.02em;
+    background:var(--gold-soft);padding:4px 8px;border-radius:5px;white-space:nowrap}
+  .blk-h h3{font:600 18px/1.3 var(--f-body);margin:0;letter-spacing:-.01em;flex:1;min-width:0}
+  .why{font-size:14px;color:var(--dim);margin:0;max-width:72ch}
+  .blk-b{padding:15px 18px}
+  .blk-b p{margin:0 0 11px;font-size:15px}
+  .blk-b p:last-child{margin-bottom:0}
+  .out{margin-top:13px;padding-top:12px;border-top:1px dashed var(--line);font-size:13.5px;color:var(--dim)}
+  .out b{color:var(--green);font-weight:650}
+  .first{background:var(--red-soft);border-color:color-mix(in srgb,var(--red) 28%,transparent)}
+  .first .clock{background:color-mix(in srgb,var(--red) 16%,transparent);color:var(--red)}
+
+  h3.sub{font:600 17px/1.3 var(--f-body);margin:30px 0 7px;letter-spacing:-.01em}
+  ul,ol{margin:0 0 11px;padding-left:21px}
+  li{margin-bottom:7px;font-size:15px}
+  li:last-child{margin-bottom:0}
+  code{font:600 13px var(--f-mono);background:var(--surface2);padding:1.5px 5px;border-radius:4px;color:var(--gold)}
+  strong{font-weight:650} em{font-style:italic}
+
+  .keys{display:flex;flex-wrap:wrap;gap:5px;margin:9px 0 2px}
+  .k{font:600 12px/1 var(--f-mono);background:var(--surface2);border:1px solid var(--line);
+    padding:5px 7px;border-radius:5px;color:var(--dim)}
+
+  .tw{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:13px 0}
+  table{width:100%;border-collapse:collapse;font-size:14px;min-width:420px}
+  th,td{text-align:left;padding:8px 11px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font:650 10.5px/1.3 var(--f-body);letter-spacing:.11em;text-transform:uppercase;color:var(--gold)}
+  td:first-child{font:600 13px var(--f-mono);white-space:nowrap;color:var(--ink)}
+
+  .note{border-radius:0 9px 9px 0;padding:14px 17px;margin:15px 0;font-size:14.5px;
+    background:var(--blue-soft);border:1px solid var(--line);border-left:3px solid var(--blue)}
+  .note.warn{background:var(--red-soft);border-left-color:var(--red)}
+  .note.ok{background:var(--green-soft);border-left-color:var(--green)}
+  .note.spec{background:var(--violet-soft);border-left-color:var(--violet)}
+  .note-t{font-weight:650;margin-bottom:5px;font-size:14px}
+  .note p{margin:0 0 8px}.note p:last-child{margin:0}
+
+  /* ask card */
+  .ask{background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:14px 17px;margin:11px 0}
+  .ask-who{font:600 15px var(--f-body);margin-bottom:6px}
+  .ask-who span{font-weight:400;color:var(--faint);font-size:13px}
+
+  /* asset chain */
+  .chain{font:600 12.5px var(--f-mono);color:var(--dim)}
+  .chain span{color:var(--gold)}
+  dl{margin:10px 0;display:grid;grid-template-columns:auto 1fr;gap:5px 14px;font-size:13.5px}
+  dt{color:var(--faint);font-weight:400}
+  dd{margin:0;font-weight:600}
+  .st{font:650 9.5px/1 var(--f-body);letter-spacing:.11em;text-transform:uppercase;
+    padding:4px 8px;border-radius:4px;white-space:nowrap}
+  .st.miss{background:var(--red-soft);color:var(--red)}
+  .st.have{background:var(--green-soft);color:var(--green)}
+  .st.part{background:var(--gold-soft);color:var(--gold)}
+
+  /* reference section */
+  .ref{margin-top:60px;padding-top:34px;border-top:4px double var(--line);scroll-margin-top:12px}
+  .ref h2{font:600 28px/1.1 var(--f-disp);margin:0 0 8px;letter-spacing:-.02em}
+  .ref .lede{color:var(--dim);font-size:15px;margin:0 0 6px;max-width:72ch}
+  .ref h3{font:600 19px/1.25 var(--f-disp);margin:36px 0 6px;
+    padding-bottom:9px;border-bottom:1px solid var(--line)}
+
+  .closing{margin-top:52px;padding:22px;background:var(--surface);border:1px solid var(--line);border-radius:11px}
+  .closing h2{font:600 21px/1.2 var(--f-disp);margin:0 0 11px}
+  .closing p{font-size:15px;margin:0 0 11px}
+  .closing p:last-child{margin:0}
+
+  @media (max-width:560px){
+    .wrap{padding-block:30px 70px}
+    .blk-top{gap:8px}
+    dl{grid-template-columns:1fr} dt{margin-top:6px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="kicker">BomSlerf · Thu 5 → Sun 8 November</div>
+<h1>Sprint 4 Runway</h1>
+<p class="standfirst">Three working sessions to turn 72 loose issues into a sprint you can run, and a Jira board that tells the truth about the product. Every asset, owner and deadline in one place.</p>
+
+<div class="deadline">
+  <b>Hard constraint:</b> Sprint 4 starts Sunday. Everything here exists to make Sunday morning a start line instead of a planning meeting.
+</div>
+<div class="headline">
+  <b>The one fact to carry all weekend:</b> every piece of Sprint 4's character and audio work is gated on 2 art packages and 8 audio files, and none of them exist yet. Fourteen tickets are waiting on Steve.
+</div>
+
+<nav class="nav">
+  <a href="#thursday">Thursday</a>
+  <a href="#friday">Friday</a>
+  <a href="#saturday">Saturday</a>
+  <a href="#evening">Sat evening</a>
+  <a href="#sunday">Sunday</a>
+  <a href="#reference">Asset reference</a>
+</nav>
+
+<!-- ═════════════════ THURSDAY ═════════════════ -->
+<div class="day" id="thursday">
+  <span class="when">Thursday afternoon</span>
+  <h2>Unblock everyone else, then close Sprint 3</h2>
+  <p class="theme">You are the bottleneck for three people today. Get their work moving before you touch yours — answers need Friday and Saturday to come back.</p>
+</div>
+
+<div class="blk">
+  <div class="blk-h first">
+    <div class="blk-top"><span class="clock">14:00 · 40m</span><h3>Send the three asks. Before anything else.</h3></div>
+    <p class="why">If these go out Sunday they are worthless. Every hour they sit unsent is an hour nobody can answer them.</p>
+  </div>
+  <div class="blk-b">
+
+    <div class="ask">
+      <div class="ask-who">Steve — deliveries <span>in this order, top to bottom</span></div>
+      <ol>
+        <li><strong>Aldric art package (BOM-99).</strong> Unblocks the longest chain and has no open questions in it. Full spec in the reference section.</li>
+        <li><strong>Four Tier 1 audio files</strong> — capture fanfare, hit, kill, battle loop. Possibly three: ask whether the main-screen track he already made covers BOM-105 before he writes a new one.</li>
+        <li><strong>Greta art package (BOM-113)</strong> — brown-gold palette, plus an answer on whether the bear is a separate model.</li>
+        <li><strong>Three Tier 2 sounds</strong> — low HP pulse, death, Knockdown sting.</li>
+      </ol>
+      <div class="note ok" style="margin:10px 0 0">
+        <div class="note-t">Why Aldric before Greta</div>
+        <p>Aldric has approved stats, approved abilities and a written voice line. Greta's package has the unresolved bear question inside it, and an ask with an open question in it always comes back slower.</p>
+      </div>
+    </div>
+
+    <div class="ask">
+      <div class="ask-who">Steve — decisions <span>five answers, each one unblocks a build</span></div>
+      <ul>
+        <li><strong>Confirm</strong> Aldric is 2,240 HP / 165 damage — Jira had it wrong</li>
+        <li><strong>Confirm</strong> the 60% slow cap from his own Wave 2 doc</li>
+        <li><strong>Crits: yes or no.</strong> Recommend <em>no</em> — no crit system exists in the GDD or Tank Spec, so the sound you wanted has no event to attach to</li>
+        <li><strong>1 or 2 captures to win</strong> — built as 1 and exposed as config, but he has said 2 in conversation and it has never been settled</li>
+        <li><strong>Respawn invulnerability</strong> at 1.0s, and whether to adopt the 2-second / 785 burst rule he proposed</li>
+        <li><strong>Agree</strong> Wave 2's 16 characters go to backlog, one a month — which is his own recommendation</li>
+      </ul>
+    </div>
+
+    <div class="ask">
+      <div class="ask-who">Amir <span>two answers and one warning</span></div>
+      <ul>
+        <li><strong>Does a quadruped rig through Mixamo?</strong> Manual Blender, Tripo's rig, or a separate pre-rigged asset. Blocks BOM-116, Greta's bear form.</li>
+        <li><strong>Has Tripo → Blender → Mixamo → Unity ever run end to end?</strong> Every character ticket assumes it works. If it hasn't, Aldric is the test case and should be budgeted as learning.</li>
+        <li><strong>Warn him about BOM-51.</strong> Deathcam is the only In Progress item in the project and the death event it needs does not exist until BOM-129 ships. He may be building blind right now.</li>
+      </ul>
+    </div>
+
+    <div class="ask">
+      <div class="ask-who">Leon <span>confirm two, answer one</span></div>
+      <ul>
+        <li>Do <strong>BOM-39</strong> (character system) and <strong>BOM-87</strong> (config) actually work? All of Sprint 4's character work sits on them.</li>
+        <li>What does it take to get the server off his home PC?</li>
+      </ul>
+    </div>
+
+    <div class="out"><b>Outcome:</b> three people have work they can do without you over the weekend.</div>
+  </div>
+</div>
+
+<div class="blk">
+  <div class="blk-h">
+    <div class="blk-top"><span class="clock">14:40 · 60m</span><h3>The QA walk, live with Amir and Leon</h3></div>
+    <p class="why">The most valuable hour of the three days. Fifteen issues sit in QA and your own playtest contradicts several. What survives this hour is what Sprint 3 actually delivered.</p>
+  </div>
+  <div class="blk-b">
+    <div class="keys">
+      <span class="k">BOM-37</span><span class="k">38</span><span class="k">39</span><span class="k">41</span><span class="k">43</span><span class="k">44</span><span class="k">45</span><span class="k">46</span><span class="k">48</span><span class="k">64</span><span class="k">87</span><span class="k">88</span><span class="k">91</span><span class="k">92</span><span class="k">93</span>
+    </div>
+    <p>One question per issue: <strong>show me it working in the build.</strong> Not "it's written" — watched, on a device.</p>
+    <div class="note warn">
+      <div class="note-t">The rule that matters</div>
+      <p>Done means someone saw it work. Marking things Done on belief is exactly how FOV ended up Done-but-broken, and how you lost a sprint to re-doing it. If it can't be demonstrated inside the hour, it goes back to To Do with a note.</p>
+    </div>
+    <p>Three you should expect to fail:</p>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Issue</th><th>What it claims</th><th>What contradicts it</th></tr></thead>
+        <tbody>
+          <tr><td>BOM-44</td><td>End of match screen and scoreboard</td><td>BOM-72 — the game freezes at round end</td></tr>
+          <tr><td>BOM-48</td><td>Basic sound effects and music</td><td>You reported the APK silent</td></tr>
+          <tr><td>BOM-43</td><td>Aldric abilities implemented</td><td>No model exists, and the stats were wrong until yesterday</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="out"><b>Outcome:</b> every one of the 15 is either Done or honestly back in To Do. No maybes.</div>
+  </div>
+</div>
+
+<div class="blk">
+  <div class="blk-h">
+    <div class="blk-top"><span class="clock">15:40 · 25m</span><h3>Close the three duplicates, decide on a fourth</h3></div>
+    <p class="why">Each describes work another ticket already covers. Left open, someone builds the same thing twice.</p>
+  </div>
+  <div class="blk-b">
+    <div class="tw">
+      <table>
+        <thead><tr><th>Close</th><th>Was</th><th>Now covered by</th></tr></thead>
+        <tbody>
+          <tr><td>BOM-49</td><td>Greta model and animations</td><td>BOM-113 · 114 · 115 · 116</td></tr>
+          <tr><td>BOM-50</td><td>Greta abilities</td><td>BOM-117 · 118</td></tr>
+          <tr><td>BOM-55</td><td>Combat feedback, shake, low HP</td><td>BOM-122 · 123 · 107</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="note">
+      <div class="note-t">And decide on BOM-63</div>
+      <p>"Aldric final model replacement" has no sprint, no label and no owner. BOM-42 was written around a <em>free placeholder knight asset</em>; BOM-63 is the swap to Steve's real model. If BOM-99 arrives on time this ticket is unnecessary — close it. If it doesn't, this is the ticket that admits the game ships with someone else's knight in it, and it needs a sprint.</p>
+    </div>
+    <div class="out"><b>Outcome:</b> Sprint 4 drops to 72 and nothing is described twice.</div>
+  </div>
+</div>
+
+<div class="blk">
+  <div class="blk-h">
+    <div class="blk-top"><span class="clock">16:05 · 30m</span><h3>Close Sprint 3. Create Sprint 4. Do not start it.</h3></div>
+    <p class="why">The shell needs to exist so issues can be moved in this weekend. Starting it before it is scoped is the thing you are trying to avoid.</p>
+  </div>
+  <div class="blk-b">
+    <ul>
+      <li>Close Sprint 3 — Jira's close dialog offers to move unfinished issues; send them to the new sprint</li>
+      <li>Create the sprint, name it <strong>BOM Sprint 4</strong>, leave it in Future</li>
+      <li>Tell the team plainly: <strong>Sprint 4 starts Sunday</strong>, scope lands Saturday night</li>
+    </ul>
+    <div class="note ok">
+      <div class="note-t">Hand this back to me</div>
+      <p>Once the sprint exists I can move all 72 Sprint4-labelled issues into it in one pass. Takes a minute and saves you 72 drags.</p>
+    </div>
+    <div class="out"><b>Outcome:</b> Sprint 3 is history, Sprint 4 is an empty container with a start date.</div>
+  </div>
+</div>
+
+<div class="blk">
+  <div class="blk-h">
+    <div class="blk-top"><span class="clock">16:35 · 35m</span><h3>Open the ticket nobody has written</h3></div>
+    <p class="why">Leon's server runs on his home PC and there is no migration ticket anywhere. It is the largest uncontrolled risk you have, and it is invisible in Jira.</p>
+  </div>
+  <div class="blk-b">
+    <p>Write it with whatever Leon told you this morning. It does not need to be in Sprint 4 — it needs to <em>exist</em>, so that when it bites during a demo it was a known risk rather than a surprise.</p>
+    <div class="out"><b>Outcome:</b> the board reflects every real risk, including the one nobody wants to own.</div>
+  </div>
+</div>
+
+<!-- ═════════════════ FRIDAY ═════════════════ -->
+<div class="day" id="friday">
+  <span class="when">Friday</span>
+  <h2>The solo pass</h2>
+  <p class="theme">Nobody is around to interrupt and nobody is waiting on you. Spend it on the two things that need uninterrupted attention.</p>
+</div>
+
+<div class="blk">
+  <div class="blk-h">
+    <div class="blk-top"><span class="clock">Block 1 · 2h</span><h3>Paste every mockup screenshot</h3></div>
+    <p class="why">Fourteen tickets have a <code>📸 PASTE MOCKUP HERE</code> placeholder with a pointer to the exact file and section. Mechanical work, but a ticket without its picture gets built wrong.</p>
+  </div>
+  <div class="blk-b">
+    <div class="tw">
+      <table>
+        <thead><tr><th>Source file</th><th>Covers</th><th>Feeds</th></tr></thead>
+        <tbody>
+          <tr><td>sprint4_blocks_bc</td><td>B0–B9, C1–C7 — combat core, all of Greta, ally targeting, combos, character select screen, hit feedback, screen shake, both characters' VFX, status effects, death and respawn, flag carrier</td><td>112, 113–121, 122–128, 132</td></tr>
+          <tr><td>bomslerf_full_flow</td><td>Auth, home (both states), queue, loading, HUD, endings, error states</td><td>89, 90, 94, 95, 96, 97, 133</td></tr>
+          <tr><td>game_endings_mockups</td><td>Knockdown, Final Stage, victory, defeat, scoreboard</td><td>96, 97, 44, 54</td></tr>
+          <tr><td>character_select_panel</td><td>Panel open, locked slot tapped, home card before and after</td><td>41</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="note warn">
+      <div class="note-t">Fix two wrong pointers while you are in there</div>
+      <p><strong>BOM-131</strong> says "from your in-game HUD mockups" — the real source is <code>sprint4_blocks_bc → C7</code>. <strong>BOM-129</strong> says the same and has no source at all, because the kill feed and deathcam were never drawn. Those two screens are the real gap.</p>
+    </div>
+    <div class="out"><b>Outcome:</b> no ticket in Sprint 4 asks someone to build a screen they cannot see.</div>
+  </div>
+</div>
+
+<div class="blk">
+  <div class="blk-h">
+    <div class="blk-top"><span class="clock">Block 2 · 1h</span><h3>Draw the two missing Sprint 4 screens</h3></div>
+    <p class="why">Kill feed and deathcam are both in Sprint 4 and neither exists. Everything else missing is a screen you chose to skip.</p>
+  </div>
+  <div class="blk-b">
+    <div class="tw">
+      <table>
+        <thead><tr><th>For</th><th>What</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>BOM-52</td><td>Kill feed row — team colours, portraits, ability icon, carrier-death weighting</td><td><span class="st miss">Needed</span></td></tr>
+          <tr><td>BOM-51</td><td>Deathcam framing — what the camera shows when it cuts to your killer</td><td><span class="st miss">Needed</span></td></tr>
+          <tr><td>BOM-60</td><td>Daily quests screen</td><td><span class="st part">You skipped</span></td></tr>
+          <tr><td>BOM-61</td><td>Player profile and lifetime stats</td><td><span class="st part">You skipped</span></td></tr>
+          <tr><td>BOM-59</td><td>Post-match coin award</td><td><span class="st part">Maybe in BOM-54</span></td></tr>
+          <tr><td>BOM-81</td><td>Structural map elements</td><td><span class="st part">Needs Steve's map</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Ask me for the two needed ones and I'll build them the way I built the character select panel.</p>
+    <div class="out"><b>Outcome:</b> every Sprint 4 ticket has a picture.</div>
+  </div>
+</div>
+
+<div class="blk">
+  <div class="blk-h">
+    <div class="blk-top"><span class="clock">Block 3 · 2h · the important one</span><h3>The scope cut</h3></div>
+    <p class="why">72 issues, two developers, one sprint. That is 36 each. It will not happen, and a sprint everyone knows is impossible stops being a plan.</p>
+  </div>
+  <div class="blk-b">
+    <p>Do it in this order, because the order is what makes it work:</p>
+    <ul>
+      <li><strong>Write the sprint goal first.</strong> One sentence, no "and". Something like: <em>"Two characters with real kits, and combat that feels like it lands."</em></li>
+      <li><strong>Sort every issue against that sentence.</strong> Serves it directly → in. Would be nice → backlog. Doesn't serve it → backlog, no argument.</li>
+      <li><strong>Then check the gates.</strong> Anything waiting on a Steve delivery that has not arrived cannot be in the sprint. That is not pessimism, it is arithmetic.</li>
+    </ul>
+    <div class="note">
+      <div class="note-t">What the dependency graph already tells you</div>
+      <p><strong>BOM-112</strong> blocks six tickets and is the first thing Leon should touch. <strong>BOM-129</strong>, <strong>130</strong> and <strong>131</strong> each unblock frontend work that cannot start without them. The whole Greta epic sits behind <strong>BOM-113</strong>. If that art is not in hand by Sunday, Greta is not a Sprint 4 character and the goal sentence needs rewriting.</p>
+    </div>
+    <p>The honest version of this sprint is probably the combat layer, the event streams, hit feel, and <em>either</em> Greta <em>or</em> the endings-and-auth rollover — not both.</p>
+    <div class="out"><b>Outcome:</b> a Sprint 4 list you would bet money on finishing, and a backlog that holds the rest without guilt.</div>
+  </div>
+</div>
+
+<!-- ═════════════════ SATURDAY ═════════════════ -->
+<div class="day" id="saturday">
+  <span class="when">Saturday morning</span>
+  <h2>Make it executable</h2>
+  <p class="theme">A scoped list is not yet a sprint. It needs an order and an owner for every line.</p>
+</div>
+
+<div class="blk">
+  <div class="blk-h">
+    <div class="blk-top"><span class="clock">Block 1 · 1.5h</span><h3>Sequence it</h3></div>
+    <p class="why">Two developers idle because the thing they need is scheduled for week two is the most common way a sprint fails.</p>
+  </div>
+  <div class="blk-b">
+    <ul>
+      <li><strong>Leon, day one:</strong> BOM-112. Nothing else competes.</li>
+      <li><strong>Leon, after:</strong> BOM-129 → 130 → 131, in that order, because the frontend queue behind them is longest</li>
+      <li><strong>Amir, day one, while blocked:</strong> what can he build with no server dependency and no art? BOM-123 screen shake, BOM-121 character select screen, BOM-41 panel. Have this answer ready before Sunday or he spends Monday waiting.</li>
+    </ul>
+    <div class="out"><b>Outcome:</b> both developers have three days of unblocked work from Sunday morning.</div>
+  </div>
+</div>
+
+<div class="blk">
+  <div class="blk-h">
+    <div class="blk-top"><span class="clock">Block 2 · 1.5h</span><h3>Give every issue an owner and a real priority</h3></div>
+    <p class="why">Most of what was created this week has no assignee. An unassigned issue in a two-person team is a decision nobody has made.</p>
+  </div>
+  <div class="blk-b">
+    <p>Priority too: almost everything in the project is Medium right now, which means nothing is prioritised.</p>
+    <div class="out"><b>Outcome:</b> every line in Sprint 4 has a name and a rank next to it.</div>
+  </div>
+</div>
+
+<div class="day">
+  <span class="when">Saturday afternoon</span>
+  <h2>Backlog hygiene, then prep the evening</h2>
+  <p class="theme">The part that makes the board reflect the product rather than its history.</p>
+</div>
+
+<div class="blk">
+  <div class="blk-h">
+    <div class="blk-top"><span class="clock">Block 1 · 2h</span><h3>Sweep BOM-1 through BOM-86</h3></div>
+    <p class="why">A long tail of issues with no sprint, no label and no decision. Each one is a small tax on reading the board.</p>
+  </div>
+  <div class="blk-b">
+    <div class="tw">
+      <table>
+        <thead><tr><th>What</th><th>Count</th><th>Decide</th></tr></thead>
+        <tbody>
+          <tr><td>BOM-65 … 85</td><td>11</td><td>The <code>product-review</code> parking lot. Each: Sprint 4, backlog, or close. Parked three months is a no.</td></tr>
+          <tr><td>BOM-11</td><td>1</td><td>Marked BLOCKED with no label and no note on what blocks it</td></tr>
+          <tr><td>BOM-63, 86</td><td>2</td><td>No labels at all — BOM-63 you already decided on Thursday</td></tr>
+          <tr><td>BOM-1 … 4, 24, 35, 36</td><td>7</td><td>Old epics. Confirm the hierarchy is right and their children point where you expect.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="out"><b>Outcome:</b> nothing on the board is unlabelled, unsorted or undecided.</div>
+  </div>
+</div>
+
+<!-- ═════════════════ SAT EVENING ═════════════════ -->
+<div class="day" id="evening">
+  <span class="when">Saturday evening · with Steve and Amir</span>
+  <h2>The model session</h2>
+  <p class="theme">The only time this week all three of you are in a room. Four things to leave with, in this order.</p>
+</div>
+
+<div class="blk">
+  <div class="blk-h">
+    <div class="blk-top"><span class="clock">Agenda</span><h3>What to get out of the room</h3></div>
+  </div>
+  <div class="blk-b">
+    <ol>
+      <li><strong>Which models exist, concretely.</strong> Not "in progress" — files, in hand, or not. This single answer decides whether Greta is in Sprint 4.</li>
+      <li><strong>The quadruped question, settled and written down.</strong> Greta's bear plus the 7 non-humanoid Wave 2 characters. Mixamo, Tripo's rig, or manual Blender. And: is the bear a separate model with its own skeleton, or the same mesh deformed? That changes BOM-116 substantially and may mean a second art package.</li>
+      <li><strong>The pipeline, agreed out loud.</strong> Tripo → Blender → Mixamo → Unity. Quad topology, 8–15k character, 1.5–4k weapon, Multi-view input, 4 generations. Steve's Wave 2 doc specifies all of it and Amir has never confirmed it works.</li>
+      <li><strong>Who does what when a model fails.</strong> Steve's doc already answers this — a small missing detail is Amir adding a primitive in Blender, not a Tripo re-run. Worth agreeing before it happens rather than after.</li>
+    </ol>
+    <div class="note">
+      <div class="note-t">One thing to raise that they will not</div>
+      <p>Steve's Wave 2 doc contains 16 new characters, and his own closing recommendation is to shelve the lot and add one a month. Say that out loud in the room so it does not quietly become an expectation. The useful part of that document is its <strong>method</strong> — silhouette first, three mandatory original identifiers, the Tripo settings table — and that applies to Greta right now.</p>
+    </div>
+    <div class="out"><b>Outcome:</b> you know whether Greta ships, and Amir knows how to rig a bear.</div>
+  </div>
+</div>
+
+<!-- ═════════════════ SUNDAY ═════════════════ -->
+<div class="closing" id="sunday">
+  <h2>Sunday morning</h2>
+  <p>Start Sprint 4. Nothing left to decide, nothing left to paste, every issue owned and ordered.</p>
+  <p><strong>If one thing slips, let it be the backlog sweep.</strong> It is the only block here that can move to next week without costing you the sprint. The QA walk, the scope cut and the rigging answer cannot.</p>
+  <p><strong>If the QA walk goes badly on Thursday</strong> — if most of those 15 cannot be demonstrated — stop and tell me. The plan for the rest of the weekend changes, because the problem stops being Sprint 4's scope and becomes whether Sprint 2 and 3 delivered anything at all.</p>
+</div>
+
+<!-- ═════════════════ REFERENCE ═════════════════ -->
+<div class="ref" id="reference">
+  <h2>Asset reference</h2>
+  <p class="lede">The full specs, for quoting into messages and tickets. Nothing here is a task — the tasks are above.</p>
+
+  <h3>Sir Aldric art package · BOM-99</h3>
+  <dl>
+    <dt>Pose</dt><dd>T-Pose, arms straight at shoulder height — not A-Pose</dd>
+    <dt>Background</dt><dd>Pure white, no floor, no ground shadow</dd>
+    <dt>Hands</dt><dd>Empty — weapons are modelled separately</dd>
+    <dt>Images</dt><dd>1 front reference (2:3) + turnaround of 4 views: Front / Left / Right / Back (3:1, cut into 4 files)</dd>
+    <dt>Also</dt><dd>Colour breakdown per region · shield shape · sword style · per-ability VFX description</dd>
+    <dt>Tripo</dt><dd>Quad · 15,000 polys (heavy plate = complex) · Multi-view input, never single image · 4 generations · Use Same Polygon Count ON</dd>
+    <dt>Weapons</dt><dd>Separate conversation, separate models, 1,500–4,000 each. Sword and shield are both asymmetric, so both need their own turnaround.</dd>
+  </dl>
+  <p><strong>Blocks</strong> <span class="chain">BOM-110 <span>→</span> 101 <span>→</span> 102 <span>→</span> 124</span> — import and rig, then idle/run, then combat animations, then ability VFX. Strictly sequential.</p>
+
+  <h3>Mother Greta art package · BOM-113</h3>
+  <p>Same package shape, with three things specific to her and easy to get wrong:</p>
+  <ul>
+    <li><strong>Brown and gold palette — not blue.</strong> Blue Realm character whose colours come from her story. Steve's golden rule, and she is the example that proves it.</li>
+    <li><strong>Death animation is specified in words:</strong> falls to the side, hand outstretched toward a nearby ally. A deliberate character beat, not a generic death.</li>
+    <li><strong>No separate weapon</strong> — her basic is Bear Claw Strike, so the body is the weapon. One model.</li>
+  </ul>
+  <p><strong>Blocks</strong> <span class="chain">BOM-114 <span>→</span> 115 <span>→</span> 116 <span>→</span> 118 <span>→</span> 125</span> — the entire BOM-111 epic.</p>
+
+  <h3>Audio · 8 files across 7 tickets</h3>
+  <div class="tw">
+    <table>
+      <thead><tr><th>Ticket</th><th>File</th><th>Spec</th><th>Tier</th></tr></thead>
+      <tbody>
+        <tr><td>BOM-103</td><td>Flag capture fanfare</td><td>2–3s · medieval horn + orchestral hit · loud from frame one · −6dB peak · reverb tail under 0.5s</td><td>1</td></tr>
+        <tr><td>BOM-104</td><td>Hit confirmation</td><td>0.2–0.3s · metallic, sword on armour · must survive heavy repetition</td><td>1</td></tr>
+        <tr><td>BOM-104</td><td>Kill confirmed</td><td>0.5s · heavier impact + one-note sting</td><td>1</td></tr>
+        <tr><td>BOM-105</td><td>Home / queue music</td><td>90s+ seamless loop · 70–80 BPM · low and brooding · no lyrics</td><td>1</td></tr>
+        <tr><td>BOM-106</td><td>Battle music loop</td><td>90s+ seamless loop · 120–140 BPM · war drums, driving strings</td><td>1</td></tr>
+        <tr><td>BOM-107</td><td>Low HP pulse</td><td>0.3s single hit · heartbeat or bass pulse · sits under the music</td><td>2</td></tr>
+        <tr><td>BOM-108</td><td>Local player death</td><td>0.5–1s · armour hitting ground · reverb-heavy, cinematic not sad</td><td>2</td></tr>
+        <tr><td>BOM-109</td><td>Knockdown sting</td><td>2–3s · bass drop + low brass + war horn</td><td>2</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="note ok">
+    <div class="note-t">One of these may already exist</div>
+    <p>BOM-105 notes Steve already made a main-screen track the team likes. If it is usable, Tier 1 drops from five files to four.</p>
+  </div>
+
+  <h3>Sounds the game needs with no ticket yet</h3>
+  <p>Each is referenced as out-of-scope in a ticket written this week — known gaps, not oversights. None block Sprint 4.</p>
+  <div class="tw">
+    <table>
+      <thead><tr><th>Sound</th><th>Referenced in</th><th>Note</th></tr></thead>
+      <tbody>
+        <tr><td>Character select</td><td>BOM-121</td><td>You named this one as high-value for feel</td></tr>
+        <tr><td>Aldric ultimate voice</td><td>Tank Spec</td><td>Line already written: <em>"FOR THE KINGDOM!"</em></td></tr>
+        <tr><td>Greta ultimate voice</td><td>Tank Spec</td><td>Line exists — confirm exact wording with Steve</td></tr>
+        <tr><td>Ability cast ×4 per character</td><td>BOM-57</td><td>8 sounds once both characters are in</td></tr>
+        <tr><td>Hidden combo chime</td><td>BOM-120</td><td>Soft ascending, distinct from the hit sound</td></tr>
+        <tr><td>Flag carrier audio</td><td>BOM-131</td><td>Explicitly deferred</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="note warn">
+    <div class="note-t">The critical-hit sound cannot be made</div>
+    <p>You listed it as valuable, and it would be — but <strong>no crit system exists anywhere in the GDD or Tank Spec.</strong> There is no event to attach a sound to. Either Steve makes crits a real mechanic, which is a combat-design change with balance consequences across every character, or it comes off the list. Recommendation: off the list.</p>
+  </div>
+
+  <h3>From Amir — no assets, two answers</h3>
+  <div class="tw">
+    <table>
+      <thead><tr><th>Question</th><th>Blocks</th><th>Why it matters</th></tr></thead>
+      <tbody>
+        <tr><td>Quadruped rig</td><td>BOM-116</td><td>Mixamo will not rig a bear. Manual Blender, Tripo's rig, or separate pre-rigged asset. Decides whether BOM-116 is two days or two weeks.</td></tr>
+        <tr><td>Pipeline proven?</td><td>All character work</td><td>Steve is honest that his polycount and HD-vs-Smart-Mesh numbers are untested and wants results from the first 2–3 characters to calibrate. If Amir has never run it, Aldric is the test case.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+</div>
+
+</body>
+</html>

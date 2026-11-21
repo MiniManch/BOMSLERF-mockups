@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Character Select Panel — BOM-41</title>
+<style>
+  :root{
+    --bg:#0e1014; --panel:#15181f; --panel2:#1b1f28; --line:#2a2f3a;
+    --ink:#e8eaf0; --dim:#9aa2b4; --faint:#6b7283;
+    --gold:#c9a84c; --gold-l:#f0d080;
+    --green:#5fc27e; --red:#e0655c; --lock:#4a5060;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  .wrap{max-width:1100px;margin:0 auto;padding:40px 16px 90px}
+
+  .mast{border-bottom:1px solid var(--line);padding-bottom:24px;margin-bottom:36px}
+  .eyebrow{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);font-weight:650}
+  h1{font-size:clamp(26px,4.5vw,34px);margin:12px 0 8px;font-weight:650;letter-spacing:-.02em}
+  .sub{color:var(--dim);max-width:62ch;margin:0}
+
+  h2{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);
+    margin:52px 0 8px;padding-bottom:9px;border-bottom:1px solid var(--line);font-weight:650}
+  .cap{color:var(--dim);font-size:13.5px;margin:0 0 20px;max-width:74ch}
+  p{margin:0 0 12px}
+
+  /* ---------- landscape phone frame ---------- */
+  .frame{
+    position:relative;width:100%;max-width:720px;aspect-ratio:20/9;
+    background:#0a0c10;border:1px solid var(--line);border-radius:14px;overflow:hidden;
+    margin:0 0 10px;
+  }
+  .fcap{font-size:12px;color:var(--faint);margin:0 0 26px}
+
+  /* home screen behind the panel */
+  .home{position:absolute;inset:0;display:flex;padding:14px;gap:12px;filter:blur(1.5px) brightness(.45)}
+  .hcol{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px}
+  .hcol.l{flex:0 0 26%} .hcol.c{flex:1} .hcol.r{flex:0 0 28%}
+  .hbar{height:7px;background:var(--panel2);border-radius:3px;margin-bottom:7px}
+  .hbar.w70{width:70%} .hbar.w50{width:50%} .hbar.w85{width:85%}
+  .hplay{height:30px;background:rgba(201,168,76,.3);border-radius:6px;margin-top:10px}
+
+  .scrim{position:absolute;inset:0;background:rgba(6,8,11,.82)}
+
+  /* the panel */
+  .panel{
+    position:absolute;inset:7% 5%;background:var(--panel);
+    border:1px solid #39404f;border-radius:12px;
+    box-shadow:0 18px 50px rgba(0,0,0,.6);
+    display:flex;flex-direction:column;overflow:hidden;
+  }
+  .ptop{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:9px 14px;border-bottom:1px solid var(--line);background:var(--panel2);flex:0 0 auto;
+  }
+  .ptitle{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-l);font-weight:700}
+  .x{width:19px;height:19px;border:1px solid var(--line);border-radius:4px;color:var(--dim);
+    font-size:11px;display:grid;place-items:center}
+
+  .pbody{flex:1;display:flex;min-height:0}
+
+  /* left: roster */
+  .roster{flex:0 0 38%;padding:10px;display:flex;flex-direction:column;gap:7px;
+    border-right:1px solid var(--line);overflow:hidden}
+  .slot{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:7px;
+    border:1px solid var(--line);background:var(--panel2);position:relative}
+  .slot.on{border-color:var(--gold);background:rgba(201,168,76,.1)}
+  .slot.lock{opacity:.5}
+  .av{flex:0 0 26px;height:26px;border-radius:5px;background:#2b3240;display:grid;place-items:center;
+    font-size:12px;color:var(--faint)}
+  .slot.on .av{background:rgba(201,168,76,.22);color:var(--gold-l)}
+  .sname{font-size:10.5px;font-weight:600;line-height:1.25}
+  .srole{font-size:8.5px;color:var(--faint);letter-spacing:.06em;text-transform:uppercase}
+  .lk{position:absolute;right:7px;font-size:9px;color:var(--lock)}
+
+  /* right: detail */
+  .detail{flex:1;padding:10px 12px;display:flex;gap:10px;min-width:0}
+  .port{flex:0 0 34%;border:1px dashed #3a4252;border-radius:7px;background:#12151c;
+    display:grid;place-items:center;text-align:center;padding:6px}
+  .portTxt{font-size:8px;color:var(--faint);letter-spacing:.08em;line-height:1.5}
+  .silh{width:30px;height:46px;margin:0 auto 5px;
+    background:linear-gradient(#2e3banull,#2e3642);border-radius:14px 14px 5px 5px;opacity:.75}
+  .info{flex:1;min-width:0;display:flex;flex-direction:column}
+  .cname{font-size:14px;font-weight:650;letter-spacing:-.01em;line-height:1.2}
+  .ctitle{font-size:9px;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;margin-bottom:7px}
+  .stats{display:grid;grid-template-columns:1fr 1fr;gap:3px 10px;margin-bottom:8px}
+  .st{display:flex;justify-content:space-between;font-size:9.5px;border-bottom:1px solid rgba(42,47,58,.7);padding-bottom:2px}
+  .st span:first-child{color:var(--faint)}
+  .st span:last-child{font-weight:650;font-variant-numeric:tabular-nums}
+  .abil{display:flex;gap:5px;margin-bottom:auto}
+  .ab{flex:1;aspect-ratio:1;border:1px solid var(--line);border-radius:5px;background:var(--panel2);
+    display:grid;place-items:center;font-size:11px;color:var(--dim)}
+  .confirm{height:26px;border-radius:6px;background:var(--gold);color:#17120a;
+    display:grid;place-items:center;font-size:10px;font-weight:750;letter-spacing:.14em;margin-top:8px}
+  .confirm.off{background:#2b3240;color:var(--faint)}
+
+  /* locked toast */
+  .toast{position:absolute;left:50%;bottom:11%;transform:translateX(-50%);
+    background:#1f242e;border:1px solid #3a4252;border-radius:7px;padding:6px 13px;
+    font-size:10px;color:var(--ink);white-space:nowrap;box-shadow:0 6px 18px rgba(0,0,0,.5)}
+
+  /* home card states */
+  .cardRow{display:flex;gap:16px;flex-wrap:wrap;margin:0 0 8px}
+  .cardDemo{flex:1 1 220px;min-width:0;background:var(--panel);border:1px solid var(--line);
+    border-radius:10px;padding:14px}
+  .cardLbl{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);
+    font-weight:650;margin-bottom:10px}
+  .ccard{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;
+    border:1px solid var(--line);background:var(--panel2)}
+  .ccard .av{flex:0 0 30px;height:30px}
+  .ccard .sname{font-size:12px}
+  .ccard .srole{font-size:9px}
+  .pencil{margin-left:auto;font-size:11px;color:var(--faint)}
+  .playBtn{height:32px;border-radius:7px;background:var(--gold);color:#17120a;display:grid;
+    place-items:center;font-size:11px;font-weight:750;letter-spacing:.16em;margin-top:9px}
+  .playBtn.off{background:#2b3240;color:var(--faint)}
+  .hint{font-size:9.5px;color:var(--faint);text-align:center;margin-top:5px}
+
+  /* spec */
+  .tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  table{width:100%;border-collapse:collapse;margin:16px 0;font-size:13.5px}
+  th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);font-weight:650}
+  code{font:600 12.5px ui-monospace,Menlo,monospace;color:var(--gold-l);
+    background:rgba(201,168,76,.1);padding:1px 5px;border-radius:3px}
+  ul{margin:0 0 14px;padding-left:22px} li{margin-bottom:7px}
+  .note{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--gold);
+    border-radius:0 8px 8px 0;padding:14px 17px;margin:18px 0}
+  .note.warn{border-left-color:var(--red)}
+  .note-t{font-weight:650;font-size:13.5px;margin-bottom:5px}
+  .note p:last-child{margin-bottom:0}
+  .note p{font-size:14px}
+  @media (max-width:640px){ .wrap{padding:28px 16px 70px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="mast">
+  <div class="eyebrow">BOM-41 · Frontend · for Amir</div>
+  <h1>Character Select Panel</h1>
+  <p class="sub">The panel that opens when you tap the character card on the home screen. Built to work with a placeholder silhouette so nothing waits on art delivery.</p>
+</div>
+
+<div class="note warn">
+  <div class="note-t">Build this with a placeholder, not with art</div>
+  <p>Steve's Aldric art package (BOM-99) has not landed. Every portrait slot here is a dashed box with a silhouette inside — that is deliberate. Build the panel, the layout and all the interaction now; drop the real render into one container later. Nothing in this ticket should be blocked on art.</p>
+</div>
+
+<h2>State 1 · Panel open, Sir Aldric selected</h2>
+<p class="cap">The default and, for now, the only real state — Aldric is the one unlocked character.</p>
+
+<div class="frame">
+  <div class="home">
+    <div class="hcol l"><div class="hbar w70"></div><div class="hbar w50"></div><div class="hplay"></div></div>
+    <div class="hcol c"><div class="hbar w85"></div><div class="hbar w50"></div></div>
+    <div class="hcol r"><div class="hbar w70"></div><div class="hbar w85"></div><div class="hbar w50"></div></div>
+  </div>
+  <div class="scrim"></div>
+  <div class="panel">
+    <div class="ptop">
+      <div class="ptitle">Choose your warrior</div>
+      <div class="x">✕</div>
+    </div>
+    <div class="pbody">
+      <div class="roster">
+        <div class="slot on">
+          <div class="av">⚔</div>
+          <div><div class="sname">Sir Aldric</div><div class="srole">Tank</div></div>
+        </div>
+        <div class="slot lock">
+          <div class="av">?</div>
+          <div><div class="sname">Mother Greta</div><div class="srole">Tank</div></div>
+          <div class="lk">🔒</div>
+        </div>
+        <div class="slot lock">
+          <div class="av">?</div>
+          <div><div class="sname">Locked</div><div class="srole">—</div></div>
+          <div class="lk">🔒</div>
+        </div>
+        <div class="slot lock">
+          <div class="av">?</div>
+          <div><div class="sname">Locked</div><div class="srole">—</div></div>
+          <div class="lk">🔒</div>
+        </div>
+      </div>
+      <div class="detail">
+        <div class="port">
+          <div>
+            <div class="silh"></div>
+            <div class="portTxt">PORTRAIT<br>PLACEHOLDER<br>BOM-99</div>
+          </div>
+        </div>
+        <div class="info">
+          <div class="cname">Sir Aldric</div>
+          <div class="ctitle">The Immovable Shield</div>
+          <div class="stats">
+            <div class="st"><span>HP</span><span>2,240</span></div>
+            <div class="st"><span>Damage</span><span>165</span></div>
+            <div class="st"><span>Speed</span><span>1.8</span></div>
+            <div class="st"><span>Range</span><span>2.5 m</span></div>
+          </div>
+          <div class="abil">
+            <div class="ab">🛡</div><div class="ab">⚔</div><div class="ab">✦</div><div class="ab">★</div>
+          </div>
+          <div class="confirm">Select</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<p class="fcap">Landscape, panel overlaid on a dimmed home screen. The home screen stays visible behind the scrim — the player has not left it.</p>
+
+<h2>State 2 · A locked slot is tapped</h2>
+<p class="cap">No error, no modal, no navigation. A brief line and the selection does not change.</p>
+
+<div class="frame">
+  <div class="home">
+    <div class="hcol l"><div class="hbar w70"></div><div class="hbar w50"></div><div class="hplay"></div></div>
+    <div class="hcol c"><div class="hbar w85"></div><div class="hbar w50"></div></div>
+    <div class="hcol r"><div class="hbar w70"></div><div class="hbar w85"></div><div class="hbar w50"></div></div>
+  </div>
+  <div class="scrim"></div>
+  <div class="panel">
+    <div class="ptop">
+      <div class="ptitle">Choose your warrior</div>
+      <div class="x">✕</div>
+    </div>
+    <div class="pbody">
+      <div class="roster">
+        <div class="slot on">
+          <div class="av">⚔</div>
+          <div><div class="sname">Sir Aldric</div><div class="srole">Tank</div></div>
+        </div>
+        <div class="slot lock" style="border-color:#4a5060;opacity:.72">
+          <div class="av">?</div>
+          <div><div class="sname">Mother Greta</div><div class="srole">Tank</div></div>
+          <div class="lk">🔒</div>
+        </div>
+        <div class="slot lock">
+          <div class="av">?</div>
+          <div><div class="sname">Locked</div><div class="srole">—</div></div>
+          <div class="lk">🔒</div>
+        </div>
+        <div class="slot lock">
+          <div class="av">?</div>
+          <div><div class="sname">Locked</div><div class="srole">—</div></div>
+          <div class="lk">🔒</div>
+        </div>
+      </div>
+      <div class="detail">
+        <div class="port">
+          <div>
+            <div class="silh"></div>
+            <div class="portTxt">PORTRAIT<br>PLACEHOLDER<br>BOM-99</div>
+          </div>
+        </div>
+        <div class="info">
+          <div class="cname">Sir Aldric</div>
+          <div class="ctitle">The Immovable Shield</div>
+          <div class="stats">
+            <div class="st"><span>HP</span><span>2,240</span></div>
+            <div class="st"><span>Damage</span><span>165</span></div>
+            <div class="st"><span>Speed</span><span>1.8</span></div>
+            <div class="st"><span>Range</span><span>2.5 m</span></div>
+          </div>
+          <div class="abil">
+            <div class="ab">🛡</div><div class="ab">⚔</div><div class="ab">✦</div><div class="ab">★</div>
+          </div>
+          <div class="confirm">Select</div>
+        </div>
+      </div>
+    </div>
+    <div class="toast">Not yet available</div>
+  </div>
+</div>
+<p class="fcap">Toast sits inside the panel, 1.5s then fades. The detail pane keeps showing Aldric — tapping a locked slot never previews it.</p>
+
+<h2>State 3 · The home card, before and after</h2>
+<p class="cap">What the panel feeds back into. Both states already exist in <code>bomslerf_full_flow.html</code> — reproduced here so the whole interaction sits in one place.</p>
+
+<div class="cardRow">
+  <div class="cardDemo">
+    <div class="cardLbl">First login · nothing picked</div>
+    <div class="ccard" style="border-style:dashed">
+      <div class="av">?</div>
+      <div><div class="sname">Choose a warrior</div><div class="srole">tap to select</div></div>
+    </div>
+    <div class="playBtn off">PLAY</div>
+    <div class="hint">choose a warrior first</div>
+  </div>
+  <div class="cardDemo">
+    <div class="cardLbl">After selecting</div>
+    <div class="ccard">
+      <div class="av" style="background:rgba(201,168,76,.22);color:var(--gold-l)">⚔</div>
+      <div><div class="sname">Sir Aldric</div><div class="srole">Tank · 2,240 HP</div></div>
+      <div class="pencil">✎</div>
+    </div>
+    <div class="playBtn">PLAY</div>
+    <div class="hint">&nbsp;</div>
+  </div>
+</div>
+<p class="fcap">PLAY is disabled until a character is chosen. The pencil is the affordance that reopens this panel.</p>
+
+<h2>Build spec</h2>
+
+<div class="tbl-wrap">
+<table>
+<thead><tr><th>Behaviour</th><th>Rule</th></tr></thead>
+<tbody>
+<tr><td>Open</td><td>Tap the character card on the home screen. Panel fades in over a scrim, 0.15s. Home screen stays mounted behind it.</td></tr>
+<tr><td>Close</td><td><code>✕</code>, tap outside the panel, or Android back. Closing without selecting keeps the previous choice.</td></tr>
+<tr><td>Select an unlocked character</td><td>Slot gets the gold border, detail pane updates, <code>Select</code> becomes active. Tapping <code>Select</code> saves and closes.</td></tr>
+<tr><td>Tap a locked character</td><td>Toast "Not yet available", 1.5s. Selection unchanged, detail pane unchanged. No modal, no store, no navigation.</td></tr>
+<tr><td>Already-selected character</td><td><code>Select</code> reads "Selected" and is inert, or just closes the panel. Never a second write.</td></tr>
+<tr><td>Persistence</td><td>Selection survives app restart. Store locally and send to the server — the server is the authority (<strong>BOM-130</strong>).</td></tr>
+<tr><td>Portrait</td><td>One container, fixed aspect. Placeholder silhouette until BOM-99 lands, then swap the asset without touching layout.</td></tr>
+<tr><td>Ability icons</td><td>Four slots, left to right: Passive · Basic · Skill · Ultimate. Placeholder glyphs for now. No tooltips in this ticket.</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="note">
+  <div class="note-t">Stats come from the server, never from the client</div>
+  <p>Read every number from the characters endpoint (<strong>BOM-39</strong>). Do not hardcode 2,240 or 165 in the panel — those values live in the character DB and Steve is still able to change them. The figures shown above are the current correct ones; Jira had them wrong until yesterday.</p>
+</div>
+
+<div class="note">
+  <div class="note-t">No team colour anywhere in this panel</div>
+  <p>Tank Category Spec golden rule: a character keeps its own colours regardless of side. There is no blue or red version of Aldric. The only ally/enemy signal in the whole game is the HP bar above the character in-match — green for ally, red for enemy. This panel has no team context at all, so it shows the character exactly as it is.</p>
+</div>
+
+<h2>Scope boundary — read this before building</h2>
+
+<p>There is a real overlap between this ticket and <strong>BOM-121</strong> (Sprint 4), which builds a full character select <em>screen</em> with two characters, stat comparison and ability previews.</p>
+
+<p>With one unlocked character, a selection does not exist in any meaningful sense. So the recommendation is:</p>
+
+<ul>
+  <li><strong>Build now:</strong> the card and its two states on the home screen, the panel shell, the roster list with locks, the detail pane, and persistence.</li>
+  <li><strong>Leave for BOM-121:</strong> stat comparison between characters, ability tooltips or descriptions, portrait animation, filtering or roles, anything to do with a second playable character.</li>
+</ul>
+
+<p>Built this way, BOM-121 extends the panel rather than replacing it, and none of this work gets thrown away.</p>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GDD Reconciliation</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Public+Sans:wght@400;600;650&display=swap">
+<style>
+:root{
+ --bg:#0e1014;--surface:#15181f;--surface2:#1b1f28;--line:#2a2f3a;
+ --ink:#e8eaf0;--dim:#9aa2b4;--faint:#6b7283;
+ --gold:#c9a84c;--gold-l:#f0d080;--red:#e0655c;--green:#6fc28b;--blue:#6ea8e0;
+ --f-disp:"Fraunces",Georgia,serif;
+ --f-body:"Public Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+ --f-mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+ color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 var(--f-body)}
+.wrap{max-width:1180px;margin:0 auto;padding:0 max(18px,env(safe-area-inset-left,0px)) 80px}
+header{border-bottom:1px solid var(--line);padding:34px 0 26px;margin-bottom:34px}
+.kicker{font:650 11px/1 var(--f-body);letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}
+h1{font:600 clamp(27px,4.6vw,38px)/1.08 var(--f-disp);margin:12px 0 10px;letter-spacing:-.02em}
+.lede{color:var(--dim);font-size:16px;max-width:78ch;margin:0 0 16px}
+.meta{display:flex;gap:16px;flex-wrap:wrap;font-size:12.5px;color:var(--faint)}
+.meta b{color:var(--ink);font-weight:650}
+h2{font:600 24px/1.2 var(--f-disp);margin:52px 0 6px;letter-spacing:-.01em;
+   padding-top:20px;border-top:1px solid var(--line)}
+h2 .num{color:var(--gold);font-family:var(--f-mono);font-size:15px;font-weight:600;margin-right:10px}
+h2:first-of-type{border-top:0;padding-top:0}
+.sect-sub{color:var(--dim);font-size:14.5px;margin:0 0 20px;max-width:80ch}
+h3{font:650 11px/1.3 var(--f-body);letter-spacing:.14em;text-transform:uppercase;
+   color:var(--gold-l);margin:30px 0 12px}
+p{max-width:84ch}
+table{width:100%;border-collapse:collapse;font-size:13.5px;margin:14px 0 8px;
+      background:var(--surface);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+th{text-align:left;font:650 10.5px/1.3 var(--f-body);letter-spacing:.1em;text-transform:uppercase;
+   color:var(--faint);padding:10px 13px;border-bottom:1px solid var(--line);background:var(--surface2)}
+td{padding:10px 13px;border-bottom:1px solid rgba(42,47,58,.55);vertical-align:top}
+tr:last-child td{border-bottom:none}
+td.k,.key{font:600 12.5px var(--f-mono);color:var(--gold-l);white-space:nowrap}
+td.was{color:var(--red)}
+td.now{color:var(--green)}
+.tag{display:inline-block;font:650 9.5px/1.4 var(--f-body);letter-spacing:.09em;text-transform:uppercase;
+     padding:3px 7px;border-radius:3px;border:1px solid var(--line);color:var(--faint);white-space:nowrap}
+.tag.prog{border-color:rgba(224,101,92,.55);color:var(--red)}
+.tag.qa{border-color:rgba(110,168,224,.5);color:var(--blue)}
+.tag.todo{border-color:rgba(154,162,180,.4);color:var(--dim)}
+.callout{border-left:3px solid var(--gold);background:rgba(201,168,76,.07);
+         padding:14px 18px;border-radius:0 7px 7px 0;margin:18px 0;font-size:14.5px;color:var(--dim)}
+.callout b{color:var(--gold-l);font-weight:650}
+.callout.red{border-left-color:var(--red);background:rgba(224,101,92,.09)}
+.callout.red b{color:var(--red)}
+.callout.green{border-left-color:var(--green);background:rgba(111,194,139,.08)}
+.callout.green b{color:var(--green)}
+.quote{border-left:3px solid var(--line);padding:4px 0 4px 18px;margin:16px 0;color:var(--dim);
+       font-size:14px;font-style:italic}
+code{font:12.5px var(--f-mono);background:rgba(255,255,255,.055);padding:1.5px 5px;border-radius:3px;
+     color:var(--gold-l)}
+ul{padding-left:22px;max-width:84ch}
+li{margin:7px 0;color:var(--dim)}
+li b,li strong{color:var(--ink);font-weight:650}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(255px,1fr));gap:14px;margin:18px 0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:15px 17px}
+.card .ct{font:650 10.5px/1.3 var(--f-body);letter-spacing:.11em;text-transform:uppercase;
+          color:var(--faint);margin-bottom:7px}
+.card .cv{font:600 27px/1 var(--f-disp);color:var(--gold)}
+.card .cv.red{color:var(--red)} .card .cv.green{color:var(--green)}
+.card .cd{font-size:12.5px;color:var(--dim);margin-top:7px;line-height:1.5}
+.he{direction:rtl;text-align:right;unicode-bidi:isolate;display:inline-block}
+footer{margin-top:60px;padding-top:22px;border-top:1px solid var(--line);
+       font-size:12.5px;color:var(--faint)}
+@media(max-width:700px){
+  table{display:block;overflow-x:auto;white-space:nowrap}
+  .wrap{padding-bottom:50px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="kicker">BomSlerf · Sprint 4 · reconciliation against the GDD repo</div>
+  <h1>The Repo vs Jira — What Has To Change</h1>
+  <p class="lede">The <code>Bomslerf/BomSlerf-GDD</code> repo was published on 15 November and declares
+  itself the single source of truth over Jira, old files and WhatsApp. This is everything in our
+  Sprint 4 Jira — and in the mockups I drew on 7 November — that it contradicts.</p>
+  <div class="meta">
+    <span>repo commit <b>0ea44a1</b> · 15 Nov 2026</span>
+    <span>reviewed <b>16 Nov 2026</b></span>
+    <span><b>86</b> tickets checked</span>
+    <span><b>8</b> docs · <b>36</b> characters</span>
+  </div>
+</header>
+
+<div class="callout">
+  <b>The rule, in the repo's own words.</b> From the README:
+  <span class="he">״אם משהו ב-Jira או בקוד סותר את המאגר הזה — המאגר צודק, ופותחים שאלה לסטיב.״</span>
+  — if Jira or the code contradicts the repo, the repo is right, and you raise a question with Steve.
+  <code>docs/02</code> goes further: in any conflict with another document, <i>02 wins</i>.
+  That answers the precedence question I asked — I've worked to it throughout.
+</div>
+
+<div class="cards">
+  <div class="card"><div class="ct">Act today</div><div class="cv red">1</div>
+    <div class="cd">BOM-51 is In Progress and the spec changed under it</div></div>
+  <div class="card"><div class="ct">Tickets contradicted</div><div class="cv red">11</div>
+    <div class="cd">Wrong values, wrong rules, or built on cancelled mechanics</div></div>
+  <div class="card"><div class="ct">My mockups now wrong</div><div class="cv red">5</div>
+    <div class="cd">Of the 10 I drew on 7 Nov</div></div>
+  <div class="card"><div class="ct">Systems with no ticket</div><div class="cv">7</div>
+    <div class="cd">Fully specified in the repo, absent from Jira</div></div>
+  <div class="card"><div class="ct">Can be closed</div><div class="cv green">2</div>
+    <div class="cd">Decisions the repo already made</div></div>
+</div>
+
+<h2><span class="num">01</span>Stop this one today</h2>
+<p class="sect-sub">Everything else can wait for your next Jira pass. This cannot.</p>
+
+<div class="callout red">
+  <b>BOM-51 Deathcam is In Progress</b> — Amir is building it right now — and
+  <code>02 §9.1</code> rewrote the behaviour on 15 November. The mockup I gave him on 7 November is
+  wrong in almost every value. If he has started, he is building the wrong camera.
+</div>
+
+<table>
+<thead><tr><th>Element</th><th>My 7 Nov mockup / the ticket</th><th>GDD 02 §9.1 — correct</th></tr></thead>
+<tbody>
+<tr><td>Killer shot</td><td class="was">0.3 s hard cut, held to 0.8 s</td><td class="now"><b>Follows the killer for 3 full seconds</b></td></tr>
+<tr><td>Killer leaves vision</td><td class="was">not handled</td><td class="now">Camera <b>stops at the last point he was seen</b>. Server never transmits an unseen enemy's position.</td></tr>
+<tr><td>After the follow</td><td class="was">countdown over a dimmed killer</td><td class="now"><b>Returns to your corpse</b> until respawn. Player can drag the map; releasing snaps back to the corpse.</td></tr>
+<tr><td>Respawn delay</td><td class="was">"unspecified — 3 s placeholder"</td><td class="now"><b>Tiered by match minute: 10 → 15 → 19 → 23 → 27 s</b>, plus 2 s spawn immunity</td></tr>
+<tr><td>In Knockdown</td><td class="was">not handled</td><td class="now">No respawn — spectate living teammates, <b>starting on your flag carrier</b></td></tr>
+<tr><td>In Final Stage</td><td class="was">not handled</td><td class="now">Spectate the <b>nearest living teammate</b>; tap a portrait to switch. Captain priority was cancelled.</td></tr>
+<tr><td>Dead player's vision</td><td class="was">not handled</td><td class="now"><b>The corpse has no vision of its own</b> and reveals nothing. You see only what living teammates see.</td></tr>
+<tr><td>Tap to skip</td><td class="was">I invented it</td><td class="now">Not in the spec. Drag-the-map is the interaction instead.</td></tr>
+</tbody>
+</table>
+
+<div class="callout">
+  <b>Also note the event contract.</b> §9.1 item 7 says the server <code>death</code> event must carry
+  who died, who killed (<b>including tower, minion or jungle creature</b>), and whether the death
+  happened in a respawn or no-respawn state. It names the technical decision — extend the existing
+  <code>death</code> event — as Leon's and yours. That is BOM-129, and it needs updating too.
+</div>
+
+<h2><span class="num">02</span>Tickets the repo contradicts</h2>
+<p class="sect-sub">Ordered by how much damage shipping them unchanged would do.</p>
+
+<table>
+<thead><tr><th>Ticket</th><th>Status</th><th>What it says</th><th>What the repo says</th></tr></thead>
+<tbody>
+<tr><td class="k">BOM-88</td><td><span class="tag qa">QA</span></td>
+  <td class="was">"Game Timer — <b>11 Minutes</b>, Server Authoritative"</td>
+  <td class="now">Match is <b>10:00</b>. 10:00 is the last-minute warning, <b>11:00 is Final Stage</b>, 13:00 is the hard stop. An 11-minute match timer is the wrong object entirely. <code>02 §1</code></td></tr>
+<tr><td class="k">BOM-95</td><td><span class="tag todo">To Do</span></td>
+  <td class="was">"In-Game Timer Rework — <b>11 Minute</b> Countdown HUD"</td>
+  <td class="now">Same error. The HUD needs three marks — warning at 10:00, Final Stage at 11:00, end at 13:00 — not one 11-minute countdown.</td></tr>
+<tr><td class="k">BOM-92</td><td><span class="tag qa">QA</span></td>
+  <td class="was">Flag capture win condition — server logic</td>
+  <td class="now">Missing three hard gates: at least <b>one tower must be destroyed</b> before the flag can be lifted at all (§2.4); <b>a defender inside the Flag Center blocks the steal</b> unless he dies, is pushed out, or the attackers have a numeric advantage — equal numbers still blocks (§5.3); and you cannot win unless <b>your own flag is at base</b> (§5.7). Pickup 0.5 s, return 3 s, floor 10 s.</td></tr>
+<tr><td class="k">BOM-59</td><td><span class="tag todo">To Do</span></td>
+  <td class="was">I wrote "the formula is not specified anywhere — do not invent coefficients"</td>
+  <td class="now">It <b>is</b> specified, in <code>06 §1.1</code>: win <b>80</b>, loss <b>40</b>, MVP <b>+25</b> (including on the losing team), first win of the day <b>×2</b>. There is <b>no per-kill award at all</b> — so the mockup's 140/100/50/40 was fiction, and my OPEN block should be deleted.</td></tr>
+<tr><td class="k">BOM-93</td><td><span class="tag qa">QA</span></td>
+  <td class="was">Knockdown &amp; Final Stage — server logic, sitting in QA</td>
+  <td class="now">Built on rules the repo still lists as <b>open and blocking</b> (K1–K4). Most critical: the trigger can fire when a team has <b>no carrier</b> because its flag is on the floor — nobody has decided whose death resolves it. Also unsettled: whether the 30 s counts from the first flag lift or from both being stolen.</td></tr>
+<tr><td class="k">BOM-60</td><td><span class="tag todo">To Do</span></td>
+  <td class="was">Quest rewards 100 / 150 / 80, reset at a fixed UTC hour</td>
+  <td class="now"><code>06 §8</code>: 3 quests per <b>24 hours per player</b>, each worth <b>80–200</b> SlerfCoins <b>plus 300 XP</b> — the XP is missing from our ticket entirely. Example set: Win 3 matches (100), Capture 2 flags (150), <b>Win without dying</b> (200).</td></tr>
+<tr><td class="k">BOM-61</td><td><span class="tag todo">To Do</span></td>
+  <td class="was">I flagged XP and gems as "systems that don't exist"</td>
+  <td class="now">Both exist and are fully costed. XP: win 300, loss 150, MVP +100, level cost <b>500 × N</b> (<code>06 §3</code>). The "gem" is <b>BomCoins</b>, with six real-money tiers. Match History is <b>the last 20 matches</b>, opened from the profile — not 3 or 10.</td></tr>
+<tr><td class="k">BOM-80</td><td><span class="tag todo">To Do</span></td>
+  <td class="was">The ticket is right. <b>My mockup is wrong.</b></td>
+  <td class="now"><code>02 §5.4</code>: the floor is <b>orange</b> when blocked, and <b>green to the attacker / red to the defender</b> when open — two players see different colours on the same floor at the same moment. I drew neutral-gold / blue / red team colours. Delete that sheet's colour table.</td></tr>
+<tr><td class="k">BOM-98</td><td><span class="tag todo">To Do</span></td>
+  <td class="was">FOV rework — enemies hidden by distance</td>
+  <td class="now">Now fully specified: <b>7 m radius, full 360°, no blind spot</b>, shared team vision, and the server must never send an unseen enemy's position. Grass is <b>2.5 m</b> and <b>only in the Lanes</b>. Boxes and walls block sight. The Flag Center and your own base are fully lit to everyone.</td></tr>
+<tr><td class="k">BOM-44</td><td><span class="tag qa">QA</span></td>
+  <td class="was">End of match screen &amp; scoreboard</td>
+  <td class="now">Event is <code>match_end</code>, not <code>match_over</code> — which our tickets use throughout. <b>8 rows, 4 per team, one MVP per team.</b> No "2-1" score, Best of 1. <b>No DRAW screen, ever</b> — Leon is told explicitly there must be no <code>DRAW</code> in the enum.</td></tr>
+<tr><td class="k">BOM-45</td><td><span class="tag qa">QA</span></td>
+  <td class="was">Match history on home screen</td>
+  <td class="now">Superseded: history now lives <b>in the profile</b>, 20 entries. The home screen instead carries a <b>5-win meter</b> toward a Rare box.</td></tr>
+</tbody>
+</table>
+
+<h2><span class="num">03</span>The mockups I drew are partly wrong</h2>
+<p class="sect-sub">Five of the ten sheets from 7 November were built on the old specs. Two survive intact,
+and one of my open questions got answered.</p>
+
+<table>
+<thead><tr><th>Sheet</th><th>Verdict</th><th>Why</th></tr></thead>
+<tbody>
+<tr><td class="k">BOM-51 Deathcam</td><td class="was"><b>Redraw</b></td><td>Every timing value is wrong — see section 01.</td></tr>
+<tr><td class="k">BOM-80 Flag floor</td><td class="was"><b>Redraw</b></td><td>Wrong colours and wrong model. It is per-player rendering: orange blocked, green/red split by side.</td></tr>
+<tr><td class="k">BOM-56 Flag capture</td><td class="was"><b>Redraw</b></td><td>I built it on "one capture wins". There are <b>three</b> win conditions, capture only works until 11:00, needs your own flag home, and is gated by the tower and Flag-Center-defender rules.</td></tr>
+<tr><td class="k">BOM-71 Uniform FOV</td><td class="was"><b>Weaken the claim</b></td><td>I drew a wide screen "seeing an enemy the other cannot". Under a <b>7 m dark map</b> that cannot happen — an enemy past 7 m is not rendered for anyone. A wider screen shows more terrain and towers, not more enemies. The fairness concern is real but much smaller than I wrote, and it is not critical.</td></tr>
+<tr><td class="k">BOM-70 Grass exit</td><td class="was"><b>Fix the framing</b></td><td>The conclusion holds — vision must cut instantly on leaving grass. But I called <b>1.5 s</b> a bug, and it is a legitimate separate mechanic: attacking from grass exposes you for 1.5 s. The spec also says hitting a <b>minion or tower</b> counts, while DoT, ground areas, reflect, auras and self-shields do not.</td></tr>
+<tr><td class="k">BOM-68 Grass desaturation</td><td class="now"><b>Conflict resolved</b></td><td>I flagged carrier-vs-grass as needing your decision. The repo decides it: the carrier is <b>always visible to everyone everywhere, including grass</b>, with a light that breaks through everything (<code>04 §8</code>). The carrier is exempt. Nothing for you to rule on.</td></tr>
+<tr><td class="k">BOM-52, 53, 54, 61</td><td class="now">Mostly stand</td><td>Need the <code>match_end</code> rename, the real coin and XP numbers, and the purple fix below.</td></tr>
+</tbody>
+</table>
+
+<div class="callout red">
+  <b>All ten sheets break the UI colour law.</b> <code>06 §10.1</code>: the palette is royal dark blue
+  <code>#0C447C</code>, live blue <code>#378ADD</code>, gold text <code>#FFD700</code> — and
+  <b>no purple in the UI, at all</b>. My Knockdown Mode kill-feed row is violet, and the sheet
+  background is a purple-black. The repo also calls for <b>Bebas Neue for numbers</b>, which none of
+  them use. Worth fixing before Amir treats any of it as reference.
+</div>
+
+<h2><span class="num">04</span>Fully specified, no ticket anywhere</h2>
+<p class="sect-sub">These are not gaps in the spec — they are gaps in Jira. Each one is written up in
+detail in the repo, several with visual direction aimed straight at Amir.</p>
+
+<ul>
+<li><b>Towers</b> — the one I have raised three times, now beyond argument. 4 towers, 7,000 HP, 220 damage every 1.5 s, 5.5 m. <b>Two towers standing locks that base's flag completely.</b> Only Basic Attack damages a tower — Skill and Ultimate do nothing. <b>"Shield of the Kingdom": 90% damage reduction while you have no minions of your own in range</b>, applied last in the damage order, with a full visual spec (team-coloured dome, sparks, small grey damage numbers with a shield icon, 0.5 s shatter). Towers do not block projectiles. Plus an aggro-priority ladder and a defence-lock rule keyed to the <i>attacker's</i> position at the moment the server confirms the hit.</li>
+<li><b>Minions</b> — 3 per lane every 30 s, with their own targeting priority and tower interaction.</li>
+<li><b>Teleport</b> — replaces the old Endpoint outright. Each minion entering gives <b>+0.2% damage and +0.2% max HP, uncapped</b>, plus healing. The old "+0.5%, capped at +6%" is cancelled.</li>
+<li><b>Gas</b> — none until 11:00. The "gas at 2:15" rule is explicitly dead. In Knockdown it closes from all four walls over 90 seconds.</li>
+<li><b>Jungle creatures</b> — 3-minute buff, creatures respawn, and attacking them does not expose you.</li>
+<li><b>The Captain</b> — §11, declared at 0:00 with a swap window until 1:00. The repo lists "when the captain enters the code" as <b>your</b> open item (E6).</li>
+<li><b>Saboteur</b> — permanent passive for every Thief, +15% against towers, Basic Attack only.</li>
+</ul>
+
+<div class="callout">
+  <b>And the roster.</b> 36 characters across five categories, each with full stats, four abilities,
+  hidden combos and art. Jira has two. The repo itself flags this as open decision <b>C1</b> — 36
+  specified against a launch vision of 12–16 — so it is a scoping conversation with Steve, not a
+  backlog-stuffing exercise. The four free starters are already chosen: Sir Aldric, Roland, Cassius
+  and Mira. Note that <b>Mother Greta is a 1,000-coin Common unlock</b>, not a starter — which affects
+  how BOM-41 and BOM-121 should treat her locked slot.
+</div>
+
+<h2><span class="num">05</span>Close these two</h2>
+
+<table>
+<thead><tr><th>Ticket</th><th>Why it can close</th></tr></thead>
+<tbody>
+<tr><td class="k">BOM-82</td><td>"Decide map dimensions — 30×18 vs 36×21.6". <span class="he">הוחלט</span> — the repo's contradiction table settles it: <b>36 × 21.6 m</b>.</td></tr>
+<tr><td class="k">BOM-83</td><td>"Numeric contradictions between tickets and spec docs". <code>08 §5</code> is exactly that list, resolved — gas, map size, Teleport, respawn, Knockdown, flag-on-floor, carrier slow (15%, Kessa 10%), Korvak→<b>Lorvak</b>, bridge→<b>stage</b>, grass placement, boxes, basic damage by category, match history, BomCoins colour.</td></tr>
+</tbody>
+</table>
+
+<h2><span class="num">06</span>What is yours to decide</h2>
+<p class="sect-sub">The repo splits open items by owner. These carry your name.</p>
+
+<ul>
+<li><b>E5 — sound.</b> Types and software. Ours are BOM-100 and BOM-103–109, already written and waiting.</li>
+<li><b>E6 — the Captain.</b> When it enters the code. No ticket exists yet.</li>
+<li><b>E1–E4, E7</b> — Power Level, Trophy Road, LiveOps board; Slerf Shards as a third currency; whether BomCoins→SlerfCoins conversion returns after soft launch; one narrator voice or several; and whether the tagline stays.</li>
+<li>The repo also names you as <b>a partner on every economy decision</b> (<code>06</code> header) and as the person who updates Jira after each of Steve's pushes.</li>
+</ul>
+
+<div class="callout green">
+  <b>Steve's blocking list is short and specific.</b> K1–K4 on Knockdown are the critical ones, and K1
+  — who counts as "the carrier" when a flag is on the floor — is marked the most critical open item in
+  the game. BOM-93 is sitting in QA as though that were settled. That is the single best question to
+  walk into your next session with Steve holding.
+</div>
+
+<footer>
+  Built 16 Nov 2026 from <code>Bomslerf/BomSlerf-GDD</code> @ <code>0ea44a1</code> ·
+  cross-checked against 86 Sprint 3 / Sprint 4 tickets and the ten mockup sheets of 7 Nov 2026.
+  Section references point at the repo's own files — <code>docs/02</code> core mechanics,
+  <code>docs/04</code> vision, <code>docs/06</code> economy, <code>docs/08</code> open decisions.
+</footer>
+
+</div>
+</body>
+</html>
